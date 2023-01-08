@@ -3,9 +3,16 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+let db = require('./config/connection')
+let hbs = require('express-handlebars')
+let Handlebars= require('handlebars')
+let fileUpload = require('express-fileupload')
+let session = require('express-session');
+var nocache = require('nocache');
+require('dotenv').config();
 
-var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var adminRouter = require('./routes/admin');
 
 var app = express();
 
@@ -13,14 +20,39 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
+app.engine('hbs', hbs.engine({
+  extname: 'hbs',
+  defaultLayout: 'layout',
+  layoutsDir: __dirname + '/views/layout/',
+  partialsDir: __dirname + '/views/partials/'
+}))
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(fileUpload());
+const oneDay = 1000 * 60 * 60 * 24;
+app.use(session({
+    secret: "eppudraa",
+    saveUninitialized:true,
+    cookie: { maxAge: oneDay },
+    resave: false 
+}));
+app.use(nocache());
+app.use('/', usersRouter);
+app.use('/admin', adminRouter);
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+db.connect((err)=>{
+  err?console.log("Connection failed"):console.log("successfully connected to the database");
+
+})
+
+Handlebars.registerHelper("inc", function(value, options)
+{
+    return parseInt(value) + 1;
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
