@@ -56,7 +56,7 @@ router.post('/bockAndUnblockUsers',adminControler.blockAndUnblockUsers)
 //Blocked users
 router.get('/blockedUsers',adminControler.getBlockedUsers)
 
-//Category management add categories
+//Category management add categories 
 router.route('/addProductCategory')
 .get(adminControler.addCategoryGet)
 .post(adminControler.addCategoryPost)
@@ -74,7 +74,7 @@ router.post('/checkBoxtest',(req,res)=>{
     console.log(req.body)
 })
 
-//Logout admin from the page
+//Logout admin 
 router.get('/logoutAdmin',adminControler.logoutAdmin)
 
 // router.post('/uploadImages',multer.uploadImage.array('images',3),(req,res)=>{
