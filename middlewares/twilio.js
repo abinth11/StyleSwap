@@ -27,6 +27,7 @@ const client = require('twilio')(accountSid, authToken)
     }
 // api for verifying the otp recived by the user 
     const verifyOtp =(mobileNo,otp) =>{
+        console.log("mobile and otp")
         console.log(mobileNo,otp)
         return new Promise((resolve, reject) =>{
             client.verify

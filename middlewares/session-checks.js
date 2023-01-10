@@ -1,14 +1,21 @@
 module.exports={
-    adminCheck:(req,res,next)=>{
-        console.log(req.session.admin);
-        if(req.session.admin){
-            res.redirect('/admin')
-        }else{
-            next();    
-        }
-
+    isAdminExist:(req,res,next)=>{
+       if(req.session.admin)
+       {
+        next();
+       }
+       else{
+        res.redirect('/admin');
+       }
     },
-    userCheck:(req,res,next)=>{
+    isUserExist:(req,res,next)=>{
+        if(req.session.user)
+        {
+            next();
+        }
+        else{
+            res.redirect('/');
+        }
 
     }
 }

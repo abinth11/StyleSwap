@@ -25,7 +25,10 @@
         <section class="content-main mt-80 mb-80">
             <div class="card mx-auto card-login " >
                 {{#if otpError}}
-                <p class="alert alert-danger">{{otpError}}</p>
+                <p class="alert alert-danger text-center">{{otpError}}</p>
+                {{/if}}
+                {{#if mobile}}
+                 <p class="alert alert-success text-center">otp has sent to {{mobile}}</p>
                 {{/if}}
                 <div class="card-body " style="border-radius: 1rem;background-color:#FAF9F6">
                     <h4 class="card-title mb-4">Verify Your otp</h4>

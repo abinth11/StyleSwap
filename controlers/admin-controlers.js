@@ -4,19 +4,22 @@ const { response } = require('express');
 let userStatus
 module.exports = {
     adminLoginGet: (req, res) => {
-        res.render('admin/loginAdmin', { loginErr: req.session.loginError })
-        req.session.loginError = null;
-        // req.session.err=null;
+        if(req.session.admin)
+        {
+            res.redirect('/admin/dashboard')
+        }
+        else
+        {
+            res.render('admin/loginAdmin', { loginErr: req.session.loginError })
+            req.session.loginError = null;
+        }
     },
     adminLoginPost: (req, res) => {
-        // const errors = validationResult(req);
-        // console.log(errors);
-        // req.session.err = errors.errors;
             adminHelpers.adminLogin(req.body).then((response) => {
                 if (response.status) {
                     req.session.adminLoggedIn = true;
                     req.session.admin = response.admin;
-                    console.log(req.session.admin);
+                    console.log(req.session);
                     res.redirect('/admin/dashboard')
                 }
                 else if (response.notExist) {
@@ -30,7 +33,14 @@ module.exports = {
             })
     },
     adminDashboard: (req, res) => {
-        res.render('admin/index',{admin:true})
+        // if(req.session.admin)
+        // {
+            res.render('admin/index',{admin:true})
+        // }
+        // else{
+        //     res.redirect('/admin')
+        // }
+        
     },
     addProducts1Get: (req, res) => {
         res.render('admin/add-product',{admin:true})

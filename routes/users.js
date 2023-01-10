@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
-let userHelpers = require('../helpers/user-helpers');
 let userControler=require('../controlers/user-controlers');
 const userValidation = require('../validation/userValidation');
-const { request } = require('express');
-let twilio=require('../middlewares/twilio')
-
+let sessionChecker = require('../middlewares/session-checks');
+const userHelpers = require('../helpers/user-helpers');
 
 /* GET home page. */
 router.get('/',userControler.userHome);
@@ -21,13 +19,19 @@ router.route('/userSignUp')
 //User login 
 router.route('/userLogin')
 .get(userControler.userLoginGet)
-.post(userValidation.userLoginValidate,userControler.userLoginPost)
+.post(userValidation.userLoginValidate,userControler.userLoginPost);
 
+// //login with otp withoug passwords
+router.route('/loginWithOtp')
+.get(userControler.loginWithOtpGet)
+.post(userControler.loginWithOtpPost)
+
+//otp validation
 router.route('/otpValidate')
-.get(userControler.otpValidateGet)
+.get(sessionChecker.isUserExist,userControler.otpValidateGet)
 .post(userControler.otpValidatePost)
 
-router.get('/dashboard',userControler.dashboard)
-router.post('/upload',userControler.upload)
+//User logout
+router.get('/logoutUser',userControler.userLogout);
 
 module.exports = router;

@@ -3,68 +3,68 @@ var router = express.Router();
 let adminControler = require('../controlers/admin-controlers');
 let adminValidate=require('../validation/adminValidation')
 let multer = require('../middlewares/multer');
-let sessionExists=require('../middlewares/session-checks')
+let sessionCheck=require('../middlewares/session-checks')
 
 /* GET users listing. */
-router.get('/',sessionExists.adminCheck,adminControler.adminLoginGet)
+router.get('/',adminControler.adminLoginGet)
 
 //Admin Login post method
 router.post('/adminLogin',adminValidate.adminLoginValidate,adminControler.adminLoginPost)
 
 //Admin dashboard
-router.get('/dashboard',adminControler.adminDashboard);
+router.get('/dashboard',sessionCheck.isAdminExist,adminControler.adminDashboard);
 
 //Admin add product get and post methods
 router.route('/addProduct1')
-.get(adminControler.addProducts1Get)
+.get(sessionCheck.isAdminExist,adminControler.addProducts1Get)
 .post(adminValidate.addProductValidate,multer.uploadImage.array('images',3),adminControler.addProducts1Post)
 
 router.route('/addProduct2')
-.get(adminControler.addProducts2Get)
+.get(sessionCheck.isAdminExist,adminControler.addProducts2Get)
 
 //For adding products like clothes and shoes
 router.route('/addProduct3')
-.get(adminControler.addProducts3Get)
+.get(sessionCheck.isAdminExist,adminControler.addProducts3Get)
 .post(adminValidate.addProductValidate,adminControler.addProducts3Post)
 
 router.route('/addProduct4')
-.get(adminControler.addProducts4Get)
+.get(sessionCheck.isAdminExist,adminControler.addProducts4Get)
 
 //view products in list view 
-router.get('/viewPoductsList',adminControler.viewProductList)
+router.get('/viewPoductsList',sessionCheck.isAdminExist,adminControler.viewProductList)
 
 //edit products in list veiw
 router.route('/editProductsList/:id')
-.get(adminControler.editProductsListGet)
+.get(sessionCheck.isAdminExist,adminControler.editProductsListGet)
 .post(adminValidate.addProductValidate,adminControler.editProductsListPut)
 
 //disable product in list view
 router.post('/diableAndEnableProduct',adminControler.disableAndEnableProduct)
 
 //view products in grid
-router.get('/viewProductsGrid',adminControler.viewProductsGrid);
+router.get('/viewProductsGrid',sessionCheck.isAdminExist,adminControler.viewProductsGrid);
 
 //view products grid 2
-router.get('/viewProductsGrid2',adminControler.viewProductsGrid2)
+router.get('/viewProductsGrid2',sessionCheck.isAdminExist,adminControler.viewProductsGrid2)
 
 //view Users 
-router.get('/viewUsers',adminControler.viewUsers)
+router.get('/viewUsers',sessionCheck.isAdminExist,adminControler.viewUsers)
 
 //Block users
 router.post('/bockAndUnblockUsers',adminControler.blockAndUnblockUsers)
 
 //Blocked users
-router.get('/blockedUsers',adminControler.getBlockedUsers)
+router.get('/blockedUsers',sessionCheck.isAdminExist,adminControler.getBlockedUsers)
 
 //Category management add categories 
 router.route('/addProductCategory')
-.get(adminControler.addCategoryGet)
+.get(sessionCheck.isAdminExist,adminControler.addCategoryGet)
 .post(adminControler.addCategoryPost)
 
 
 //Category management edit categories
 router.route('/editProdutCategory/:id')
-.get(adminControler.editCategoryGet)
+.get(sessionCheck.isAdminExist,adminControler.editCategoryGet)
 .post(adminControler.editCategoryPut)
 
 //Delete category
