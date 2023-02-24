@@ -141,33 +141,15 @@
                                 </div>
                                 <hr>
                                 <h5 class="mb-3">Categories</h5>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"  id="product-cat" name="categories"  >
-                                    <label class="form-check-label" for="product-cat"> Shirt </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"  id="product-cat-1" name="categories">
-                                    <label class="form-check-label" for="product-cat-1"> T-Shirt </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"  id="product-cat-2" name="categories">
-                                    <label class="form-check-label" for="product-cat-2"> Sneakers </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="product-cat-3" name="categories" >
-                                    <label class="form-check-label" for="product-cat-3"> Joggers </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"  id="product-cat-4" name="categories">
-                                    <label class="form-check-label" for="product-cat-4"> Vests </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"  id="product-cat-5" name="categories">
-                                    <label class="form-check-label" for="product-cat-5"> Knitwear </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"  id="product-cat-8" name="categories">
-                                    <label class="form-check-label" for="product-cat-8"> Shorts </label>
+                                
+
+                                 <div class="mb-4">
+                                    <select class="form-select" name="product_status">
+                                        {{#each category}}
+                                        <option>{{category_name}}</option>
+                                        {{/each}}
+                                        
+                                    </select>
                                 </div>
                             </div>
                             <h5 class="mb-3 ms-3">Delivery Options</h5>

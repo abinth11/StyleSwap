@@ -1,5 +1,65 @@
-document.addEventListener("DOMContentLoaded", function(event) {
 
-    function OTPInput() {
-    const inputs = document.querySelectorAll('#otp > *[id]');
-    for (let i = 0; i < inputs.length; i++) { inputs[i].addEventListener('keydown', function(event) { if (event.key==="Backspace" ) { inputs[i].value='' ; if (i !==0) inputs[i - 1].focus(); } else { if (i===inputs.length - 1 && inputs[i].value !=='' ) { return true; } else if (event.keyCode> 47 && event.keyCode < 58) { inputs[i].value=event.key; if (i !==inputs.length - 1) inputs[i + 1].focus(); event.preventDefault(); } else if (event.keyCode> 64 && event.keyCode < 91) { inputs[i].value=String.fromCharCode(event.keyCode); if (i !==inputs.length - 1) inputs[i + 1].focus(); event.preventDefault(); } } }); } } OTPInput(); });
+const addToCart=(productId)=>{
+    $.ajax({
+        url:'/add-to-cart/'+productId,
+        method:'get',
+        success:(response)=>{
+            if(response.status){
+                let count=$('#cartCount').html();
+                count=parseInt(count)+1;
+                $('#cartCount').html(count);
+            }
+        }       
+    })
+}
+
+const changeQuantity=(cartId,productId,userId,count)=>{
+   let quantity=parseInt(document.getElementById(productId).innerHTML)
+    $.ajax({
+        type:'POST',
+        url:'/change-quantity',
+        data:{
+            cartId:cartId,
+            productId:productId,
+            count:count,
+            quantity:quantity,
+            userId:userId
+        },
+        success:(response)=>{
+            if(response.removed){
+                alert("Product reomove from your cart");
+                location.reload();
+            }else{
+                document.getElementById(productId).innerHTML=quantity+count;
+                document.getElementById('totalAmout').innerHTML=response.total.total;
+                console.log(response.total.total)
+            }
+        },
+        error: function(data){
+            alert(data);
+            console.log(JSON.stringify(data));
+        }
+    })
+}
+
+const deleteCartProduct=(cartId,productId)=>{
+    $.ajax({
+        type:"PUT",
+        url:"/remove-cart-product",
+        data:{
+            cartId:cartId,
+            productId:productId
+        },
+        success:(response)=>{
+            if(response.removed){
+                alert("deleted item")
+                location.reload();
+            }else{
+                alert("deletion failed");
+            }
+        },
+        error:(err)=>{
+            alert(err);
+        }
+    })
+}

@@ -49,22 +49,22 @@
                             <form action="/admin/addProductCategory" method="post">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name"/>
+                                    <input type="text" placeholder="Type here" class="form-control" id="category_name" name="category_name"/>
                                 </div>
                                 <div class="mb-4">
                                     <label for="product_slug" class="form-label">Slug</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_slug" name="product_slug" />
+                                    <input type="text" placeholder="Type here" class="form-control" id="category_slug" name="category_slug" />
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Parent</label>
-                                    <select class="form-select" name="product_parent">
+                                    <select class="form-select" name="category_parent">
                                         <option>Clothes</option>
                                         <option>T-Shirts</option>
                                     </select>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <textarea placeholder="Type here" class="form-control" name="product_description"></textarea>
+                                    <textarea placeholder="Type here" class="form-control" name="category_description"></textarea>
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-primary">Create category</button>
@@ -76,11 +76,6 @@
                                 <table class="table table-hover"  style="overflow: hidden;">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" />
-                                                </div>
-                                            </th>
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Description</th>
@@ -92,15 +87,10 @@
                                     <tbody>
                                         {{#each category}}
                                         <tr>
-                                            <td class="text-center">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" />
-                                                </div>
-                                            </td>
-                                            <td>21</td>
-                                            <td><b>{{product_name}}</b></td>
-                                            <td>{{product_description}}</td>
-                                            <td>{{product_slug}}</td>
+                                            <td>{{inc @index}}</td>
+                                            <td><b>{{category_name}}</b></td>
+                                            <td>{{category_description}}</td>
+                                            <td>{{category_slug}}</td>
                                             <td>1</td>
                                             <td class="text-end">
                                                 <div class="dropdown">

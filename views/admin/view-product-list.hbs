@@ -40,11 +40,6 @@
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check ms-2">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
                         <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
                             <select class="form-select">
                                 <option selected>All category</option>
@@ -70,14 +65,10 @@
                     {{#each products}}
                     <article class="itemlist">
                         <div class="row align-items-center">
-                            <div class="col col-check flex-grow-0">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="">
-                                </div>
-                            </div>
                             <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
                                 <a class="itemside" href="#">
-                                    <div class="left">
+                                    {{inc @index}}
+                                    <div class=" ms-3 left">
                                         <img src="/images/{{_id}}.jpg" class="img-sm img-thumbnail" alt="Item">
                                     </div>
                                     <div class="info">

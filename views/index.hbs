@@ -262,9 +262,11 @@
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                    <a class="mini-cart-icon" href="/userCart">
                                         <img alt="Evara" src="/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue">2</span>
+                                        {{#if cartCount}}
+                                        <span class="pro-count blue" id="cartCount">{{cartCount}}</span>
+                                        {{/if}}
                                     </a>
                                     <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                         <ul>
@@ -298,7 +300,7 @@
                                                 <h4>Total <span>$4000.00</span></h4>
                                             </div>
                                             <div class="shopping-cart-button">
-                                                <a href="shop-cart.html" class="outline">View cart</a>
+                                                <a href="/userCart" class="outline">View cart</a>
                                                 <a href="shop-checkout.html">Checkout</a>
                                             </div>
                                         </div>
@@ -315,14 +317,14 @@
                             aria-expanded="false"> <img class="img-xs rounded-circle"
                                 src="/assets/imgs/people/avatar2.jpg" alt="User" style="height: 35px;"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
+                            <a class="dropdown-item" href="/editProfile"><i class="material-icons md-perm_identity"></i>My
                                 Profile</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
                                 Settings</a>
                             <a class="dropdown-item" href="#"><i
-                                    class="material-icons md-account_balance_wallet"></i>Wallet</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
+                                    class="material-icons md-account_balance_wallet"></i>Orders</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Wishlist</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Coupons
                                 center</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item text-danger" href="/logoutUser"><i
@@ -1065,7 +1067,8 @@
                                             <span class="old-price">$245.8</span>
                                         </div>
                                         <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                            <button aria-label=" Cart" class="action-btn hover-up" onclick="addToCart('{{_id}}')"><i class="fi-rs-shopping-bag-add"></i></button>
+                                            {{!-- <a aria-label="Cart" class="action-btn hover-up" href="/add-to-cart/{{_id}}"><i class="fi-rs-shopping-bag-add"></i></a> --}}
                                         </div>
                                     </div>
                                 </div>

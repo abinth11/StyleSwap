@@ -37,7 +37,7 @@ module.exports = {
       .withMessage("Phone number should have 10 numbers")
       .matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)
       .withMessage("Phone number is not valid"),
-      check('password')
+    check('password')
       .notEmpty()
       .withMessage("Password is not valid")
       .trim(),
