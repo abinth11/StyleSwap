@@ -70,6 +70,12 @@ router.route('/editProdutCategory/:id')
 //Delete category
 router.get('/deleteProductCategory/:id', adminControler.deleteProductCategory)
 
+//view and manage orders
+router.get('/admin-view-orders',adminControler.viewAllOrders)
+
+//change status of ordered products
+router.post('/change-product-status',adminControler.changeProductStatus);
+
 router.post('/checkBoxtest', (req, res) => {
     console.log(req.body)
 })

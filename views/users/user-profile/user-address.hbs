@@ -1,0 +1,180 @@
+{{>head-user}}
+{{>user-header}}
+
+<section class="pt-100 pb-100">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-4">
+                {{>user-profile-nav}}
+            </div>
+            <div class="col-md-6">
+
+
+                <div class="row">
+
+                    <div class="row  d-flex align-items-center" style="height: 100px;">
+                        <div class="d-flex align-items-center " style="border: 1px solid #F4F5F9;height: 50px;">
+                            <button class="ms-3 text-dark" onclick="toggleDiv()"
+                                style="border: none;background: none;font-weight: 600;">+ ADD A
+                                NEW ADDRESS</button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row" id="add-address" style="display: none;">
+                        <div class="col mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item"><a href="" class="active nav-link">Settings</a></li>
+                                    </ul>
+                                    <div class="tab-content pt-3">
+                                        <div class="tab-pane active">
+                                            <form class="form" action="/addressManageMent" method="post">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="form-group">
+                                                                    <label>Full Name</label>
+                                                                    <input class="form-control" type="text" name="name"
+                                                                        placeholder="Name" value="">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col">
+                                                                <div class="form-group">
+                                                                    <label>Mobile</label>
+                                                                    <input class="form-control" type="text"
+                                                                        name="mobile" placeholder="mobile" value="">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <div class="form-group">
+                                                                    <label>Pincode</label>
+                                                                    <input class="form-control" type="text"
+                                                                        name="pincode" placeholder="pincode" value="">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col">
+                                                                <div class="form-group">
+                                                                    <label>Locality</label>
+                                                                    <input class="form-control" type="text"
+                                                                        name="locality" placeholder="locality" value="">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col mb-3">
+                                                                <div class="form-group">
+                                                                    <label>Address</label>
+                                                                    <textarea class="form-control" rows="5"
+                                                                        placeholder="address" name="address"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <div class="form-group">
+                                                                    <label>City</label>
+                                                                    <input class="form-control" type="text" name="city"
+                                                                        placeholder="city" value="">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col">
+                                                                <div class="form-group">
+                                                                    <label>State</label>
+                                                                    <input class="form-control" type="text" name="state"
+                                                                        placeholder="state" value="">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <div class="form-group">
+                                                                    <label>Landmark</label>
+                                                                    <input class="form-control" type="text"
+                                                                        name="landmark" placeholder="landmark" value="">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col">
+                                                                <div class="form-group">
+                                                                    <label>Alternate Phone</label>
+                                                                    <input class="form-control" type="text"
+                                                                        name="alternatePhone" placeholder="phone"
+                                                                        value="">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="padding-top: 2rem;">
+                                                    <div class="col d-flex justify-content-end">
+                                                        <button class="btn btn-danger" type="submit">Cancel</button>
+
+                                                        <button class="btn btn-primary ms-3" type="submit">Save</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{#each address}}
+                    <div class="row  d-flex align-items-center ">
+                        <div class="d-flex align-items-center ms-3 me-2"
+                            style="height: 100px;border: .001rem solid rgb(169, 169, 169);width: 700px;">
+                            <p>{{name}} {{mobile}}</p>
+                            <button class="btn-white btn-sm font-sm text-danger"
+                                style="border:none;background-color: transparent;" onclick="deleteAddress('{{_id}}')">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+
+                            </button>
+
+
+                        </div>
+
+                    </div>
+                    {{/each}}
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</section>
+{{>foot-user}}
+
+
+<script>
+    function toggleDiv() {
+        var x = document.getElementById("add-address");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+<script>
+    const deleteAddress = (addressId) => {
+        $.ajax({
+            url: "/delete-address",
+            data: {
+                addressId: addressId,
+            },
+            method: 'post',
+            success: (res) => {
+                location.reload();
+            }
+        })
+    }
+</script>

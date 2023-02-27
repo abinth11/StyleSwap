@@ -1,0 +1,64 @@
+{{>head-user}}
+{{>user-header}}
+
+<section class="pt-100 pb-100">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-4">
+                {{>user-profile-nav}}
+            </div>
+            <div class="col-md-6">
+                <div class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Your Orders</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Total</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each orders}}
+                                        <tr>
+                                            <td>#1357</td>
+                                            <td>{{date}}</td>
+                                            <td>{{status}}</td>
+                                            <td>${{totalPrice}}</td>
+                                            <td><a href="#" class="btn-small d-block">View</a></td>
+                                        </tr>
+                                        {{/each}}
+                                        <tr>
+                                            <td>#2468</td>
+                                            <td>June 29, 2020</td>
+                                            <td>Completed</td>
+                                            <td>$364.00 for 5 item</td>
+                                            <td><a href="#" class="btn-small d-block">View</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#2366</td>
+                                            <td>August 02, 2020</td>
+                                            <td>Completed</td>
+                                            <td>$280.00 for 3 item</td>
+                                            <td><a href="#" class="btn-small d-block">View</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{{>foot-user}}

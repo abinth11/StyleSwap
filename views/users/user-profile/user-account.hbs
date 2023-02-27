@@ -1,0 +1,82 @@
+{{>head-user}}
+{{>user-header}}
+
+<section class="pt-100 pb-100">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-4">
+                {{>user-profile-nav}}
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Account Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="update-profile">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label>First Name<span class="required">*</span></label>
+                                    <input type="text" value="{{userDetails._id}}" name="userId" hidden>
+                                    <input  class="form-control square" name="fname" value="{{userDetails.name}}" type="text">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Last Name <span class="required">*</span></label>
+                                    <input  class="form-control square" name="lname">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Display Name <span class="required">*</span></label>
+                                    <input class="form-control square" name="dname" type="text">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Email Address <span class="required">*</span></label>
+                                    <input  class="form-control square" name="email" value="{{userDetails.email}}" type="email">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Mobile <span class="required">*</span></label>
+                                    <input  class="form-control square" name="mobile" type="text" value="{{userDetails.mobile}}">
+                                </div>
+                                {{!-- <div class="form-group col-md-12">
+                                    <label>Current Password <span class="required">*</span></label>
+                                    <input required="" class="form-control square" name="password" type="password">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>New Password <span class="required">*</span></label>
+                                    <input required="" class="form-control square" name="npassword" type="password">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Confirm Password <span class="required">*</span></label>
+                                    <input required="" class="form-control square" name="cpassword" type="password">
+                                </div> --}}
+                                <div class="col-md-12  justify-content-center d-flex">
+                                    <button type="submit" class="btn btn-fill-out submit text-center" name="submit"
+                                        value="Submit">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{>foot-user}}
+
+
+
+<script>
+    $("#update-profile").submit((e) => {
+        e.preventDefault()
+        $.ajax({
+            type: "POST",
+            url: '/update-user-profile',
+            data: $('#update-profile').serialize(),
+            success: (response) => {
+                if(response){
+                    location.reload();
+                }
+            }
+        })
+    })
+</script>

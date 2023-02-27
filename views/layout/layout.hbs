@@ -3,30 +3,62 @@
 
 <head>
   <title>shoppingCart</title>
-  {{!-- <link rel='stylesheet' href='/stylesheets/style.css' /> --}}
+  <link rel='stylesheet' href='/stylesheets/style.css' />
   <script defer src="/javascripts/script.js"></script>
   <!-- CSS only -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>  
-{{#if admin}}  
-{{>admin-navbar}}
-{{>admin-header}}
-{{/if}}
-{{!-- {{#unless user}}
-{{>default-header}}
-{{/unless}}  --}}
+<body>
+  {{#if admin}}
+  {{>admin-navbar}}
+  {{>admin-header}}
+  {{/if}}
+
+  {{#if userHeader}}
+  {{>user-header}}
+  {{/if}}
+  {{#if defaultHeader}}
+  {{>default-header}}
+  {{/if}}
+
+  {{!-- {{#if userProfile}}
+  {{>user-profile-nav}}
+  {{/if}} --}}
+
+  {{{body}}}
 
 
-      {{{body}}}
+  {{#if userHome}}
+  {{>user-footer}}
+  {{/if}}
 
-{{#if userHome}}
-{{>user-footer}}
-{{/if}}
-
-
+ {{!-- <!-- Vendor JS-->
+    <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/plugins/slick.js"></script>
+    <script src="/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="/js/plugins/wow.js"></script>
+    <script src="/js/plugins/jquery-ui.js"></script>
+    <script src="/js/plugins/perfect-scrollbar.js"></script>
+    <script src="/js/plugins/magnific-popup.js"></script>
+    <script src="/js/plugins/select2.min.js"></script>
+    <script src="/js/plugins/waypoints.js"></script>
+    <script src="/js/plugins/counterup.js"></script>
+    <script src="/js/plugins/jquery.countdown.min.js"></script>
+    <script src="/js/plugins/images-loaded.js"></script>
+    <script src="/js/plugins/isotope.js"></script>
+    <script src="/js/plugins/scrollup.js"></script>
+    <script src="/js/plugins/jquery.vticker-min.js"></script>
+    <script src="/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="/js/plugins/jquery.elevatezoom.js"></script>
+    <!-- Template  JS -->
+    <script src="/js/main.js"></script>
+    <script src="/js/shop.js"></script> --}}
 </body>
 
 </html>
-

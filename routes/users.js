@@ -51,21 +51,33 @@ router.route('/proceed-to-checkout')
 //my orders
 router.get('/view-orders',sessionChecker.isUserExist,userControler.getUserOrders)
 
-
+//cancell orders
+router.post('/cancell-order',userControler.cancellOrders)
 
 //Edit profile 
 router.get('/editProfile',sessionChecker.isUserExist, userControler.editUserProfile)
 router.post('/editProfile/:id', userControler.editUserProfilePost)
+
+//user profile part
+router.get('/profile-dashboard',sessionChecker.isUserExist,userControler.userProfileDash)
+router.get('/profile-orders',sessionChecker.isUserExist,userControler.userProfileOrders)
+router.get('/profile-track-orders',sessionChecker.isUserExist,userControler.userProfileTrackOrders)
+router.get('/profile-address',sessionChecker.isUserExist,userControler.userProfileAddress)
+router.get('/profile-account-detail',sessionChecker.isUserExist,userControler.userAccountDetails)
+router.post('/update-user-profile',userControler.updateProfile)
+router.get('/profile-change-password',sessionChecker.isUserExist,userControler.changePassword)
+
 
 //Address management
 router.route('/addressManageMent')
     .get(userControler.addAddressGet)
     .post(userControler.addAddressPost)
 
+//delete address
+router.post('/delete-address',userControler.deleteAddress)
+
 //change password
-router.route('/change-user-password/:id')
-    .get(sessionChecker.isUserExist,userControler.changePasswordGet)
-    .post(userControler.changePasswordPost)
+router.post('/change-user-password/:id',userControler.changePasswordPost);
 
 //User logout
 router.get('/logoutUser', userControler.userLogout);

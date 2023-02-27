@@ -1,17 +1,17 @@
 const userHelpers = require("../helpers/user-helpers");
+const adminHelpers = require("../helpers/admin-helpers")
 let twilio = require('../middlewares/twilio')
 let { validationResult } = require('express-validator');
 let err;
 module.exports = {
-    userHome:async (req, res) => {
-        let cartCount;
-        if(req.session.user)
-        {
-            cartCount=await userHelpers.getCartProductsCount(req.session.user._id)
+    userHome: async (req, res) => {
+        let cartCount, defaultHeader = true;
+        if (req.session.user) {
+            cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
             console.log(cartCount);
         }
         userHelpers.viewProduct().then((products) => {
-            res.render('index', { user: req.session.user, products, userHome: true ,cartCount});
+            res.render('index', { user: req.session.user, products, cartCount });
         })
     },
     userSignUpGet: (req, res) => {
@@ -137,95 +137,144 @@ module.exports = {
             res.render('users/shop-product-right', { user: req.session.user, product });
         })
     },
-    userCartGet:async(req,res)=>{
-        let cartItems=await userHelpers.getcartProducts(req.session?.user._id)
-        let totalAmout=await userHelpers.findTotalAmout(req.session.user._id);
-        res.render('users/shop-cart',{cartItems,user:req.session.user,totalAmout})
+    userCartGet: async (req, res) => {
+        let cartItems = await userHelpers.getcartProducts(req.session?.user._id)
+        let totalAmout = await userHelpers.findTotalAmout(req.session.user._id);
+        res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout })
 
     },
-    addToCartGet:(req,res)=>{
-        let productId=req.params.id
-        let userId=req.session?.user._id;
-        userHelpers.addToCart(productId,userId).then((response)=>{
-            res.json({status:true})
+    addToCartGet: (req, res) => {
+        let productId = req.params.id
+        let userId = req.session?.user._id;
+        userHelpers.addToCart(productId, userId).then((response) => {
+            res.json({ status: true })
             // res.redirect('/');
         })
     },
-    changeCartProductQuantity:(req,res)=>{
-        userHelpers.changeCartQuantity(req.body).then(async(response)=>{
-        response.total= await userHelpers.findTotalAmout(req.body.userId);
-        res.json(response);
+    changeCartProductQuantity: (req, res) => {
+        userHelpers.changeCartQuantity(req.body).then(async (response) => {
+            response.total = await userHelpers.findTotalAmout(req.body.userId);
+            res.json(response);
         })
     },
-    removeProducts:(req,res)=>{
-        userHelpers.removeCartProducts(req.body).then((response)=>{
+    removeProducts: (req, res) => {
+        userHelpers.removeCartProducts(req.body).then((response) => {
             res.json(response)
         })
     },
-    proceedToCheckOutGet:async(req,res)=>{
-        let cartItems=await userHelpers.getcartProducts(req.session?.user._id)
-        let totalAmout=await userHelpers.findTotalAmout(req.session.user._id)
-        res.render('users/shop-checkout',{totalAmout,user:req.session.user,cartItems});  
+    proceedToCheckOutGet: async (req, res) => {
+        let cartItems = await userHelpers.getcartProducts(req.session?.user._id)
+        let totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
+        let addresses = await userHelpers.getAllAddresses(req.session.user._id);
+        console.log(addresses)
+        res.render('users/shop-checkout', { totalAmout, user: req.session.user, cartItems, addresses });
     },
-    proceedToCheckOutPost:async(req,res)=>{
-        console.log(req.body);
-        let products=await userHelpers.getAllProductsUserCart(req.body.userId);
-        let totalPrice=await userHelpers.findTotalAmout(req.body.userId);
-        userHelpers.placeOrders(req.body,products,totalPrice).then((response)=>{
-            res.json({status:true})
-            // res.redirect('/view-orders');
+    proceedToCheckOutPost: async (req, res) => {
+        // console.log(req.body);  
+        let products = await userHelpers.getAllProductsUserCart(req.body.userId);
+        let totalPrice = await userHelpers.findTotalAmout(req.body.userId);
+        userHelpers.placeOrders(req.body, products, totalPrice).then((response) => {
+            res.json({ status: true })
+            // console.log(response)
         })
     },
-    getUserOrders:async(req,res)=>{
-        let orders= await userHelpers.getCurrentUserOrders(req.session.user._id)
-        console.log(orders)
-        console.log(orders[0].products);
-        res.render('users/shop-orders',{orders})
+    getUserOrders: async (req, res) => {
+        let odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
+        let orders = adminHelpers.ISO_to_Normal_Date(odr)
+        // console.log(orders)
+        res.render('users/shop-orders', { orders })
 
     },
-    editUserProfile:async(req,res)=>{
-        let id=req.session?.user._id;
-        let userDetails=await userHelpers.getLoginedUser(id);
-        let address=await userHelpers.getUserAddress(id);
-        console.log(address)
-        res.render('users/edit-profile',{userDetails,user:req.session.user,address})
+    cancellOrders: (req, res) => {
+        let orderId = req.body.orderId;
+        userHelpers.cancellUserOrder(orderId).then((response) => {
+            console.log(response);
+            res.redirect('/view-orders')
+        })
     },
-    editUserProfilePost:(req,res)=>{
-        let userId=req.params.id;
-        userHelpers.editProfile(userId,req.body).then((response)=>{
+    editUserProfile: async (req, res) => {
+        let id = req.session?.user._id;
+        let userDetails = await userHelpers.getLoginedUser(id);
+        let address = await userHelpers.getUserAddress(id);
+        console.log(address)
+        res.render('users/edit-profile', { userDetails, user: req.session.user, address })
+    },
+    editUserProfilePost: (req, res) => {
+        let userId = req.params.id;
+        userHelpers.editProfile(userId, req.body).then((response) => {
             res.redirect('/')
         })
 
     },
-    addAddressGet:(req,res)=>{
-        let userId=req.session?.user._id;
-        userHelpers.getUserAddress(userId).then((address)=>{
+    addAddressGet: (req, res) => {
+        let userId = req.session?.user._id;
+        userHelpers.getUserAddress(userId).then((address) => {
             console.log(address)
-            res.render('users/add-address',{address});
+            res.render('users/add-address', { address });
         })
 
     },
-    addAddressPost:(req,res)=>{
-        let userId=req.session.user?._id;
-        req.body.userId=userId;
+    addAddressPost: (req, res) => {
+        let userId = req.session.user?._id;
+        let addressFromCheckOut = req.body.fromCheckOut;
+        req.body.userId = userId;
         console.log(req.body);
-        userHelpers.addNewAddress(req.body).then((response)=>{
+        userHelpers.addNewAddress(req.body).then((response) => {
             console.log(response)
-            res.render('users/add-address');
+            if (addressFromCheckOut) {
+                res.redirect('/proceed-to-checkout')
+            } else {
+                res.redirect('/profile-address')
+            }
         })
 
     },
-    changePasswordGet:(req,res)=>{
+    deleteAddress: (req, res) => {
+        console.log(req.body);
+        let addressId = req.body.addressId
+        userHelpers.addressDelete(addressId).then((response) => {
+            console.log(response)
+            res.redirect('/profile-address')
+        })
 
     },
-    changePasswordPost:(req,res)=>{
+    changePasswordPost: (req, res) => {
         console.log(req.params.id);
-        userHelpers.changeUserPassword(req.params.id,req.body).then((response)=>{
+        console.log(req.body);
+        userHelpers.changeUserPassword(req.params.id, req.body).then((response) => {
             console.log(response)
             res.redirect('/editProfile')
         })
     },
-    userLogout: (req, res) => {
+    userProfileDash: (req, res) => {
+        res.render('users/user-profile/user-dashboard', { user: req.session.user })
+    },
+    userProfileOrders: async (req, res) => {
+        let odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
+        let orders = adminHelpers.ISO_to_Normal_Date(odr)
+        console.log(orders)
+        res.render('users/user-profile/user-orders', { orders })
+    },
+    userProfileTrackOrders: (req, res) => {
+        res.render('users/user-profile/user-track-orders')
+    },
+    userProfileAddress: async (req, res) => {
+        let address = await userHelpers.getUserAddress(req.session.user._id);
+        res.render('users/user-profile/user-address', { address })
+    },
+    userAccountDetails: async(req, res) => {
+        let userDetails=await userHelpers.getUserDetails(req.session.user._id);
+        res.render('users/user-profile/user-account',{userDetails})
+    },
+    updateProfile:(req,res)=>{
+        userHelpers.updateUserDetails(req.body).then((response)=>{
+            console.log(response);
+        })
+    },
+    changePassword: (req, res) => {
+        res.render('users/user-profile/user-change-password')
+    },
+    userLogout: (req, res) => { 
         req.session.user = null;
         res.redirect('/');
     }

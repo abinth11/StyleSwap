@@ -1,15 +1,15 @@
-body {
+/* body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
+} */
 
-a {
+/* a {
   color: #00B7FF;
-}
-.height-100 {
+} */
+/* .height-100 {
   height: 100vh
-}
+} */
 
-.card {
+/* .card {
   width: 400px;
   border: none;
   height: 300px;
@@ -18,27 +18,27 @@ a {
   display: flex;
   justify-content: center;
   align-items: center
-}
+} */
 
-.card h6 {
+/* .card h6 {
   color: red;
   font-size: 20px
-}
+} */
 
-.inputs input {
+/* .inputs input {
   width: 40px;
   height: 40px
-}
+} */
 
-input[type=number]::-webkit-inner-spin-button,
+/* input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   margin: 0
-}
+} */
 
-.card-2 {
+/* .card-2 {
   background-color: #fff;
   padding: 10px;
   width: 350px;
@@ -47,9 +47,9 @@ input[type=number]::-webkit-outer-spin-button {
   left: 20px;
   position: absolute;
   border-radius: 5px
-}
+} */
 
-.card-2 .content {
+/* .card-2 .content {
   margin-top: 50px
 }
 
@@ -60,12 +60,29 @@ input[type=number]::-webkit-outer-spin-button {
 .form-control:focus {
   box-shadow: none;
   border: 2px solid red
-}
+} */
 
-.validate {
+/* .validate {
   border-radius: 20px;
   height: 40px;
   background-color: red;
   border: 1px solid red;
   width: 140px
+} */
+
+
+
+/* .list-addresses{
+  border: 2px solid red;
+} */
+input[type=radio]{
+  transform:scale(1.5);
+}
+.address-list-p{
+  margin-left: 1em;
+}
+.address-list-l{
+  
+  font-size: 18px;
+  margin-left: 0.5em;
 }

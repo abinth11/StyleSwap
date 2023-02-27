@@ -52,6 +52,18 @@ Handlebars.registerHelper("inc", function (value, options) {
   return parseInt(value) + 1;
 });
 
+Handlebars.registerHelper('eq', function(a, b) {
+  return a === b;
+});
+
+Handlebars.registerHelper('or', function(a, b, options) {
+  if (a || b) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

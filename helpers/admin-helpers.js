@@ -1,7 +1,9 @@
 let db = require('../config/connection');
 let collection = require('../config/collections');
 let objectId = require('mongodb').ObjectId
-let multer = require('../middlewares/multer')
+let multer = require('../middlewares/multer');
+const { ORDER_COLLECTION } = require('../config/collections');
+const { NewKeyInstance } = require('twilio/lib/rest/api/v2010/account/newKey');
 module.exports = {
     adminLogin: (adminInfo) => {
         return new Promise((async (resolve, reject) => {
@@ -26,7 +28,7 @@ module.exports = {
         }))
     },
     addProducts: (product) => {
-        product.product_price=parseInt(product.product_price)
+        product.product_price = parseInt(product.product_price)
         return new Promise((resolve, reject) => {
             product.isActive = true;
             db.get().collection(collection.PRODUCT_COLLECTION).insertOne(product).then((data) => {
@@ -49,7 +51,7 @@ module.exports = {
     },
     updateProductsList: (productId, productDetails) => {
         return new Promise((resolve, reject) => {
-            productDetails.product_price=parseInt(productDetails.product_price)
+            productDetails.product_price = parseInt(productDetails.product_price)
             db.get().collection(collection.PRODUCT_COLLECTION)
                 .updateOne({ _id: objectId(productId) }, {
                     $set: {
@@ -153,6 +155,81 @@ module.exports = {
             resolve(status);
         })
     },
+    getAllUserOrders: () => {
+        return new Promise(async (resolve, reject) => {
+            let orders = db.get().collection(collection.ORDER_COLLECTION).find({}).toArray();
+            resolve(orders);
+        })
+
+    },
+
+    ISO_to_Normal_Date: (orders) => {
+        let options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true,
+        };
+        for (let i = 0; i < orders.length; i++) {
+            let isoDate = orders[i].date
+            let daTe = new Date(isoDate);
+            orders[i].date = daTe.toLocaleString("en-US", options);
+        }
+        return orders;
+
+    },
+    changeOrderStatus: (orderInfo) => {
+        return new Promise((resolve, reject) => {
+            let { orderId, currentStatus, newStatus } = orderInfo;
+            db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(orderId) },
+                {
+                    $set: {
+                        status: newStatus
+                    }
+                }).then((response) => {
+                    resolve(response);
+                })
+        })
+    },
+    getallUserDetails: () => {
+        return new Promise(async (resolve, reject) => {
+            let userDetails = db.get().collection(ORDER_COLLECTION).aggregate([
+                {
+                    "$match": {
+                        "orderId": objectId(userId)
+                    }
+                },
+                {
+                    $unwind: '$products'
+                },
+                {
+                    $project: {
+                        item: '$products.item',
+                        quantity: '$products.quantity'
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": collection.PRODUCT_COLLECTION,
+                        "localField": "item",
+                        "foreignField": "_id",
+                        "as": "product"
+                    }
+                },
+                {
+                    $project: {
+                        item: 1,
+                        quantity: 1,
+                        product: { $arrayElemAt: ['$product', 0] }
+                    }
+                },
+
+            ])
+        })
+    }
     // searchUsers:(name)=>{
     //     return new Promise((resolve,reject)=>{
     //         db.get().collection(collection.USER_COLLECTION).findOne({name:name}).then((data)=>{
