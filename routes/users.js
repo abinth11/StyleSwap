@@ -66,7 +66,8 @@ router.get('/profile-address',sessionChecker.isUserExist,userControler.userProfi
 router.get('/profile-account-detail',sessionChecker.isUserExist,userControler.userAccountDetails)
 router.post('/update-user-profile',userControler.updateProfile)
 router.get('/profile-change-password',sessionChecker.isUserExist,userControler.changePassword)
-
+//change password
+router.post('/change-user-password/:id',userValidation.userPasswordUpdateValidation,userControler.changePasswordPost);
 
 //Address management
 router.route('/addressManageMent')
@@ -75,9 +76,6 @@ router.route('/addressManageMent')
 
 //delete address
 router.post('/delete-address',userControler.deleteAddress)
-
-//change password
-router.post('/change-user-password/:id',userControler.changePasswordPost);
 
 //User logout
 router.get('/logoutUser', userControler.userLogout);

@@ -2,6 +2,7 @@ const userHelpers = require("../helpers/user-helpers");
 const adminHelpers = require("../helpers/admin-helpers")
 let twilio = require('../middlewares/twilio')
 let { validationResult } = require('express-validator');
+const Routes = require("twilio/lib/rest/Routes");
 let err;
 module.exports = {
     userHome: async (req, res) => {
@@ -111,7 +112,7 @@ module.exports = {
     userLoginPost: (req, res) => {
         const errors = validationResult(req);
         console.log(errors);
-        err = errors.errors
+        err = errors.errors 
         req.session.mobile = req.body.mobile;
         if (err.length == 0) {
             userHelpers.loginUser(req.body).then((response) => {
@@ -238,14 +239,6 @@ module.exports = {
         })
 
     },
-    changePasswordPost: (req, res) => {
-        console.log(req.params.id);
-        console.log(req.body);
-        userHelpers.changeUserPassword(req.params.id, req.body).then((response) => {
-            console.log(response)
-            res.redirect('/editProfile')
-        })
-    },
     userProfileDash: (req, res) => {
         res.render('users/user-profile/user-dashboard', { user: req.session.user })
     },
@@ -264,15 +257,42 @@ module.exports = {
     },
     userAccountDetails: async(req, res) => {
         let userDetails=await userHelpers.getUserDetails(req.session.user._id);
+        // let profile_update_status= req.session.profile_update_status
         res.render('users/user-profile/user-account',{userDetails})
+        // req.session.profile_update_status=null;
     },
     updateProfile:(req,res)=>{
+        // let sessionUserId=req.session.user._id;
+        // console.log(req.body)
         userHelpers.updateUserDetails(req.body).then((response)=>{
-            console.log(response);
+            console.log(response)
+            res.redirect('/profile-account-detail')
         })
+        // console.log(response)
+        // req.session.profile_update_status=response;  
     },
     changePassword: (req, res) => {
-        res.render('users/user-profile/user-change-password')
+        let password_change_stat=req.session.password_change_stat;
+        let updatePasswd_err=req.session.updatePasswd_err;
+        let user=req.session.user._id;
+        res.render('users/user-profile/user-change-password',{user,password_change_stat,updatePasswd_err})
+        req.session.password_change_stat=null;
+        req.session.updatePasswd_err=null;
+    },
+    changePasswordPost: (req, res) => {
+        const errors=validationResult(req);
+        console.log(errors);
+        req.session.updatePasswd_err=errors.errors
+        if(req.session.updatePasswd_err.length==0){
+            userHelpers.changeUserPassword(req.params.id, req.body).then((response) => {
+                // console.log(response)
+                req.session.password_change_stat=response;
+                res.redirect('/profile-change-password');
+            })
+        }else{
+            res.redirect('/profile-change-password')
+        }
+        
     },
     userLogout: (req, res) => { 
         req.session.user = null;

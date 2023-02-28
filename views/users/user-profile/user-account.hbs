@@ -15,6 +15,15 @@
                     </div>
                     <div class="card-body">
                         <form id="update-profile">
+                            {{#if profile_update_status.emailExist}}
+                            <p class="alert alert-danger text-center">Email already exist</p>
+                            {{/if}}
+                            {{#if profile_update_status.mobileExist}}
+                            <p class="alert alert-danger text-center">Mobile already exist</p>
+                            {{/if}}
+                            {{#if profile_update_status.modifiedCount}}
+                            <p class="alert alert-danger text-center">Mobile already exist</p>
+                            {{/if}}
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label>First Name<span class="required">*</span></label>

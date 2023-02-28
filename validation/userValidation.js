@@ -42,5 +42,27 @@ module.exports = {
       .withMessage("Password is not valid")
       .trim(),
   ],
+  userPasswordUpdateValidation:[
+    check('password')
+    .notEmpty()
+    .withMessage("Current password cannot be empty")
+    .isLength({ min: 4})
+    .withMessage("Password should have atleast four letters")
+    .trim(),
+    check('npassword')
+    .notEmpty()
+    .withMessage("New password cannot be empty")
+    .isLength({ min: 4 })
+    .withMessage("New password should have atleast four letters")
+    .trim(),
+    check('cpassword')
+    .notEmpty()
+    .withMessage("Confirm password cannot be empty")
+    .isLength({ min: 4 })
+    .withMessage("Confirms password should have atleast four letters")
+    .trim(),
+
+
+  ]
 
 }

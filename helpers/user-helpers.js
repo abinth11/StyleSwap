@@ -312,7 +312,8 @@ module.exports = {
                 deliveryAddressId: ObjectId(orderInfo.address),
                 paymentMethod: orderInfo.payment_method,
                 totalPrice: totalPrice?.total,
-                status: orderStatus,
+                orderStatus: orderStatus,
+                status:"placed",
                 date: new Date(),
                 deliveryDetails: {
                     mobile_no: orderInfo.mobile_,
@@ -397,27 +398,38 @@ module.exports = {
 
     },
     updateUserDetails:(userInfo)=>{
-        let response={emailExist:false,mobileExist:false}
-        return new Promise(async(resolve,reject)=>{
-            let result= await db.get().collection(collection.USER_COLLECTION).find( { $or: [ { email: userInfo.email }, { mobile: userInfo.moible } ] } ).toArray();
-            console.log(result);
-            // db.get().collection(collection.USER_COLLECTION).updateOne
+        console.log(userInfo)
+        return new Promise((resolve,reject)=>{
+            db.get().collection(collection.USER_COLLECTION).updateOne({_id:ObjectId(userInfo.userId)},{
+                $set:{
+                    name:userInfo.fname,
+                    email:userInfo.email,
+                    mobile:userInfo.mobile,
+                }
+            }).then((response)=>{
+                resolve(response);
+            })
         })
-
+     
     },
     changeUserPassword: (userId, passwordInfo) => {
         return new Promise(async (resolve, reject) => {
             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: ObjectId(userId) })
+            let currentPassword= passwordInfo.password
+            console.log(currentPassword)
             let newPassword = passwordInfo.npassword;
             let confirmPassword = passwordInfo.cpassword;
             let hashedNewPassword = await bcrypt.hash(passwordInfo.npassword, 10)
+            console.log(user);
             if (user) {
-                bcrypt.compare(passwordInfo.password, user.password).then((status) => {
+                bcrypt.compare(currentPassword, user.password).then((status) => {
+                    if(!status){
+                        resolve({ invalidCurrentPassword: true })
+                    }
                     if (newPassword != confirmPassword) {
-                        resolve({ passwordMismatch: true })
+                        resolve({ passwordMismatchnewAndConfirm: true })
                     }
                     else if (status) {
-                        console.log("password matched")
                         db.get().collection(collection.USER_COLLECTION).updateOne({ _id: ObjectId(userId) }, {
                             $set: {
                                 password: hashedNewPassword
@@ -427,18 +439,10 @@ module.exports = {
 
                         })
                     }
-                    else {
-                        console.log({ invalidCurrentPassword: true })
-                    }
                 })
             } else {
-                resolve({ status: false })
+                resolve({ passwordNotUpdated:true })
             }
-
-            //  db.get().collection(collection.USER_COLLECTION).findOneAndUpdate({userId:ObjectId(userId)},{
-
-            //
-
         })
     }
 }
