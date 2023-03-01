@@ -32,14 +32,18 @@ module.exports = {
         res.render('admin/index')
     },
     addProducts1Get: (req, res) => {
-        res.render('admin/add-product')
+        res.render('admin/test')
     },
     addProducts1Post: (req, res) => {
-        const errors = validationResult(req);
-        console.log(errors);
-        adminHelpers.addProducts(req.body).then((data) => {
-            console.log(data)
-        })
+        console.log(req.body)
+        // console.log(req.files)
+        res.send("uploaded")
+        // console.log(req.files)
+        // const errors = validationResult(req);
+        // console.log(errors);
+        // adminHelpers.addProducts(req.body).then((data) => {
+        //     console.log(data)
+        // })
     },
     addProducts2Get: (req, res) => {
         res.render('admin/add-product2')
@@ -190,8 +194,20 @@ module.exports = {
     viewAllOrders:async (req, res) => {
         let orders= await adminHelpers.getAllUserOrders()
         let odr= adminHelpers.ISO_to_Normal_Date(orders)
-        // console.log(odr);
+        console.log(odr[0].products);
         res.render('admin/page-orders-1',{odr});
+    },
+    viewOrderDetails:async(req,res)=>{
+        console.log(req.params.id);
+        let odr= await adminHelpers.getCurrentOrderMore(req.params.id)
+        let orders=adminHelpers.ISO_to_Normal_Date(odr)
+        let products=await adminHelpers.getCurrentProducts(req.params.id)
+        let address=await adminHelpers.getallUserAddress(req.params.id)
+        orders=orders[0];
+        console.log(orders);
+        console.log(products)
+        console.log(address)
+        res.render('admin/view-more-orders',{orders,products,address})
     },
     changeProductStatus:(req,res)=>{
       adminHelpers.changeOrderStatus(req.body).then((response)=>{

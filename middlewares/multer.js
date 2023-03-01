@@ -1,25 +1,21 @@
-const multer = require('multer')
+const multer=require("multer");
 const path=require('path')
-
-
-const fileStorage=multer.diskStorage({
-    destination:'images',
-    filename:(req,file,cb)=>{
-        cb(null,file.filename+'_'+Date.now()+path.extname(file.originalname))
-    }
-})
- 
-const uploadImage=multer({
-    storage:fileStorage,
-    limits:{
-        fileSize:1000000
+const storage=multer.diskStorage({
+    destination:(req,file,cb)=>{
+        cb(null,"Images");
     },
-    fileFilter(req,file,cb){
-        if(!file.originalname.match(/\.(png|jpb)$/)){
-            return cb(new Error("Please upload an Image file!"));
-        }
-        cb(undefined,true);
+    filename:(req,file,cb)=>{
+        console.log(file);
+        cb(null,Date.now()+path.extname(file.originalname))
     }
 })
+const upload=multer({
+    storage:storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5 // 5 MB
+      },
+    // dest:'Images'
+});
 
-module.exports={uploadImage}
+module.exports={upload}
+

@@ -2,9 +2,8 @@ var express = require('express');
 var router = express.Router();
 let adminControler = require('../controlers/admin-controlers');
 let adminValidate = require('../validation/adminValidation')
-let multer = require('../middlewares/multer');
+let {upload} = require('../middlewares/multer');
 let sessionCheck = require('../middlewares/session-checks')
-
 /* GET users listing. */
 router.get('/', adminControler.adminLoginGet)
 
@@ -14,10 +13,21 @@ router.post('/adminLogin', adminValidate.adminLoginValidate, adminControler.admi
 //Admin dashboard
 router.get('/dashboard', sessionCheck.isAdminExist, adminControler.adminDashboard);
 
-//Admin add product get and post methods
+// Admin add product get and post methods
 router.route('/addProduct1')
     .get(sessionCheck.isAdminExist, adminControler.addProducts1Get)
-    .post(adminValidate.addProductValidate, multer.uploadImage.array('images', 3), adminControler.addProducts1Post)
+    .post(upload.single('product_image'),adminControler.addProducts1Post)
+
+router.get('/addProduct1',sessionCheck.isAdminExist,adminControler.addProducts1Get)
+
+// const upload = multer({ dest: 'uploads/' });
+
+// router.post('/add-product-1', upload.single('image'), (req, res) => {
+//   console.log(req.body);
+//   console.log(req.file);
+//   console.log('llllllllllllllllll');
+//   res.send('File uploaded!');
+// });
 
 router.route('/addProduct2')
     .get(sessionCheck.isAdminExist, adminControler.addProducts2Get)
@@ -71,10 +81,13 @@ router.route('/editProdutCategory/:id')
 router.get('/deleteProductCategory/:id', adminControler.deleteProductCategory)
 
 //view and manage orders
-router.get('/admin-view-orders',adminControler.viewAllOrders)
+router.get('/admin-view-orders', adminControler.viewAllOrders)
+
+// view orders more
+router.get('/view-order-details/:id',adminControler.viewOrderDetails)
 
 //change status of ordered products
-router.post('/change-product-status',adminControler.changeProductStatus);
+router.post('/change-product-status', adminControler.changeProductStatus);
 
 router.post('/checkBoxtest', (req, res) => {
     console.log(req.body)

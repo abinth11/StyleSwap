@@ -166,12 +166,12 @@ module.exports = {
     proceedToCheckOutGet: async (req, res) => {
         let cartItems = await userHelpers.getcartProducts(req.session?.user._id)
         let totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
-        let addresses = await userHelpers.getAllAddresses(req.session.user._id);
-        console.log(addresses)
-        res.render('users/shop-checkout', { totalAmout, user: req.session.user, cartItems, addresses });
+        let address = await userHelpers.getAllAddresses(req.session.user._id);
+        console.log(address)
+        res.render('users/shop-checkout',{ totalAmout, user: req.session.user, cartItems, address});
     },
     proceedToCheckOutPost: async (req, res) => {
-        // console.log(req.body);  
+        console.log(req.body);  
         let products = await userHelpers.getAllProductsUserCart(req.body.userId);
         let totalPrice = await userHelpers.findTotalAmout(req.body.userId);
         userHelpers.placeOrders(req.body, products, totalPrice).then((response) => {

@@ -1,29 +1,19 @@
 {{>head-user}}
 {{>user-header}}
-
 <section class="pt-100 pb-100">
     <div class="container">
         <div class="row">
-
             <div class="col-md-4">
                 {{>user-profile-nav}}
             </div>
             <div class="col-md-6">
-
-
                 <div class="row">
-
                     <div class="row  d-flex align-items-center" style="height: 100px;">
                         <div class="d-flex align-items-center " style="border: 1px solid #F4F5F9;height: 50px;">
                             <button class="ms-3 text-dark" onclick="toggleDiv()"
-                                style="border: none;background: none;font-weight: 600;">+ ADD A
-                                NEW ADDRESS</button>
-
+                                style="border: none;background: none;font-weight: 600;">+ ADD A NEW ADDRESS</button>
                         </div>
-
                     </div>
-
-
                     <div class="row" id="add-address" style="display: none;">
                         <div class="col mb-3">
                             <div class="card">
@@ -115,45 +105,60 @@
                                                 <div class="row" style="padding-top: 2rem;">
                                                     <div class="col d-flex justify-content-end">
                                                         <button class="btn btn-danger" type="submit">Cancel</button>
-
                                                         <button class="btn btn-primary ms-3" type="submit">Save</button>
                                                     </div>
                                                 </div>
                                             </form>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {{#each address}}
-                    <div class="row  d-flex align-items-center ">
-                        <div class="d-flex align-items-center ms-3 me-2"
-                            style="height: 100px;border: .001rem solid rgb(169, 169, 169);width: 700px;">
-                            <p>{{name}} {{mobile}}</p>
-                            <button class="btn-white btn-sm font-sm text-danger"
-                                style="border:none;background-color: transparent;" onclick="deleteAddress('{{_id}}')">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
+                    <div class="row">
+                        <input type="text" hidden name="userId" value="{{user.response._id}}">
+                        <div class="payment_option">
+                            {{#each address }}
+                            <div class="order_review">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="deliveryAddress"
+                                                id="flexRadioDefault1" value="{{_id}}" required>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                <ul>
+                                                    <li class="ms-3">Name: {{name}}</li>
+                                                    <li class="ms-3">Mobile: {{mobile}}</li>
+                                                    <li class="ms-3">Pincode: {{pincode}}</li>
+                                                    <li class="ms-3">Address: {{locality}}, {{landmark}}, {{city}},
+                                                        {{state}}</li>
+                                                    <br>
+                                                </ul>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="">
+                                            <button class="btn-white btn-lg font-sm text-danger "
+                                                style="border:none;background-color: transparent;margin-left: 8em;"
+                                                onclick="deleteAddress('{{_id}}')">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
 
-                            </button>
-
-
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            {{/each}}
                         </div>
-
                     </div>
-                    {{/each}}
                 </div>
-
-
             </div>
-
         </div>
     </div>
 </section>
 {{>foot-user}}
-
-
 <script>
     function toggleDiv() {
         var x = document.getElementById("add-address");

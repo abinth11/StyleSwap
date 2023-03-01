@@ -8,22 +8,19 @@
                 <div class="col-9">
                     <div class="content-header">
                         <h2 class="content-title">Add New Product</h2>
-                        <div>
-                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                            <button class="btn btn-md rounded font-sm hover-up">Publich</button>
-                        </div>
+                        
                     </div>
                 </div>
                 <div class="col-lg-6">
+                    <form  action="/admin/add-product-1" method="post" enctype="multipart/form-data " >
                     <div class="card mb-4">
                         <div class="card-header">
                             <h4>Basic</h4>
                         </div>
                         <div class="card-body">
-                            <form>
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product title</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_name">
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name">
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Full description</label>
@@ -34,7 +31,7 @@
                                         <div class="mb-4">
                                             <label class="form-label">Regular price</label>
                                             <div class="row gx-2">
-                                                <input placeholder="$" type="text" class="form-control">
+                                                <input placeholder="$" type="text" class="form-control" name="price">
                                             </div>
                                         </div>
                                     </div>
@@ -61,7 +58,6 @@
                                     <input class="form-check-input" type="checkbox" value="">
                                     <span class="form-check-label"> Make a template </span>
                                 </label>
-                            </form>
                         </div>
                     </div> <!-- card end// -->
                     <div class="card mb-4">
@@ -69,7 +65,6 @@
                             <h4>Shipping</h4>
                         </div>
                         <div class="card-body">
-                            <form>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-4">
@@ -92,7 +87,6 @@
                                     <label for="product_name" class="form-label">Shipping fees</label>
                                     <input type="text" placeholder="$" class="form-control" id="product_name">
                                 </div>
-                            </form>
                         </div>
                     </div> <!-- card end// -->
                 </div>
@@ -104,15 +98,21 @@
                         <div class="card-body">
                             <div class="input-upload">
                                 <img src="/assets/imgs/theme/upload.svg" alt="">
-                                <input class="form-control" type="file">
+                                {{!-- <input class="form-control" type="file"> --}}
+                                <input type="file"  name="product_image">
                             </div>
                         </div>
                     </div> <!-- card end// -->
                     <div class="card mb-4">
-                        <div class="card-header">
+                        {{!-- <div class="card-header">
                             <h4>Organization</h4>
+                        </div> --}}
+                        <div>
+                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <input type="submit">
                         </div>
-                        <div class="card-body">
+                        </form>
+                        {{!-- <div class="card-body">
                             <div class="row gx-2">
                                 <div class="col-sm-6 mb-3">
                                     <label class="form-label">Category</label>
@@ -139,7 +139,7 @@
                                     <input type="text" class="form-control">
                                 </div>
                             </div> <!-- row.// -->
-                        </div>
+                        </div> --}}
                     </div> <!-- card end// -->
                 </div>
             </div>

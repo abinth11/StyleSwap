@@ -162,7 +162,50 @@ module.exports = {
         })
 
     },
+    getCurrentOrderMore: (orderId) => {
+        return new Promise(async (resolve, reject) => {
+            let orders = db.get().collection(collection.ORDER_COLLECTION).find({ _id: objectId(orderId) }).toArray();
+            resolve(orders);
+        })
 
+    },
+    getCurrentProducts:(orderId)=>{
+        return new Promise(async (resolve, reject) => {
+            let order =await db.get().collection(ORDER_COLLECTION).aggregate([
+                {
+                    "$match": {
+                        "_id": objectId(orderId)
+                    }
+                },
+                {
+                    $unwind: '$products'
+                },
+                {
+                    $project: {
+                        item: '$products.item',
+                        quantity: '$products.quantity'
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": collection.PRODUCT_COLLECTION,
+                        "localField": "item",
+                        "foreignField": "_id",
+                        "as": "product"
+                    }
+                },
+                {
+                    $project: {
+                        item: 1,
+                        quantity: 1,
+                        product: { $arrayElemAt: ['$product', 0] }
+                    }
+                },
+            ]).toArray();
+            resolve(order)
+        })
+
+    },
     ISO_to_Normal_Date: (orders) => {
         let options = {
             year: "numeric",
@@ -194,40 +237,36 @@ module.exports = {
                 })
         })
     },
-    getallUserDetails: () => {
+    getallUserAddress: (orderId) => {
         return new Promise(async (resolve, reject) => {
-            let userDetails = db.get().collection(ORDER_COLLECTION).aggregate([
+            let userDetails =await db.get().collection(ORDER_COLLECTION).aggregate([
                 {
                     "$match": {
-                        "orderId": objectId(userId)
+                        "_id": objectId(orderId)
                     }
                 },
                 {
-                    $unwind: '$products'
-                },
-                {
                     $project: {
-                        item: '$products.item',
-                        quantity: '$products.quantity'
+                        addressId: '$deliveryAddressId',
                     }
                 },
                 {
                     "$lookup": {
-                        "from": collection.PRODUCT_COLLECTION,
-                        "localField": "item",
+                        "from": collection.ADDRESS_COLLECTION,
+                        "localField": "addressId",
                         "foreignField": "_id",
-                        "as": "product"
+                        "as": "address"
                     }
                 },
                 {
                     $project: {
-                        item: 1,
-                        quantity: 1,
-                        product: { $arrayElemAt: ['$product', 0] }
+                        address: { $arrayElemAt: ['$address', 0] }
                     }
                 },
 
-            ])
+            ]).toArray();
+            resolve(userDetails[0])
+            // console.log(userDetails);
         })
     }
     // searchUsers:(name)=>{

@@ -77,7 +77,8 @@
                                         </div> 
                                     </td>
                                     <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                        {{!-- <button class="btn btn-md rounded font-sm" onclick="viewMoreOrders('{{_id}}')">Details</button> --}}
+                                        <a href="/admin/view-order-details/{{_id}}"  class="btn btn-md rounded font-sm">Details</a>
                                         {{!-- <div class="dropdown">
                                             <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                             <div class="dropdown-menu">
@@ -124,5 +125,18 @@
             location.reload();
         }
       })
+    }
+    const viewMoreOrders=(orderId)=>{
+        console.log(orderId);
+        $.ajax({
+            url:"/admin/view-order-details",
+            data:{
+                orderId:orderId
+            },
+            method:'get',
+            success:()=>{
+
+            }
+        })
     }
 </script>
