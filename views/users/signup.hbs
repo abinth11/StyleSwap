@@ -3,6 +3,7 @@
 
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-account-register.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:33 GMT -->
+
 <head>
     <meta charset="utf-8">
     <title>Evara Dashboard</title>
@@ -17,49 +18,81 @@
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
 </head>
 
 <body>
     <main>
-       
+
         <section class="content-main mt-20 mb-80">
             <div class="card mx-auto card-login">
                 <div class="card-body">
                     <h4 class="card-title mb-4 text-center">Create an Account</h4>
-                    {{#each errors}}
-                    <p class="alert alert-danger text-center">{{this.msg}}</p>
-                    {{/each}}
+                    {{!-- {{#each errors}} --}}
+                    {{#if errors}}
+                    <p class="alert alert-danger text-center">{{errors.[0].msg}}</p>
+                    {{/if}}
+                    {{!-- {{/each}} --}}
                     {{#if signUpErr}}
                     <p class="alert alert-danger text-center">{{signUpErr}}</p>
                     {{/if}}
 
 
-                    <form action="/userSignUp" method="post">
-                         <div class="mb-3">
+                    <form id="signup">
+                        <div class="mb-3">
                             <label class="form-label">Name</label>
-                            <input class="form-control" placeholder="Your name" type="text" name="name">
+                            <input class="form-control" placeholder="Your name" type="text" name="name" id="name">
+                            <small class="text-danger error-msg ms-1 pt-2"></small>
                         </div> <!-- form-group// -->
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input class="form-control" placeholder="Your email" type="text" name="email">
+                            <input class="form-control" placeholder="Your email" type="text" name="email" id="email">
+                            <small class="text-danger error-msg ms-1 pt-2"></small>
                         </div> <!-- form-group// -->
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
                             <div class="row gx-2">
-                                {{!-- <div class="col-4"> <input class="form-control" value="+998" type="text"> </div> --}}
-                            <input class="form-control" placeholder="Your mobile" type="text" name="mobile">
+                                {{!-- <div class="col-4"> <input class="form-control" value="+998" type="text"> </div>
+                                --}}
+                                <input class="form-control" placeholder="Your mobile" type="text" name="mobile"
+                                    id="mobile">
+                                <small class="text-danger error-msg ms-1 pt-2"></small>
                             </div>
                         </div> <!-- form-group// -->
                         <div class="mb-3">
                             <label class="form-label">Create password</label>
-                            <input class="form-control" placeholder="Password" type="password" name="password">
+                            <div class="input-container">
+                                <button id="toggle-password" class="eye-btn">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                                <input class="form-control" placeholder="Password" type="password" name="password"
+                                    id="password">
+
+                                <small class="text-danger error-msg ms-1 pt-2"></small>
+
+                            </div>
+                            <small class="text-danger error-msg ms-1 pt-2"></small>
                         </div> <!-- form-group// -->
-                         <div class="mb-3">
+                        <div class="mb-3">
                             <label class="form-label">Confirm password</label>
-                            <input class="form-control" placeholder="Password" type="password" name="confirmPassword">
+                            <div class="input-container">
+                                <button id="toggle-password2" class="eye-btn">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                                <input class="form-control" placeholder="Password" type="password"
+                                    name="confirmPassword" id="confirmPassword">
+
+                                <small class="text-danger error-msg ms-1 pt-2"></small>
+
+                            </div>
+
+
+
                         </div>
                         <div class="mb-3">
-                            <p class="small text-center text-muted">By signing up, you confirm that you’ve read and accepted our User Notice and Privacy Policy.</p>
+                            <p class="small text-center text-muted">By signing up, you confirm that you’ve read and
+                                accepted our User Notice and Privacy Policy.</p>
                         </div> <!-- form-group  .// -->
                         <div class="mb-4">
                             <button type="submit" class="btn btn-primary w-100"> Login </button>
@@ -73,7 +106,7 @@
         <footer class="main-footer text-center">
             <p class="font-xs">
                 <script>
-                document.write(new Date().getFullYear())
+                    document.write(new Date().getFullYear())
                 </script> ©, Evara - HTML Ecommerce Template .
             </p>
             <p class="font-xs mb-30">All rights reserved</p>
@@ -84,8 +117,10 @@
     <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="assets/js/main.js" type="text/javascript"></script>
+    <script src="/frontendValidations/userSignup.js" type="text/javascript"></script>
 </body>
 
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-account-register.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:33 GMT -->
+
 </html>

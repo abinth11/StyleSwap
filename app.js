@@ -12,13 +12,11 @@ let nocache = require('nocache');
 require('dotenv').config();
 let usersRouter = require('./routes/users');
 let adminRouter = require('./routes/admin');
-
 let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
 app.engine('hbs', hbs.engine({
   extname: 'hbs',
   defaultLayout: 'layout',
@@ -40,6 +38,7 @@ app.use(session({
   resave: false
 }));
 app.use(nocache());
+
 app.use('/', usersRouter);
 app.use('/admin', adminRouter);
 
@@ -51,11 +50,11 @@ Handlebars.registerHelper("inc", function (value, options) {
   return parseInt(value) + 1;
 });
 
-Handlebars.registerHelper('eq', function(a, b) {
+Handlebars.registerHelper('eq', function (a, b) {
   return a === b;
 });
 
-Handlebars.registerHelper('or', function(a, b, options) {
+Handlebars.registerHelper('or', function (a, b, options) {
   if (a || b) {
     return options.fn(this);
   } else {
@@ -65,9 +64,9 @@ Handlebars.registerHelper('or', function(a, b, options) {
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+  res.render('users/page-404')
+  // next(createError(404));
 });
-
 
 // error handler
 app.use(function (err, req, res, next) {

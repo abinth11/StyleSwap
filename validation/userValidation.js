@@ -12,11 +12,13 @@ module.exports = {
       .withMessage("Phone number cannot be empty")
       .isLength({ min: 10, max: 10 })
       .withMessage("Phone number should have 10 numbers")
-      .matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)
+      .matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/)
       .withMessage("Phone number is not valid"),
     check('email')
       .notEmpty()
-      .isEmail()
+      .isEmail().
+      withMessage("Invalid email")
+      .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
       .withMessage("Please enter your valid email address")
       .trim(),
     check('password')
@@ -42,27 +44,24 @@ module.exports = {
       .withMessage("Password is not valid")
       .trim(),
   ],
-  userPasswordUpdateValidation:[
+  userPasswordUpdateValidation: [
     check('password')
-    .notEmpty()
-    .withMessage("Current password cannot be empty")
-    .isLength({ min: 4})
-    .withMessage("Password should have atleast four letters")
-    .trim(),
+      .notEmpty()
+      .withMessage("Current password cannot be empty")
+      .isLength({ min: 4 })
+      .withMessage("Password should have atleast four letters")
+      .trim(),
     check('npassword')
-    .notEmpty()
-    .withMessage("New password cannot be empty")
-    .isLength({ min: 4 })
-    .withMessage("New password should have atleast four letters")
-    .trim(),
+      .notEmpty()
+      .withMessage("New password cannot be empty")
+      .isLength({ min: 4 })
+      .withMessage("New password should have atleast four letters")
+      .trim(),
     check('cpassword')
-    .notEmpty()
-    .withMessage("Confirm password cannot be empty")
-    .isLength({ min: 4 })
-    .withMessage("Confirms password should have atleast four letters")
-    .trim(),
-
-
+      .notEmpty()
+      .withMessage("Confirm password cannot be empty")
+      .isLength({ min: 4 })
+      .withMessage("Confirms password should have atleast four letters")
+      .trim(),
   ]
-
 }

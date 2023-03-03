@@ -86,3 +86,44 @@ input[type=radio]{
   font-size: 18px;
   margin-left: 0.5em;
 }
+.error-msg{
+  font-size: smaller;
+}
+.input-container {
+  position: relative;
+}
+/* 
+#toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+} */
+.eye-btn{
+  border: none;
+  background-color: transparent;
+  color: rgb(188, 188, 188);
+}
+#toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+#toggle-password2 {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+
+#password-field {
+  padding-right: 30px; /* make room for the button */
+}

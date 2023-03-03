@@ -2,7 +2,6 @@ const userHelpers = require("../helpers/user-helpers");
 const adminHelpers = require("../helpers/admin-helpers")
 let twilio = require('../middlewares/twilio')
 let { validationResult } = require('express-validator');
-const Routes = require("twilio/lib/rest/Routes");
 let err;
 module.exports = {
     userHome: async (req, res) => {
@@ -33,21 +32,25 @@ module.exports = {
             userHelpers.regisUserUser(req.body).then((response) => {
                 if (response.email == email) {
                     req.session.signUpErr = `${response.email} already exists please login`
-                    res.redirect('/userSignUp')
+                    res.json({status:false})
+                    // res.redirect('/userSignUp')
                 }
                 else if (response.mobile == mobile) {
                     req.session.signUpErr = `${response.mobile} already exists please login`
-                    res.redirect('/userSignUp')
+                    res.json({status:false})
+                    // res.redirect('/userSignUp')
                 }
                 else if (response.status) {
                     req.session.loggedIn = true;
                     req.session.user = response.userData;
-                    res.redirect('/');
+                    res.json({status:true})
+                    // res.redirect('/');
                 }
             })
         }
         else {
-            res.redirect('/userSignUp');
+            // res.redirect('/userSignUp');
+            res.json({status:false})
         }
     },
     userLoginGet: (req, res) => {
@@ -110,23 +113,27 @@ module.exports = {
         res.render('users/dashboard', { user: req.session.user })
     },
     userLoginPost: (req, res) => {
+        console.log(req.body)
         const errors = validationResult(req);
         console.log(errors);
-        err = errors.errors 
+        err = errors.errors
         req.session.mobile = req.body.mobile;
         if (err.length == 0) {
             userHelpers.loginUser(req.body).then((response) => {
                 if (response.block) {
                     req.session.loginError = "Your accout is blocked by admin ";
-                    res.redirect('/userLogin');
+                    res.json({status:false})
+                    // res.redirect('/userLogin');
                 }
                 else if (response.status) {
                     req.session.user = response.user;
-                    res.redirect('/')
+                    res.json({status:true})
+                    // res.redirect('/')
                 }
                 else {
                     req.session.loginError = "Invalid phone number or password.."
-                    res.redirect('/userLogin');
+                    res.json({status:false})
+                    // res.redirect('/userLogin');
                 }
             })
         }
@@ -139,10 +146,12 @@ module.exports = {
         })
     },
     userCartGet: async (req, res) => {
-        let cartItems = await userHelpers.getcartProducts(req.session?.user._id)
+        // let cartItems = await userHelpers.getcartProducts(req.session?.user._id)
         let totalAmout = await userHelpers.findTotalAmout(req.session.user._id);
-        res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout })
-
+        let cartItems = await userHelpers.getcartProducts(req.session.user._id);
+        // console.log(cartItems);
+        let cartId=cartItems._id
+        res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout,cartId})
     },
     addToCartGet: (req, res) => {
         let productId = req.params.id
@@ -155,6 +164,9 @@ module.exports = {
     changeCartProductQuantity: (req, res) => {
         userHelpers.changeCartQuantity(req.body).then(async (response) => {
             response.total = await userHelpers.findTotalAmout(req.body.userId);
+            let subtotal=await userHelpers.findSubTotal(req.body.userId);
+            response.subtotal=subtotal;
+            console.log(subtotal);
             res.json(response);
         })
     },
@@ -168,10 +180,10 @@ module.exports = {
         let totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
         let address = await userHelpers.getAllAddresses(req.session.user._id);
         console.log(address)
-        res.render('users/shop-checkout',{ totalAmout, user: req.session.user, cartItems, address});
+        res.render('users/shop-checkout', { totalAmout, user: req.session.user, cartItems, address });
     },
     proceedToCheckOutPost: async (req, res) => {
-        console.log(req.body);  
+        console.log(req.body);
         let products = await userHelpers.getAllProductsUserCart(req.body.userId);
         let totalPrice = await userHelpers.findTotalAmout(req.body.userId);
         userHelpers.placeOrders(req.body, products, totalPrice).then((response) => {
@@ -184,7 +196,6 @@ module.exports = {
         let orders = adminHelpers.ISO_to_Normal_Date(odr)
         // console.log(orders)
         res.render('users/shop-orders', { orders })
-
     },
     cancellOrders: (req, res) => {
         let orderId = req.body.orderId;
@@ -205,16 +216,17 @@ module.exports = {
         userHelpers.editProfile(userId, req.body).then((response) => {
             res.redirect('/')
         })
-
     },
-    addAddressGet: (req, res) => {
-        let userId = req.session?.user._id;
-        userHelpers.getUserAddress(userId).then((address) => {
-            console.log(address)
-            res.render('users/add-address', { address });
-        })
-
-    },
+    // addAddressGet: (req, res) => {
+    //     let userId = req.session?.user._id;
+    //     let updateMsg=req.session.updatedAddr
+    //     console.log(updateMsg)
+    //     userHelpers.getUserAddress(userId).then((address) => {
+    //         console.log(address)
+    //         res.render('users/add-address', { address,updateMsg });
+    //         req.session.updateMsg=null;
+    //     })
+    // },
     addAddressPost: (req, res) => {
         let userId = req.session.user?._id;
         let addressFromCheckOut = req.body.fromCheckOut;
@@ -223,21 +235,43 @@ module.exports = {
         userHelpers.addNewAddress(req.body).then((response) => {
             console.log(response)
             if (addressFromCheckOut) {
-                res.redirect('/proceed-to-checkout')
+                res.json({addressFromCheckOut:true})
+                // res.redirect('/proceed-to-checkout')
             } else {
-                res.redirect('/profile-address')
+                res.json({addressFromProfile:true})
+                // res.redirect('/profile-address')
             }
         })
-
+    },
+    editAddressGet:async(req,res)=>{
+        // console.log(req.query)
+        let from=req.query.from;
+        let currentAddress=await userHelpers.getCurrentAddress(req.query.id);
+        res.render('users/user-profile/edit-address',{currentAddress,from})
+    },
+    editAddressPost:(req,res)=>{
+        console.log(req.query)
+        let from=req.query.from;
+        userHelpers.editAddress(req.query.addressId,req.body).then(()=>{
+           req.session.updatedAddr="Successfully updated address"
+           if(from=='profile'){
+            res.redirect('/profile-address')
+           }else{
+            res.redirect('/proceed-to-checkout')
+           }
+        })
     },
     deleteAddress: (req, res) => {
         console.log(req.body);
-        let addressId = req.body.addressId
+        let addressId = req.body.addressId,from=req.body.from
         userHelpers.addressDelete(addressId).then((response) => {
             console.log(response)
-            res.redirect('/profile-address')
+            if(from=='profile'){
+                res.redirect('/profile-address')
+            }else{
+                res.redirect('/proceed-to-checkout')
+            }
         })
-
     },
     userProfileDash: (req, res) => {
         res.render('users/user-profile/user-dashboard', { user: req.session.user })
@@ -253,18 +287,21 @@ module.exports = {
     },
     userProfileAddress: async (req, res) => {
         let address = await userHelpers.getUserAddress(req.session.user._id);
-        res.render('users/user-profile/user-address', { address })
+        let updateMsg=req.session.updatedAddr;
+        console.log(updateMsg)
+        res.render('users/user-profile/user-address', { address,updateMsg })
+        req.session.updatedAddr=null;
     },
-    userAccountDetails: async(req, res) => {
-        let userDetails=await userHelpers.getUserDetails(req.session.user._id);
+    userAccountDetails: async (req, res) => {
+        let userDetails = await userHelpers.getUserDetails(req.session.user._id);
         // let profile_update_status= req.session.profile_update_status
-        res.render('users/user-profile/user-account',{userDetails})
+        res.render('users/user-profile/user-account', { userDetails })
         // req.session.profile_update_status=null;
     },
-    updateProfile:(req,res)=>{
+    updateProfile: (req, res) => {
         // let sessionUserId=req.session.user._id;
         // console.log(req.body)
-        userHelpers.updateUserDetails(req.body).then((response)=>{
+        userHelpers.updateUserDetails(req.body).then((response) => {
             console.log(response)
             res.redirect('/profile-account-detail')
         })
@@ -272,29 +309,28 @@ module.exports = {
         // req.session.profile_update_status=response;  
     },
     changePassword: (req, res) => {
-        let password_change_stat=req.session.password_change_stat;
-        let updatePasswd_err=req.session.updatePasswd_err;
-        let user=req.session.user._id;
-        res.render('users/user-profile/user-change-password',{user,password_change_stat,updatePasswd_err})
-        req.session.password_change_stat=null;
-        req.session.updatePasswd_err=null;
+        let password_change_stat = req.session.password_change_stat;
+        let updatePasswd_err = req.session.updatePasswd_err;
+        let user = req.session.user._id;
+        res.render('users/user-profile/user-change-password', { user, password_change_stat, updatePasswd_err })
+        req.session.password_change_stat = null;
+        req.session.updatePasswd_err = null;
     },
     changePasswordPost: (req, res) => {
-        const errors=validationResult(req);
+        const errors = validationResult(req);
         console.log(errors);
-        req.session.updatePasswd_err=errors.errors
-        if(req.session.updatePasswd_err.length==0){
+        req.session.updatePasswd_err = errors.errors
+        if (req.session.updatePasswd_err.length == 0) {
             userHelpers.changeUserPassword(req.params.id, req.body).then((response) => {
                 // console.log(response)
-                req.session.password_change_stat=response;
+                req.session.password_change_stat = response;
                 res.redirect('/profile-change-password');
             })
-        }else{
+        } else {
             res.redirect('/profile-change-password')
         }
-        
     },
-    userLogout: (req, res) => { 
+    userLogout: (req, res) => {
         req.session.user = null;
         res.redirect('/');
     }

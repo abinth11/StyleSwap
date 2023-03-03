@@ -49,33 +49,38 @@ router.route('/proceed-to-checkout')
     .post(userControler.proceedToCheckOutPost)
 
 //my orders
-router.get('/view-orders',sessionChecker.isUserExist,userControler.getUserOrders)
+router.get('/view-orders', sessionChecker.isUserExist, userControler.getUserOrders)
 
 //cancell orders
-router.post('/cancell-order',userControler.cancellOrders)
+router.post('/cancell-order', userControler.cancellOrders)
 
 //Edit profile 
-router.get('/editProfile',sessionChecker.isUserExist, userControler.editUserProfile)
+router.get('/editProfile', sessionChecker.isUserExist, userControler.editUserProfile)
 router.post('/editProfile/:id', userControler.editUserProfilePost)
 
 //user profile part
-router.get('/profile-dashboard',sessionChecker.isUserExist,userControler.userProfileDash)
-router.get('/profile-orders',sessionChecker.isUserExist,userControler.userProfileOrders)
-router.get('/profile-track-orders',sessionChecker.isUserExist,userControler.userProfileTrackOrders)
-router.get('/profile-address',sessionChecker.isUserExist,userControler.userProfileAddress)
-router.get('/profile-account-detail',sessionChecker.isUserExist,userControler.userAccountDetails)
-router.post('/update-user-profile',userControler.updateProfile)
-router.get('/profile-change-password',sessionChecker.isUserExist,userControler.changePassword)
+router.get('/profile-dashboard', sessionChecker.isUserExist, userControler.userProfileDash)
+router.get('/profile-orders', sessionChecker.isUserExist, userControler.userProfileOrders)
+router.get('/profile-track-orders', sessionChecker.isUserExist, userControler.userProfileTrackOrders)
+router.get('/profile-account-detail', sessionChecker.isUserExist, userControler.userAccountDetails)
+router.post('/update-user-profile', userControler.updateProfile)
+router.get('/profile-change-password', sessionChecker.isUserExist, userControler.changePassword)
 //change password
-router.post('/change-user-password/:id',userValidation.userPasswordUpdateValidation,userControler.changePasswordPost);
+router.post('/change-user-password/:id', userValidation.userPasswordUpdateValidation, userControler.changePasswordPost);
 
 //Address management
+router.get('/profile-address', sessionChecker.isUserExist, userControler.userProfileAddress)
 router.route('/addressManageMent')
-    .get(userControler.addAddressGet)
-    .post(userControler.addAddressPost)
+      .post(userControler.addAddressPost)
+    // .get(sessionChecker.isUserExist,userControler.addAddressGet)
+    
+//edit address
+router.route("/editAddress")
+    .get(userControler.editAddressGet)
+    .post(userControler.editAddressPost)
 
 //delete address
-router.post('/delete-address',userControler.deleteAddress)
+router.post('/delete-address', userControler.deleteAddress)
 
 //User logout
 router.get('/logoutUser', userControler.userLogout);

@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 let adminControler = require('../controlers/admin-controlers');
 let adminValidate = require('../validation/adminValidation')
-let {upload} = require('../middlewares/multer');
+let { upload } = require('../middlewares/multer');
 let sessionCheck = require('../middlewares/session-checks')
 /* GET users listing. */
 router.get('/', adminControler.adminLoginGet)
@@ -16,18 +16,17 @@ router.get('/dashboard', sessionCheck.isAdminExist, adminControler.adminDashboar
 // Admin add product get and post methods
 router.route('/addProduct1')
     .get(sessionCheck.isAdminExist, adminControler.addProducts1Get)
-    .post(upload.single('product_image'),adminControler.addProducts1Post)
+    .post(upload.single('product_image'), adminControler.addProducts1Post)
 
-router.get('/addProduct1',sessionCheck.isAdminExist,adminControler.addProducts1Get)
+router.get('/addProduct1', sessionCheck.isAdminExist, adminControler.addProducts1Get)
 
 // const upload = multer({ dest: 'uploads/' });
 
-// router.post('/add-product-1', upload.single('image'), (req, res) => {
-//   console.log(req.body);
-//   console.log(req.file);
-//   console.log('llllllllllllllllll');
-//   res.send('File uploaded!');
-// });
+router.post('/add-product-1', upload.single('image'), (req, res) => {
+  console.log(req.body);
+  console.log(req.file);
+  console.log('llllllllllllllllll');
+});
 
 router.route('/addProduct2')
     .get(sessionCheck.isAdminExist, adminControler.addProducts2Get)
@@ -84,7 +83,7 @@ router.get('/deleteProductCategory/:id', adminControler.deleteProductCategory)
 router.get('/admin-view-orders', adminControler.viewAllOrders)
 
 // view orders more
-router.get('/view-order-details/:id',adminControler.viewOrderDetails)
+router.get('/view-order-details/:id', adminControler.viewOrderDetails)
 
 //change status of ordered products
 router.post('/change-product-status', adminControler.changeProductStatus);

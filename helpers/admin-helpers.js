@@ -1,9 +1,7 @@
 let db = require('../config/connection');
 let collection = require('../config/collections');
 let objectId = require('mongodb').ObjectId
-let multer = require('../middlewares/multer');
 const { ORDER_COLLECTION } = require('../config/collections');
-const { NewKeyInstance } = require('twilio/lib/rest/api/v2010/account/newKey');
 module.exports = {
     adminLogin: (adminInfo) => {
         return new Promise((async (resolve, reject) => {
@@ -160,18 +158,16 @@ module.exports = {
             let orders = db.get().collection(collection.ORDER_COLLECTION).find({}).toArray();
             resolve(orders);
         })
-
     },
     getCurrentOrderMore: (orderId) => {
         return new Promise(async (resolve, reject) => {
             let orders = db.get().collection(collection.ORDER_COLLECTION).find({ _id: objectId(orderId) }).toArray();
             resolve(orders);
         })
-
     },
-    getCurrentProducts:(orderId)=>{
+    getCurrentProducts: (orderId) => {
         return new Promise(async (resolve, reject) => {
-            let order =await db.get().collection(ORDER_COLLECTION).aggregate([
+            let order = await db.get().collection(ORDER_COLLECTION).aggregate([
                 {
                     "$match": {
                         "_id": objectId(orderId)
@@ -222,7 +218,6 @@ module.exports = {
             orders[i].date = daTe.toLocaleString("en-US", options);
         }
         return orders;
-
     },
     changeOrderStatus: (orderInfo) => {
         return new Promise((resolve, reject) => {
@@ -239,7 +234,7 @@ module.exports = {
     },
     getallUserAddress: (orderId) => {
         return new Promise(async (resolve, reject) => {
-            let userDetails =await db.get().collection(ORDER_COLLECTION).aggregate([
+            let userDetails = await db.get().collection(ORDER_COLLECTION).aggregate([
                 {
                     "$match": {
                         "_id": objectId(orderId)

@@ -188,32 +188,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{#each cartItems}}
+                                    {{#each cartItems.products}}
                                     <tr>
-                                        <td class="image product-thumbnail"><img src="/images/{{product._id}}.jpg" alt="#"></td>
+                                        <td class="image product-thumbnail"><img src="/images/{{product_id}}.jpg" alt="#"></td>
                                         <td class="product-des product-name">
-                                            <h5 class="product-name"><a href="shop-product-right.html">{{product.product_title}}</a></h5>
+                                            <h5 class="product-name"><a href="shop-product-right.html">{{product_title}}</a></h5>
                                             <p class="font-xs">Maboriosam in a tonto nesciung eget<br> distingy magndapibus.
                                             </p>
                                         </td>
-                                        <td class="price" data-title="Price"><span>${{product.product_price}}</span></td>
+                                        <td class="price" data-title="Price"><span>${{product_price}}</span></td>
                                         <td class="text-center" data-title="Stock">
                                             <div class="detail-qty border radius m-auto">
                                                 {{!-- <a class="qty-down" onclick="changeQuantity('{{_id}}','{{product._id}}',1)"><i class="fi-rs-angle-small-down"></i></a>
                                                 <span >{{quantity}}</span>
                                                 <a  class="qty-up" onclick="changeQuantity('{{_id}}','{{product._id}}',-1)"><i class="fi-rs-angle-small-up"></i></a> --}}
 
-                                                <button class=""  style="border: none;background: none;" onclick="changeQuantity('{{_id}}','{{product._id}}','{{../user._id}}',-1)"><i class="fi-rs-angle-small-down"></i></button>
-                                                 <p class="" id="{{product._id}}" >{{quantity}}</p>
-                                                 <button class="" style="border: none;background: none;"  onclick="changeQuantity('{{_id}}','{{product._id}}','{{../user._id}}',1)"><i class="fi-rs-angle-small-up"></i></button>
+                                                <button class=""  style="border: none;background: none;" onclick="changeQuantity('{{../cartId}}','{{product_id}}','{{../user._id}}',-1)"><i class="fi-rs-angle-small-down"></i></button>
+                                                 <p class="" id="{{product_id}}" >{{quantity}}</p>
+                                                 <button class="" style="border: none;background: none;"  onclick="changeQuantity('{{../cartId}}','{{product_id}}','{{../user._id}}',1)"><i class="fi-rs-angle-small-up"></i></button>
                                             </div>
                                         </td>
                                         <td class="text-right" data-title="Cart">
-                                            <span>${{product.product_price}}</span>
+                                            <span id="{{product_id}}-subtotal">&#36;{{subtotal}}</span>
                                         </td>
                                         <td class="action" data-title="Remove">
                                             {{!-- <a href="#" class="text-muted"><i class="fi-rs-trash"></i></a> --}}
-                                            <button class="text-muted" style="border: none;background: none;" onclick="deleteCartProduct('{{_id}}','{{product._id}}')"><i class="fi-rs-trash text-danger"></i></button>
+                                            <button class="text-muted" style="border: none;background: none;" onclick="deleteCartProduct('{{../cartId}}','{{product_id}}')"><i class="fi-rs-trash text-danger"></i></button>
                                             </td>
                                     </tr>
                                     {{/each}}
@@ -551,7 +551,7 @@
                                                 <tr>
                                                     <td class="cart_total_label">Total</td>
                                                     {{#if totalAmout}}
-                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand" id="totalAmout">${{totalAmout.total}}</span></strong></td>
+                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand" id="totalAmout">&#36;{{totalAmout.total}}</span></strong></td>
                                                     {{/if}}
                                                 </tr>
                                             </tbody>

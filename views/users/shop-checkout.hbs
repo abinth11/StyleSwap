@@ -262,24 +262,28 @@
                                         </ul>
                                         <div class="tab-content pt-3">
                                             <div class="tab-pane active">
-                                                <form class="form" action="/addressManageMent" method="post">
+
+
+                                                <form class="form" id="add_address">
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="row">
                                                                 <div class="col">
                                                                     <div class="form-group">
                                                                         <label>Full Name</label>
-                                                                        <input type="text" value="checkout"
-                                                                            name="fromCheckOut" hidden>
                                                                         <input class="form-control" type="text"
-                                                                            name="name" placeholder="Name" value="">
+                                                                            name="name" placeholder="Name" value=""
+                                                                            id="name">
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col">
                                                                     <div class="form-group">
                                                                         <label>Mobile</label>
                                                                         <input class="form-control" type="text"
-                                                                            name="mobile" placeholder="mobile" value="">
+                                                                            name="mobile" placeholder="mobile" value=""
+                                                                            id="mobile">
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -289,7 +293,8 @@
                                                                         <label>Pincode</label>
                                                                         <input class="form-control" type="text"
                                                                             name="pincode" placeholder="pincode"
-                                                                            value="">
+                                                                            value="" id="pincode">
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col">
@@ -297,7 +302,8 @@
                                                                         <label>Locality</label>
                                                                         <input class="form-control" type="text"
                                                                             name="locality" placeholder="locality"
-                                                                            value="">
+                                                                            value="" id="locality">
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -306,8 +312,9 @@
                                                                     <div class="form-group">
                                                                         <label>Address</label>
                                                                         <textarea class="form-control" rows="5"
-                                                                            placeholder="address"
-                                                                            name="address"></textarea>
+                                                                            placeholder="address" name="address"
+                                                                            id="address"></textarea>
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -316,14 +323,18 @@
                                                                     <div class="form-group">
                                                                         <label>City</label>
                                                                         <input class="form-control" type="text"
-                                                                            name="city" placeholder="city" value="">
+                                                                            name="city" placeholder="city" value=""
+                                                                            id="city">
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col">
                                                                     <div class="form-group">
                                                                         <label>State</label>
                                                                         <input class="form-control" type="text"
-                                                                            name="state" placeholder="state" value="">
+                                                                            name="state" placeholder="state" value=""
+                                                                            id="state">
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -333,7 +344,8 @@
                                                                         <label>Landmark</label>
                                                                         <input class="form-control" type="text"
                                                                             name="landmark" placeholder="landmark"
-                                                                            value="">
+                                                                            value="" id="landmark">
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col">
@@ -341,7 +353,8 @@
                                                                         <label>Alternate Phone</label>
                                                                         <input class="form-control" type="text"
                                                                             name="alternatePhone" placeholder="phone"
-                                                                            value="">
+                                                                            value="" id="alternate_phone">
+                                                                        <small class="error-msg text-danger"></small>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -350,12 +363,13 @@
                                                     <div class="row" style="padding-top: 2rem;">
                                                         <div class="col d-flex justify-content-end">
                                                             <button class="btn btn-danger" type="submit">Cancel</button>
-
                                                             <button class="btn btn-primary ms-3"
                                                                 type="submit">Save</button>
                                                         </div>
                                                     </div>
                                                 </form>
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -392,6 +406,13 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
+                                            <div>
+                                                <a class="btn-white btn-lg font-sm text-success "
+                                                    style="border:none;background-color: transparent;margin-left: 8em;"
+                                                    href="/editAddress?id={{_id}}&from=checkout">
+                                                    <i class="fas fa-edit" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
                                             <div class="">
                                                 <button class="btn-white btn-lg font-sm text-danger "
                                                     style="border:none;background-color: transparent;margin-left: 8em;"
@@ -451,6 +472,7 @@
     </section>
 </main>
 {{>foot-user}}
+<script src="/frontendValidations/addAddress.js" type="text/javascript"></script>
 <script>
     function toggleDiv() {
         var x = document.getElementById("add-address-div");
@@ -482,6 +504,7 @@
             url: "/delete-address",
             data: {
                 addressId: addressId,
+                from:'check-out'
             },
             method: 'post',
             success: (res) => {

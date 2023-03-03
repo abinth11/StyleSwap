@@ -32,7 +32,7 @@ module.exports = {
         res.render('admin/index')
     },
     addProducts1Get: (req, res) => {
-        res.render('admin/test')
+        res.render('admin/add-product')
     },
     addProducts1Post: (req, res) => {
         console.log(req.body)
@@ -51,7 +51,7 @@ module.exports = {
     addProducts3Get: (req, res) => {
         adminHelpers.getAllCategories().then((category) => {
             console.log(category);
-            res.render('admin/add-product3', { category, productAddingErr: req.session.addProductError, productAddingSucc: req.session.addProductSuccess, Prostatus: req.session.addProductStatus})
+            res.render('admin/add-product3', { category, productAddingErr: req.session.addProductError, productAddingSucc: req.session.addProductSuccess, Prostatus: req.session.addProductStatus })
             req.session.addProductError = null;
             req.session.addProductStatus = null;
             req.session.addProductSuccess = null;
@@ -94,7 +94,7 @@ module.exports = {
         let productId = req.params.id
         adminHelpers.getProductDetails(productId).then((product) => {
             console.log(product);
-            res.render('admin/edit-product', { product, Prostatus: req.session.updateProductStatus, updateErr: req.session.updateProductError, updateMsg: req.session.updateMsg});
+            res.render('admin/edit-product', { product, Prostatus: req.session.updateProductStatus, updateErr: req.session.updateProductError, updateMsg: req.session.updateMsg });
             req.session.updateProductError = null;
             req.session.updateProductStatus = null;
             req.session.updateMsg = false;
@@ -135,15 +135,13 @@ module.exports = {
     },
     viewProductsGrid2: (req, res) => {
         res.render('admin/view-products-grid2')
-
     },
     addCategoryGet: (req, res) => {
         adminHelpers.getAllCategories().then((category) => {
-            res.render('admin/view-products-category', {category, deletedCategory: req.session.categoryDeleted, addedCategory: req.session.addedCategory })
+            res.render('admin/view-products-category', { category, deletedCategory: req.session.categoryDeleted, addedCategory: req.session.addedCategory })
             req.session.categoryDeleted = null;
             req.session.addedCategory = null;
         })
-
     },
     addCategoryPost: (req, res) => {
         console.log(req.body);
@@ -155,7 +153,7 @@ module.exports = {
     editCategoryGet: (req, res) => {
         let catId = req.params.id;
         adminHelpers.getCurrentCategory(catId).then((category) => {
-            res.render("admin/edit-product-category", {category })
+            res.render("admin/edit-product-category", { category })
         })
     },
     editCategoryPut: (req, res) => {
@@ -175,7 +173,7 @@ module.exports = {
     },
     viewUsers: (req, res) => {
         adminHelpers.viewAllUser().then((users) => {
-            res.render('admin/view-users', { users})
+            res.render('admin/view-users', { users })
         })
     },
     blockAndUnblockUsers: (req, res) => {
@@ -187,33 +185,33 @@ module.exports = {
     },
     getBlockedUsers: (req, res) => {
         adminHelpers.blockedUsers().then((blockeduser) => {
-            res.render('admin/blocked-users', {blockeduser })
+            res.render('admin/blocked-users', { blockeduser })
             console.log(blockeduser);
         })
     },
-    viewAllOrders:async (req, res) => {
-        let orders= await adminHelpers.getAllUserOrders()
-        let odr= adminHelpers.ISO_to_Normal_Date(orders)
+    viewAllOrders: async (req, res) => {
+        let orders = await adminHelpers.getAllUserOrders()
+        let odr = adminHelpers.ISO_to_Normal_Date(orders)
         console.log(odr[0].products);
-        res.render('admin/page-orders-1',{odr});
+        res.render('admin/page-orders-1', { odr });
     },
-    viewOrderDetails:async(req,res)=>{
+    viewOrderDetails: async (req, res) => {
         console.log(req.params.id);
-        let odr= await adminHelpers.getCurrentOrderMore(req.params.id)
-        let orders=adminHelpers.ISO_to_Normal_Date(odr)
-        let products=await adminHelpers.getCurrentProducts(req.params.id)
-        let address=await adminHelpers.getallUserAddress(req.params.id)
-        orders=orders[0];
+        let odr = await adminHelpers.getCurrentOrderMore(req.params.id)
+        let orders = adminHelpers.ISO_to_Normal_Date(odr)
+        let products = await adminHelpers.getCurrentProducts(req.params.id)
+        let address = await adminHelpers.getallUserAddress(req.params.id)
+        orders = orders[0];
         console.log(orders);
         console.log(products)
         console.log(address)
-        res.render('admin/view-more-orders',{orders,products,address})
+        res.render('admin/view-more-orders', { orders, products, address })
     },
-    changeProductStatus:(req,res)=>{
-      adminHelpers.changeOrderStatus(req.body).then((response)=>{
-        res.redirect('/admin/admin-view-orders')
-        console.log(response);
-      })
+    changeProductStatus: (req, res) => {
+        adminHelpers.changeOrderStatus(req.body).then((response) => {
+            res.redirect('/admin/admin-view-orders')
+            console.log(response);
+        })
     },
     logoutAdmin: (req, res) => {
         req.session.admin = null;

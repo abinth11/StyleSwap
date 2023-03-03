@@ -30,9 +30,24 @@ const changeQuantity=(cartId,productId,userId,count)=>{
                 alert("Product reomove from your cart");
                 location.reload();
             }else{
+                console.log(response.subtotal)
+                console.log(productId);
                 document.getElementById(productId).innerHTML=quantity+count;
                 document.getElementById('totalAmout').innerHTML=response.total.total;
                 console.log(response.total.total)
+                
+                let subtotalArr = response.subtotal;
+
+    for (let i = 0; i < subtotalArr.length; i++) {
+      let subtotal = subtotalArr[i].subtotal;
+      let productId = subtotalArr[i]._id.toString();
+
+      document.getElementById(`${productId}-subtotal`).innerHTML = `$${subtotal}`;
+    }
+
+
+
+               
             }
         },
         error: function(data){
@@ -63,3 +78,6 @@ const deleteCartProduct=(cartId,productId)=>{
         }
     })
 }
+
+
+

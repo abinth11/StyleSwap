@@ -3,33 +3,27 @@
 <section class="pt-100 pb-100">
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
-                {{>user-profile-nav}}
+            <div class="col-md-2">
+                {{!-- {{>user-profile-nav}} --}}
             </div>
-            <div class="col-md-6">
-                  {{#if updateMsg}}
-                    <div class="alert alert-success text-center">
-                        {{updateMsg}}
-                    </div>
+            <div class="col-md-8">
                 <div class="row">
-                  
-                    {{/if}}
-                    <div class="row  d-flex align-items-center" style="height: 100px;">
+                    {{!-- <div class="row  d-flex align-items-center" style="height: 100px;">
                         <div class="d-flex align-items-center " style="border: 1px solid #F4F5F9;height: 50px;">
                             <button class="ms-3 text-dark" onclick="toggleDiv()"
                                 style="border: none;background: none;font-weight: 600;">+ ADD A NEW ADDRESS</button>
                         </div>
-                    </div>
-                    <div class="row" id="add-address" style="display: none;">
+                    </div> --}}
+                    <div class="row" id="add-address">
                         <div class="col mb-3">
                             <div class="card">
                                 <div class="card-body">
-                                    <ul class="nav nav-tabs">
+                                    {{!-- <ul class="nav nav-tabs">
                                         <li class="nav-item"><a href="" class="active nav-link">Settings</a></li>
-                                    </ul>
+                                    </ul> --}}
                                     <div class="tab-content pt-3">
                                         <div class="tab-pane active">
-                                            <form class="form" id="add_address">
+                                            <form class="form" action="/editAddress?addressId={{currentAddress._id}}&from={{from}}" method="post">
                                                 <div class="row">
                                                     <div class="col">
                                                         <div class="row">
@@ -37,7 +31,7 @@
                                                                 <div class="form-group">
                                                                     <label>Full Name</label>
                                                                     <input class="form-control" type="text" name="name"
-                                                                        placeholder="Name" value="" id="name">
+                                                                        placeholder="Name" value="{{currentAddress.name}}" id="name">
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -45,7 +39,7 @@
                                                                 <div class="form-group">
                                                                     <label>Mobile</label>
                                                                     <input class="form-control" type="text"
-                                                                        name="mobile" placeholder="mobile" value="" id="mobile">
+                                                                        name="mobile" placeholder="mobile" value="{{currentAddress.mobile}}" id="mobile">
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -55,7 +49,7 @@
                                                                 <div class="form-group">
                                                                     <label>Pincode</label>
                                                                     <input class="form-control" type="text"
-                                                                        name="pincode" placeholder="pincode" value="" id="pincode">
+                                                                        name="pincode" placeholder="pincode" value="{{currentAddress.pincode}}" id="pincode">
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -63,7 +57,7 @@
                                                                 <div class="form-group">
                                                                     <label>Locality</label>
                                                                     <input class="form-control" type="text"
-                                                                        name="locality" placeholder="locality" value="" id="locality">
+                                                                        name="locality" placeholder="locality" value="{{currentAddress.locality}}" id="locality">
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -73,7 +67,7 @@
                                                                 <div class="form-group">
                                                                     <label>Address</label>
                                                                     <textarea class="form-control" rows="5"
-                                                                        placeholder="address" name="address" id="address"></textarea >
+                                                                        placeholder="address" name="address" id="address" >{{currentAddress.address}}</textarea >
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -83,7 +77,7 @@
                                                                 <div class="form-group">
                                                                     <label>City</label>
                                                                     <input class="form-control" type="text" name="city"
-                                                                        placeholder="city" value="" id="city">
+                                                                        placeholder="city" value="{{currentAddress.city}}" id="city">
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -91,7 +85,7 @@
                                                                 <div class="form-group">
                                                                     <label>State</label>
                                                                     <input class="form-control" type="text" name="state"
-                                                                        placeholder="state" value="" id="state">
+                                                                        placeholder="state" value="{{currentAddress.state}}" id="state">
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -101,7 +95,7 @@
                                                                 <div class="form-group">
                                                                     <label>Landmark</label>
                                                                     <input class="form-control" type="text"
-                                                                        name="landmark" placeholder="landmark" value="" id="landmark">
+                                                                        name="landmark" placeholder="landmark" value="{{currentAddress.landmark}}" id="landmark">
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -110,7 +104,7 @@
                                                                     <label>Alternate Phone</label>
                                                                     <input class="form-control" type="text"
                                                                         name="alternatePhone" placeholder="phone"
-                                                                        value="" id="alternate_phone">
+                                                                        value="{{currentAddress.alternatePhone}}" id="alternate_phone">
                                                                         <small class="error-msg text-danger"></small>
                                                                 </div>
                                                             </div>
@@ -130,51 +124,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <input type="text" hidden name="userId" value="{{user.response._id}}">
-                        <div class="payment_option">
-                            {{#each address }}
-                            <div class="order_review">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="deliveryAddress"
-                                                id="flexRadioDefault1" value="{{_id}}" required>
-                                            <label class="form-check-label" for="flexRadioDefault1">
-                                                <ul>
-                                                    <li class="ms-3">Name: {{name}}</li>
-                                                    <li class="ms-3">Mobile: {{mobile}}</li>
-                                                    <li class="ms-3">Pincode: {{pincode}}</li>
-                                                    <li class="ms-3">Address: {{locality}}, {{landmark}}, {{city}},
-                                                        {{state}}</li>
-                                                    <br>
-                                                </ul>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div>
-                                            <a class="btn-white btn-lg font-sm text-success "
-                                            style="border:none;background-color: transparent;margin-left: 8em;"
-                                             href="/editAddress?id={{_id}}&from=profile">
-                                                <i class="fas fa-edit" aria-hidden="true"></i>
-                                            </a>
-                                        </div>
-                                        <div class="">
-                                            <button class="btn-white btn-lg font-sm text-danger "
-                                                style="border:none;background-color: transparent;margin-left: 8em;"
-                                                onclick="deleteAddress('{{_id}}')">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
-
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <br>
-                            {{/each}}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -182,29 +131,3 @@
 </section>
 {{>foot-user}}
 <script src="/frontendValidations/addAddress.js" type="text/javascript"></script>
-
-<script>
-    function toggleDiv() {
-        var x = document.getElementById("add-address");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-    }
-</script>
-<script>
-    const deleteAddress = (addressId) => {
-        $.ajax({
-            url: "/delete-address",
-            data: {
-                addressId: addressId,
-                from:'profile'
-            },
-            method: 'post',
-            success: (res) => {
-                location.reload();
-            }
-        })
-    }
-</script>
