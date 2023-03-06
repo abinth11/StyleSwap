@@ -1,88 +1,93 @@
-var express = require('express');
-var router = express.Router();
-let userControler = require('../controlers/user-controlers');
-const userValidation = require('../validation/userValidation');
-let sessionChecker = require('../middlewares/session-checks');
-const userHelpers = require('../helpers/user-helpers');
+const express = require('express')
+const router = express.Router()
+const userControler = require('../controlers/user-controlers')
+const userValidation = require('../validation/userValidation')
+const sessionChecker = require('../middlewares/session-checks')
+const userHelpers = require('../helpers/user-helpers')
 
 /* GET home page. */
-router.get('/', userControler.userHome);
+router.get('/', userControler.userHome)
 
-//view more for each product in home page
-router.get('/shop-product-right/:id', userControler.shopProductRight);
+// view more for each product in home page
+router.get('/shop-product-right/:id', userControler.shopProductRight)
 
-//User registration(singnUp)
+// User registration(singnUp)
 router.route('/userSignUp')
-    .get(userControler.userSignUpGet)
-    .post(userValidation.userSignUpValidate, userControler.usersignUpPost)
+  .get(userControler.userSignUpGet)
+  .post(userValidation.userSignUpValidate, userControler.usersignUpPost)
 
-//User login 
+// User login
 router.route('/userLogin')
-    .get(userControler.userLoginGet)
-    .post(userValidation.userLoginValidate, userControler.userLoginPost);
+  .get(userControler.userLoginGet)
+  .post(userValidation.userLoginValidate, userControler.userLoginPost)
 
 // //login with otp withoug passwords
 router.route('/loginWithOtp')
-    .get(userControler.loginWithOtpGet)
-    .post(userControler.loginWithOtpPost)
+  .get(userControler.loginWithOtpGet)
+  .post(userControler.loginWithOtpPost)
 
-//otp validation
+// otp validation
 router.route('/otpValidate')
-    .get(sessionChecker.isUserExist, userControler.otpValidateGet)
-    .post(userControler.otpValidatePost)
+  .get(sessionChecker.isUserExist, userControler.otpValidateGet)
+  .post(userControler.otpValidatePost)
 
-//Cart for user
+// Cart for user
 router.get('/userCart', sessionChecker.isUserExist, userControler.userCartGet)
 
-//add to the cart
+// add to the cart
 router.get('/add-to-cart/:id', sessionChecker.isUserExist, userControler.addToCartGet)
 
-//change product quantity in the cart
+// change product quantity in the cart
 router.post('/change-quantity', userControler.changeCartProductQuantity)
 
-//remove products from the cart
+// remove products from the cart
 router.put('/remove-cart-product', userControler.removeProducts)
 
-//proceed to chekout
+// proceed to chekout
 router.route('/proceed-to-checkout')
-    .get(sessionChecker.isUserExist, userControler.proceedToCheckOutGet)
-    .post(userControler.proceedToCheckOutPost)
+  .get(sessionChecker.isUserExist, userControler.proceedToCheckOutGet)
+  .post(userControler.proceedToCheckOutPost)
 
-//my orders
+// for verifying the payment
+router.post('/verify-payment', userControler.verifyRazorpayPayment)
+
+// my orders
 router.get('/view-orders', sessionChecker.isUserExist, userControler.getUserOrders)
 
-//cancell orders
+// cancell orders
 router.post('/cancell-order', userControler.cancellOrders)
 
-//Edit profile 
+// Edit profile
 router.get('/editProfile', sessionChecker.isUserExist, userControler.editUserProfile)
 router.post('/editProfile/:id', userControler.editUserProfilePost)
 
-//user profile part
+// user profile part
 router.get('/profile-dashboard', sessionChecker.isUserExist, userControler.userProfileDash)
 router.get('/profile-orders', sessionChecker.isUserExist, userControler.userProfileOrders)
 router.get('/profile-track-orders', sessionChecker.isUserExist, userControler.userProfileTrackOrders)
 router.get('/profile-account-detail', sessionChecker.isUserExist, userControler.userAccountDetails)
 router.post('/update-user-profile', userControler.updateProfile)
 router.get('/profile-change-password', sessionChecker.isUserExist, userControler.changePassword)
-//change password
-router.post('/change-user-password/:id', userValidation.userPasswordUpdateValidation, userControler.changePasswordPost);
+// change password
+router.post('/change-user-password/:id', userValidation.userPasswordUpdateValidation, userControler.changePasswordPost)
 
-//Address management
+// Address management
 router.get('/profile-address', sessionChecker.isUserExist, userControler.userProfileAddress)
 router.route('/addressManageMent')
-      .post(userControler.addAddressPost)
-    // .get(sessionChecker.isUserExist,userControler.addAddressGet)
-    
-//edit address
-router.route("/editAddress")
-    .get(userControler.editAddressGet)
-    .post(userControler.editAddressPost)
+  .post(userControler.addAddressPost)
+// .get(sessionChecker.isUserExist,userControler.addAddressGet)
 
-//delete address
+// edit address
+router.route('/editAddress')
+  .get(userControler.editAddressGet)
+  .post(userControler.editAddressPost)
+
+// delete address
 router.post('/delete-address', userControler.deleteAddress)
 
-//User logout
-router.get('/logoutUser', userControler.userLogout);
+// track order
+router.get('/track-order', userControler.trackOrders)
+// User logout
+router.get('/logoutUser', userControler.userLogout)
 
-module.exports = router;
+module.exports = router

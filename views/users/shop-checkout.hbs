@@ -209,16 +209,16 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each cartItems}}
+                                        {{#each cartItems.products}}
                                         <tr>
-                                            <td class="image product-thumbnail"><img src="/images/{{product._id}}.jpg"
+                                            <td class="image product-thumbnail"><img src="/images/{{product_id}}.jpg"
                                                     alt="#"></td>
                                             <td>
-                                                <h5><a href="shop-product-full.html">{{product.product_title}}</a>
+                                                <h5><a href="shop-product-full.html">{{product_title}}</a>
                                                 </h5>
                                                 <span class="product-qty">x {{quantity}}</span>
                                             </td>
-                                            <td>${{product.product_price}}</td>
+                                            <td>${{subtotal}}</td>
                                         </tr>
                                         {{/each}}
                                         <tr>
@@ -231,9 +231,9 @@
                                         </tr>
                                         <tr>
                                             <th>Total</th>
-                                            {{#if totalAmout}}
+                                            {{#if cartItems}}
                                             <td colspan="2" class="product-subtotal"><span
-                                                    class="font-xl text-brand fw-900">${{totalAmout.total}}</span>
+                                                    class="font-xl text-brand fw-900">${{cartItems.total}}</span>
                                             </td>
                                             {{/if}}
                                         </tr>
@@ -452,16 +452,16 @@
                                             </div>
                                             <div class="custome-radio">
                                                 <input class="form-check-input" type="radio" name="payment_method"
-                                                    id="exampleRadios5" value="paypal">
+                                                    id="exampleRadios5" value="razorpay">
                                                 <label class="form-check-label" for="exampleRadios5"
                                                     data-bs-toggle="collapse" data-target="#paypal"
-                                                    aria-controls="paypal">Paypal</label>
+                                                    aria-controls="paypal">Razorpay</label>
                                                 <div class="form-group collapse in" id="paypal">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-fill-out btn-block mt-30">Place Order</button>
+                                    <button class="btn btn-fill-out btn-block mt-30" id="rzp-button1">Place Order</button>
                                 </div>
                             </div>
                         </div>
@@ -483,7 +483,6 @@
         }
     }
 </script>
-
 <script>
     $("#place-order").submit((e) => {
         e.preventDefault()
@@ -493,18 +492,78 @@
             data: $('#place-order').serialize(),
             success: (response) => {
                 console.log(response)
-                if (response.status) {
+                if (response.statusCod) {
                     location.href = '/view-orders'
+                } else if (response.id) {
+                    getRazorpay(response);
                 }
             }
         })
     })
+
+    const getRazorpay = (order) => {
+        var options = {
+            "key": "rzp_test_ltAM3hZSUBfLfx", // Enter the Key ID generated from the Dashboard
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Acme Corp", //your business name
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo",
+            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response) {
+                
+                {{!-- alert(response.razorpay_payment_id);
+                alert(response.razorpay_order_id);
+                alert(response.razorpay_signature) --}}
+
+                verifyPayment(order, response);
+            },
+            "prefill": {
+                "name": "Gaurav Kumar", //your customer's name
+                "email": "gaurav.kumar@example.com",
+                "contact": "9000090000"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.on('payment.failed', function (response) {
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+        });
+        document.getElementById('rzp-button1').onclick = function (e) {
+            e.preventDefault();
+            rzp1.open();
+            
+        }
+
+    }
+    const verifyPayment = (payment, order) => {
+        $.ajax({
+            type:"post",
+            url: '/verify-payment',
+            data: {
+                payment,
+                order
+            }
+
+        })
+    }
     const deleteAddress = (addressId) => {
         $.ajax({
             url: "/delete-address",
             data: {
                 addressId: addressId,
-                from:'check-out'
+                from: 'check-out'
             },
             method: 'post',
             success: (res) => {

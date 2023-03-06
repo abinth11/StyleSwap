@@ -1,44 +1,44 @@
-let { check, validationResult } = require('express-validator');
+const { check } = require('express-validator')
 module.exports = {
   adminLoginValidate: [
     check('email')
       .notEmpty()
-      .withMessage("Email cannot be empty")
+      .withMessage('Email cannot be empty')
       .isEmail()
-      .withMessage("The email is not valid")
-      .trim(),
+      .withMessage('The email is not valid')
+      .trim()
   ],
   addProductValidate: [
     check('product_title')
       .notEmpty()
-      .withMessage("Product name cannot be empty")
+      .withMessage('Product name cannot be empty')
       .matches(/^[A-Za-z0-9]/)
-      .withMessage("Invalid product name")
+      .withMessage('Invalid product name')
       .trim(),
     check('product_brand')
       .notEmpty()
-      .withMessage("Product brand cannot be empty")
+      .withMessage('Product brand cannot be empty')
       .matches(/^[A-Za-z0-9]/)
-      .withMessage("Invalid brand name")
+      .withMessage('Invalid brand name')
       .trim(),
     check('product_price')
       .notEmpty()
-      .withMessage("Product price cannot be empty")
+      .withMessage('Product price cannot be empty')
       .isNumeric()
-      .withMessage("Product price must be a number")
+      .withMessage('Product price must be a number')
       .trim(),
     check('product_description')
       .notEmpty()
-      .withMessage("Product description cannot be empty")
+      .withMessage('Product description cannot be empty')
       .matches(/^[A-Za-z0-9]/)
-      .withMessage("Invalid description for the product")
+      .withMessage('Invalid description for the product')
       .trim(),
     check('product_color')
       .notEmpty()
-      .withMessage("Product color cannot be empty")
+      .withMessage('Product color cannot be empty')
       .matches(/^[A-Za-z0-9]/)
-      .withMessage("Please enter a valida color")
-      .trim(),
+      .withMessage('Please enter a valida color')
+      .trim()
     //  check('product_image')
     // .notEmpty()
     // .withMessage("Product image cannot be empty")

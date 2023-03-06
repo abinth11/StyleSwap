@@ -127,3 +127,121 @@ input[type=radio]{
 #password-field {
   padding-right: 30px; /* make room for the button */
 }
+
+.status-buttons button {
+  background-color: #eee;
+  border: none;
+  color: #444;
+  font-size: 12px;
+  width: 30px;
+  padding: 3px 6px;
+  margin: 3px;
+  transition: all 0.3s ease;
+}
+
+.status-buttons button:hover {
+  background-color: #444;
+  color: #fff;
+  cursor: pointer;
+}
+
+.status-buttons .placed:hover {
+  background-color: black;
+}
+
+.status-buttons .pending:hover {
+  background-color: #f4b400;
+}
+
+.status-buttons .cancelled:hover {
+  background-color: #e74c3c;
+}
+
+.status-box {
+  padding: 60px 0 0;
+
+}
+.status-box ul li span{
+  position: relative;
+  padding-left: 20px;
+}
+/* //dots  */
+.status-box ul li span:after{
+  content:'';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  background:black;
+  width:10px;
+  height:10px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 0 1px 10px white;
+}
+
+/* //icons */
+.status-box ul li span:before{
+  /* content: '\f46c'; */
+  font-family: 'Line Awesome Free';
+  font-size: 46px;
+  font-weight: 600;
+  position:absolute;
+  left: -90px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: inherit;
+}
+.status-box ul li:nth-child(1) span:before{
+  content: '\f46c';
+}
+.status-box ul li:nth-child(2) span:before{
+  content: '\f560';
+}
+.status-box ul li:nth-child(3) span:before{
+  content: '\f4de';
+}
+.status-box ul li:nth-child(4) span:before{
+  content: '\f0d1';
+}
+.status-box ul li:nth-child(5) span:before{
+  content: '\f582';
+}
+.status-box ul li{
+  position: relative;
+}
+.status-box ul li:before{
+  content: '';
+  position:absolute;
+  top: 0;
+  left: -6px;
+  width: 3px;
+  height: 100%;
+  background: black;
+  margin-top: 10px;
+
+}
+.status-li{
+  font-size: 22px;
+  padding-top: 2.6em;
+}
+ .status-box ul li.step-completed:before{
+ background:grey;
+}
+.status-box ul li.step-completed span:after{
+  background-color: grey;
+ }
+ .status-box ul li.step-completed span{
+  color: grey;
+ }
+
+.status-box ul li:nth-child(5) span:after{
+  box-shadow: 0 20px 1px 20px white;
+}
+ 
+.status-box ul li.current-status span{
+   color: rgb(11, 186, 11);
+}
+.status-box ul li.current-status span:after{
+  background-color:rgb(11, 186, 11);
+}
+
