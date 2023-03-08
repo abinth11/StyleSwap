@@ -496,6 +496,7 @@
                     location.href = '/view-orders'
                 } else if (response.id) {
                     getRazorpay(response);
+                    {{!-- location.href = '/view-orders' --}}
                 }
             }
         })
@@ -543,7 +544,6 @@
         document.getElementById('rzp-button1').onclick = function (e) {
             e.preventDefault();
             rzp1.open();
-            
         }
 
     }

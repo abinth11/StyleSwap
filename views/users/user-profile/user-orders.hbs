@@ -1,14 +1,14 @@
 {{>head-user}}
 {{>user-header}}
 
-<section class="pt-100 pb-100">
+<section class="pt-50 pb-100">
     <div class="container">
         <div class="row">
 
             <div class="col-md-4">
                 {{>user-profile-nav}}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="tab-content">
                     <div class="card">
                         <div class="card-header">
@@ -16,7 +16,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table">
+                                {{!-- <table class="table">
                                     <thead>
                                         <tr>
                                             <th>Order</th>
@@ -51,7 +51,30 @@
                                             <td><a href="#" class="btn-small d-block">View</a></td>
                                         </tr>
                                     </tbody>
+                                </table> --}}
+                                <table id="example" class="table table-striped table-bordered" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Order id</th>
+                                            <th>status</th>
+                                            <th>Date</th>
+                                            <th>Total</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each orders}}
+                                        <tr>
+                                            <td>{{_id}}</td>
+                                            <td>{{status}}</td>
+                                            <td>{{date}}</td>
+                                            <td>${{totalPrice}}</td>
+                                            <td><a href="/profile-orders-view-more/{{_id}}" class="btn-small d-block">View</a></td>
+                                        </tr>  
+                                        {{/each}}
+                                    </tbody>
                                 </table>
+
                             </div>
                         </div>
                     </div>
@@ -61,4 +84,15 @@
         </div>
     </div>
 </section>
+
 {{>foot-user}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/dataTables.bootstrap4.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.3/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>

@@ -62,6 +62,10 @@ Handlebars.registerHelper('or', function (a, b, options) {
   }
 });
 
+Handlebars.registerHelper('multiply', function(a, b) {
+  return a * b;
+});
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   res.render('users/page-404')

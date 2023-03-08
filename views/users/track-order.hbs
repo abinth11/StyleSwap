@@ -9,25 +9,74 @@
 		href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 	<title>Document</title>
 	<link rel="stylesheet" href="/css/main.css">
-	<div class="container" style="height: 80vh;">
-		<div class="row pt-50 d-flex align-items-center justify-content-center" style="">
-			<div class="status-box" style="width: 400px;">
-				<ul class="list-unstyled">
-					<li class="status_line step-completed " style="font-size: 22px;"><span>Order Placed</span> </li>
-					<li class="status_line status-li step-completed"><span>Order Confirmed</span></li>
-					<li class="status_line  status-li current-status" ><span>Shipped</span></li>
-					<li class="status_line  status-li"><span>Out for delivery</span></li>
-					<li class="status_line  status-li"><span>Complete</span></li>
-				</ul>
+	<section>
+		<div class="container" style="height: 80vh;">
+			<div class="row pt-50 d-flex align-items-center justify-content-center" style="">
+				<div class="status-box ps-5" style="">
 
+					<ul class="list-unstyled" id="status-list">
+						<li class="status_line" style="font-size: 22px;" data-status="placed"><span>Order Placed</span>
+							{{statusDates.placed}}</li>
+						<li class="status_line status-li" data-status="confirmed"><span>Order Confirmed</span>
+							{{statusDates.confirmed}}</li>
+						<li class="status_line status-li" data-status="shipped"><span>Shipped</span>
+							{{statusDates.shipped}}
+						</li>
+						<li class="status_line status-li " data-status="delivery"><span>Out for delivery
+								{{statusDates.delivery}}</span></li>
+						<li class="status_line status-li" data-status="completed"><span>Completed</span>
+							{{statusDates.completed}}</li>
+						<input type="hidden" value="{{orderStatus}}">
+					</ul>
+				</div>
 			</div>
+<div class="pt-10 mt-25 d-flex" style="margin-left: -3.4em; border-radius: 4px;">
+  <button class="btn-cancel me-1" >Return</button>
+  <button class="btn-help ms-1">Need Help</button>
+</div>
+
 
 		</div>
 
-	</div>
-
+	</section>
 	</body>
 
 </html>
+<script>
+	const statusLines = document.querySelectorAll("#status-list .status_line");
 
-</div>
+	function updateStatusColors(currentStatusIndex) {
+		for (let i = 0; i < statusLines.length; i++) {
+			if (i < currentStatusIndex) {
+				statusLines[i].style.color = "green";
+			} else if (i === currentStatusIndex) {
+				statusLines[i].style.color = "orange";
+			} else {
+				statusLines[i].style.color = "#ccc";
+			}
+		}
+	}
+
+	const orderStatus = document.querySelector("input[type=hidden]").value;
+	let currentStatusIndex = -1;
+	for (let i = 0; i < statusLines.length; i++) {
+		if (statusLines[i].getAttribute("data-status") === orderStatus) {
+			currentStatusIndex = i;
+			break;
+		}
+	}
+	updateStatusColors(currentStatusIndex);
+
+	let index = 0;
+	const interval = setInterval(function () {
+		if (index > currentStatusIndex) {
+			clearInterval(interval);
+			return;
+		}
+
+		updateStatusColors(index);
+
+		index++;
+	}, 200);
+
+</script>

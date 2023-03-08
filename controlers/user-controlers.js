@@ -139,7 +139,7 @@ module.exports = {
     const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
     const cartItems = await userHelpers.getcartProducts(req.session.user._id)
     // console.log(cartItems);
-    const cartId = cartItems._id
+    const cartId = cartItems?._id
     res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId })
   },
   addToCartGet: (req, res) => {
@@ -171,22 +171,24 @@ module.exports = {
     res.render('users/shop-checkout', { user: req.session.user, cartItems, address })
   },
   proceedToCheckOutPost: async (req, res) => {
-    console.log(req.body)
     const products = await userHelpers.getAllProductsUserCart(req.body.userId)
+    let pro
+    products ? pro = products.products : pro = []
     let totalPrice = 0
-    if (products.length > 0) {
+    if (pro.length) {
       totalPrice = await userHelpers.findTotalAmout(req.body.userId)
     }
     userHelpers.placeOrders(req.body, products, totalPrice).then((response) => {
-      console.log(response)
+      // console.log(response)
       const insertedOrderId = response.insertedId
+      // userHelpers.createStatusCollection(insertedOrderId)
       if (req.body.payment_method === 'cod') {
         res.json({ statusCod: true })
       } else if (req.body.payment_method === 'razorpay') {
         const total = totalPrice?.total
         console.log(total)
         userHelpers.getRazorpay(insertedOrderId, total).then((response) => {
-          console.log(response)
+          // console.log(response)
           res.json(response)
         })
         console.log('razorpay selected')
@@ -296,9 +298,9 @@ module.exports = {
     res.render('users/user-profile/user-dashboard', { user: req.session.user })
   },
   userProfileOrders: async (req, res) => {
-    const odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
+    const odr = await userHelpers.getOrdersProfile(req.session.user._id)
     const orders = adminHelpers.ISO_to_Normal_Date(odr)
-    console.log(orders)
+    console.log(odr)
     res.render('users/user-profile/user-orders', { orders })
   },
   userProfileTrackOrders: (req, res) => {
@@ -349,8 +351,18 @@ module.exports = {
       res.redirect('/profile-change-password')
     }
   },
-  trackOrders: (req, res) => {
-    res.render('users/track-order')
+  trackOrders: async (req, res) => {
+    // console.log(req.params.id)
+    const orderStatus = await userHelpers.getOrderStatus(req.params.id)
+    const statusDates = await userHelpers.getStatusDates(req.params.id)
+    // const address = await userHelpers.getAddressforTrackingPage(req.params.id)
+    console.log(statusDates)
+    res.render('users/track-order', { orderStatus, statusDates })
+  },
+  viewMoreProducts: async (req, res) => {
+    const orderedProductsWithSameId = await userHelpers.getProductsWithSameId(req.params.id)
+    console.log(orderedProductsWithSameId)
+    res.render('users/view-more-orders', { orderedProductsWithSameId })
   },
   userLogout: (req, res) => {
     req.session.user = null

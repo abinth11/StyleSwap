@@ -4,7 +4,7 @@
     <main class="main-wrap">
 {{>admin-header}}
         <section class="content-main">
-            <form  enctype="multipart/form-data" id="add-product-3">
+            <form  enctype="multipart/form-data" id="add-product-3" >
                 <div class="row">
                     <div class="col-9">
                         <div class="content-header">
@@ -15,7 +15,7 @@
 
                                 <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to
                                     draft</button>
-                                <button class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
+                                <button class="btn btn-md rounded font-sm hover-up"  type="submit">Publish</button>
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                                 
 
                                  <div class="mb-4">
-                                    <select class="form-select" name="product_status">
+                                    <select class="form-select" name="product_status" id="category">
                                         {{#each category}}
                                         <option id="category">{{category_name}}</option>
                                         {{/each}}

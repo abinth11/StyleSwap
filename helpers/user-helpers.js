@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const { ObjectId } = require('mongodb')
 const Razorpay = require('razorpay')
 const { response } = require('express')
+const { resolve } = require('path')
 module.exports = {
   regisUserUser: (userData) => {
     userData.active = true
@@ -93,8 +94,8 @@ module.exports = {
             email: userData.email
           }
         }).then((data) => {
-        resolve(data)
-      })
+          resolve(data)
+        })
     })
   },
   addNewAddress: (address) => {
@@ -163,8 +164,8 @@ module.exports = {
               {
                 $inc: { 'products.$.quantity': 1 }
               }).then(() => {
-              resolve()
-            })
+                resolve()
+              })
         } else {
           db.get().collection(collection.CART_COLLECTION).updateOne({ userId: ObjectId(userId) }, {
             $push: {
@@ -243,16 +244,16 @@ module.exports = {
           {
             $pull: { products: { item: ObjectId(productId) } }
           }).then(() => {
-          resolve({ removed: true })
-        })
+            resolve({ removed: true })
+          })
       } else {
         db.get().collection(collection.CART_COLLECTION)
           .findOneAndUpdate({ _id: ObjectId(cartId), 'products.item': ObjectId(productId) },
             {
               $inc: { 'products.$.quantity': count }
             }).then((response) => {
-            resolve({ status: true })
-          })
+              resolve({ status: true })
+            })
       }
     })
   },
@@ -263,8 +264,8 @@ module.exports = {
         {
           $pull: { products: { item: ObjectId(productId) } }
         }).then(() => {
-        resolve({ removed: true })
-      })
+          resolve({ removed: true })
+        })
     })
   },
   findTotalAmout: (userId) => {
@@ -307,7 +308,7 @@ module.exports = {
         }
       ]
       ).toArray()
-      console.log(totalAmout)
+      // console.log(totalAmout)
       resolve(totalAmout[0])
     })
   },
@@ -427,7 +428,7 @@ module.exports = {
         userId: ObjectId(orderInfo.userId),
         name: orderInfo.name,
         mobile: orderInfo.mobile,
-        deliveryAddressId: ObjectId(orderInfo.address),
+        deliveryAddressId: ObjectId(orderInfo.deliveryAddress),
         paymentMethod: orderInfo.payment_method,
         totalPrice: totalPrice?.total,
         orderStatus,
@@ -442,6 +443,18 @@ module.exports = {
         db.get().collection(collection.CART_COLLECTION).deleteOne({ userId: ObjectId(orderInfo.userId) }).then((response) => {
           resolve(resp)
         })
+      })
+    })
+  },
+  createStatusCollection: (orderId) => {
+    return new Promise((resolve, reject) => {
+      const key = 'placed'
+      const now = new Date()
+      const dateString = now.toDateString() // e.g. "Sun Mar 07 2023"
+      const status = { [key]: dateString, orderId }
+      db.get().collection(collection.ORDER_SATUS).insertOne(status).then((reponse) => {
+        console.log(response)
+        resolve(reponse)
       })
     })
   },
@@ -479,7 +492,7 @@ module.exports = {
       if (hmac === paymentInfo['payment[razorpay_signature']) {
         resolve()
       } else {
-        reject({ error:'Payment failed' })
+        reject({ error: 'Payment failed' })
       }
     })
   },
@@ -603,6 +616,103 @@ module.exports = {
       } else {
         resolve({ passwordNotUpdated: true })
       }
+    })
+  },
+  getOrderStatus: (orderId) => {
+    // console.log(orderId)
+    return new Promise(async (resolve, reject) => {
+      const orders = await db.get().collection(collection.ORDER_COLLECTION).find({ _id: ObjectId(orderId) }).toArray()
+      // console.log(orders)
+      resolve(orders[0].status)
+    })
+  },
+  getStatusDates: (orderId) => {
+    return new Promise(async (resolve, reject) => {
+      const dates = await db.get().collection(collection.ORDER_SATUS).findOne({ orderId: orderId })
+      resolve(dates)
+    })
+  },
+  getAddressforTrackingPage: (orderId) => {
+    console.log(orderId)
+    return new Promise(async (resolve, reject) => {
+      const deliveryAddress = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+        {
+          $match: {
+            _id: ObjectId(orderId)
+          }
+        },
+        {
+          $lookup: {
+            from: collection.ADDRESS_COLLECTION,
+            localField: 'deliveryAddressId',
+            foreignField: '_id',
+            as: 'address'
+          }
+        }
+        // {
+        //   $unwind: '$address'
+        // },
+        // {
+        //   $project: {
+        //     name: 1,
+        //     mobile: 1,
+        //     address: {
+        //       $concat: [
+        //         '$address.address',
+        //         ', ',
+        //         '$address.locality',
+        //         ', ',
+        //         '$address.city',
+        //         ', ',
+        //         '$address.state',
+        //         ', ',
+        //         '$address.pincode'
+        //       ]
+        //     }
+        //   }
+        // }
+      ]).toArray()
+      console.log(deliveryAddress)
+    })
+  },
+  getOrdersProfile: async (orderId) => {
+    const orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: ObjectId(orderId) }).toArray()
+    return orders
+  },
+  getProductsWithSameId: (orderId) => {
+    return new Promise(async (resolve, reject) => {
+      const products = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+        {
+          $match: {
+            _id: ObjectId(orderId)
+          }
+        },
+        {
+          $unwind: '$products'
+        },
+        {
+          $project: {
+            proId: '$products.item',
+            quantity: '$products.quantity'
+          }
+        },
+        {
+          $lookup: {
+            from: collection.PRODUCT_COLLECTION,
+            localField: 'proId',
+            foreignField: '_id',
+            as: 'products'
+          }
+        },
+        {
+          $project: {
+            proId: 1,
+            quantity: 1,
+            products: { $arrayElemAt: ['$products', 0] }
+          }
+        }
+      ]).toArray()
+      resolve(products)
     })
   }
 }

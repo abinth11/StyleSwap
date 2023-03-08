@@ -9,7 +9,7 @@ const warrantyEl = document.querySelector('#product_warranty')
 const returnEl = document.querySelector('#product_return')
 const quantityEl = document.querySelector('#product_quantity')
 const categoryEl = document.querySelector('#category')
-const deliveryEl = document.querySelector('#product-cat')
+// const deliveryEl = document.querySelector('#product-cat')
 
 const form = document.querySelector('#add-product-3')
 
@@ -106,12 +106,13 @@ const checkDescription = () => {
 }
 const checkPrice = () => {
   let valid = false
-  const min = 1; const max = 20
-  const price = priceEl.value.trim()
+  let price = priceEl.value.trim()
+  price = parseInt(price)
+  console.log(price)
   if (!isRequired(price)) {
     showError(priceEl, 'price cannot be blank.')
-  } else if (!isBetween(price.length, min, max)) {
-    showError(priceEl, 'Invalid price')
+  } else if (typeof price !== 'number' || isNaN(price)) {
+    showError(priceEl, 'Price must be a number')
   } else {
     showSuccess(priceEl)
     valid = true
@@ -175,23 +176,23 @@ const checkCategory = () => {
   }
   return valid
 }
-const checkDelivery = () => {
-  let valid = false
-  const deliveryOptions = document.getElementsByName('delivery')
-  let isAtLeastOneSelected = false
-  for (let i = 0; i < deliveryOptions.length; i++) {
-    if (deliveryOptions[i].checked) {
-      isAtLeastOneSelected = true
-      break
-    }
-  }
-  if (!isAtLeastOneSelected) {
-    showError(deliveryEl, 'this field cannot be blank.')
-  } else {
-    valid = true
-  }
-  return valid
-}
+// const checkDelivery = () => {
+//   let valid = false
+//   const deliveryOptions = document.getElementsByName('delivery')
+//   let isAtLeastOneSelected = false
+//   for (let i = 0; i < deliveryOptions.length; i++) {
+//     if (deliveryOptions[i].checked) {
+//       isAtLeastOneSelected = true
+//       break
+//     }
+//   }
+//   if (!isAtLeastOneSelected) {
+//     showError(deliveryEl, 'this field cannot be blank.')
+//   } else {
+//     valid = true
+//   }
+//   return valid
+// }
 
 const isRequired = value => value !== ''
 const isBetween = (length, min, max) => !(length < min || length > max)
@@ -220,47 +221,6 @@ const showSuccess = (input) => {
   const error = formField.querySelector('small')
   error.textContent = ''
 }
-
-form.addEventListener('submit', function (e) {
-  // prevent the form from submitting
-  e.preventDefault()
-
-  // validate fields
-  const isTitleValid = checkTitle()
-  const isSkuValid = checkSku()
-  const isColorValid = checkColor()
-  const isSizeValid = checkSize()
-  const isBrandValid = checkBrand()
-  const isDescriptionValid = checkDescription()
-  const isPriceValid = checkPrice()
-  const isWarrantyValid = checkWarranty()
-  const isReturnValid = checkReturn()
-  const isQuantityValid = checkQuantity()
-  const isCategoryValid = checkCategory()
-  const isDeliveryValid = checkDelivery()
-
-  const isFormValid = isTitleValid && isSkuValid &&
-  isColorValid && isSizeValid && isBrandValid && isDescriptionValid &&
-  isPriceValid && isWarrantyValid && isReturnValid && isQuantityValid &&
-  isCategoryValid
-  // submit to the server if the form is valid
-  if (isFormValid) {
-    console.log('form is valid')
-    $.ajax({
-      type: 'POST',
-      url: '/admin/addProduct3',
-      data: $('#add-product-3').serialize(),
-      success: (response) => {
-        location.reload()
-        //   if(response.addressFromCheckOut){
-        //     location.href='/proceed-to-checkout'
-        //   }else if(response.addressFromProfile){
-        //     location.href='/profile-address'
-        //   }
-      }
-    })
-  }
-})
 
 const debounce = (fn, delay = 500) => {
   let timeoutId
@@ -321,3 +281,38 @@ form.addEventListener('input', debounce(function (e) {
     //   break
   }
 }))
+
+form.addEventListener('submit', function (e) {
+  // prevent the form from submitting
+  e.preventDefault()
+
+  // validate fields
+  const isTitleValid = checkTitle()
+  const isSkuValid = checkSku()
+  const isColorValid = checkColor()
+  const isSizeValid = checkSize()
+  const isBrandValid = checkBrand()
+  const isDescriptionValid = checkDescription()
+  const isPriceValid = checkPrice()
+  const isWarrantyValid = checkWarranty()
+  const isReturnValid = checkReturn()
+  const isQuantityValid = checkQuantity()
+  const isCategoryValid = checkCategory()
+
+  const isFormValid = isTitleValid && isSkuValid &&
+    isColorValid && isSizeValid && isBrandValid && isDescriptionValid &&
+    isPriceValid && isWarrantyValid && isReturnValid && isQuantityValid &&
+    isCategoryValid
+
+  // submit to the server if the form is valid
+  if (isFormValid) {
+    console.log('form is valid')
+    $.ajax({
+      type: 'POST',
+      url: '/admin/addProduct3',
+      data: $('#add-product-3').serialize(),
+      success: (response) => {
+      }
+    })
+  }
+})

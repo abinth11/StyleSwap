@@ -113,7 +113,7 @@
                                     <div class="product-extra-link2">
                                         <button type="submit" class="button button-add-to-cart">Add to cart</button>
                                         <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                        <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shopping-bag-add"></i></a>
                                     </div>
                                 </div>
                                 <ul class="product-meta font-xs color-grey mt-50">
@@ -419,9 +419,10 @@
                                                 <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                             </div>
                                             <div class="product-extra-link2">
-                                                <button type="submit" class="button button-add-to-cart">Add to cart</button>
+                                                {{!-- <a href="/proceed-to-checkout" class="button button-add-to-cart">Buy</a> --}}
+                                                <button  class="button button-add-to-cart" onclick="buyNow('{{product._id}}')">Buy now</button>
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shopping-bag-add"></i></a>
                                             </div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">

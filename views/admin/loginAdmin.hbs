@@ -22,7 +22,7 @@
 
 <body>
     <main>
-       
+
         <section class="content-main mt-80 mb-80  pt-80">
             <div class="card mx-auto card-login ">
                 <div class="card-body ">
@@ -34,12 +34,14 @@
                     {{/if}}
 
                     <h4 class="card-title mb-4">Sign in</h4>
-                    <form action="/admin/adminLogin" method="post">
+                    <form id="signIn">
                         <div class="mb-3">
-                            <input class="form-control" placeholder="Email or phone" type="text" name="email">
+                            <input class="form-control" placeholder="Email or phone" type="text" name="email" id="email">
+                            <small class="text-danger error-msg ms-1 pt-2"></small>
                         </div> <!-- form-group// -->
                         <div class="mb-3">
-                            <input class="form-control" placeholder="Password" type="password" name="password">
+                            <input class="form-control" placeholder="Password" type="password" name="password" id="password">
+                            <small class="text-danger error-msg ms-1 pt-2"></small>
                         </div> <!-- form-group// -->
                         <div class="mb-3">
                             <a href="#" class="float-end font-sm text-muted">Forgot password?</a>
@@ -76,3 +78,130 @@
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-account-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:33 GMT -->
 
 </html>
+
+   <script>
+        const emailEl = document.querySelector('#email')
+        const passwordEl = document.querySelector('#password')
+
+        const form = document.querySelector('#signIn')
+
+        const checkEmail = () => {
+            let valid = false
+            const email = emailEl.value.trim()
+            if (!isRequired(email)) {
+                showError(emailEl, 'Email cannot be blank.')
+            } else if (!isEmailValid(email)) {
+                showError(emailEl, 'Email is not valid.')
+            } else {
+                showSuccess(emailEl)
+                valid = true
+            }
+            return valid
+        }
+
+        const checkPassword = () => {
+            let valid = false
+
+            const password = passwordEl.value.trim()
+
+            if (!isRequired(password)) {
+                showError(passwordEl, 'Password cannot be blank.')
+            } else {
+                showSuccess(passwordEl)
+                valid = true
+            }
+            return valid
+        }
+
+        const isEmailValid = (email) => {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            return re.test(email)
+        }
+
+        const isPasswordSecure = (password) => {
+            const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+            return re.test(password)
+        }
+
+        const isRequired = value => value !== ''
+
+        const showError = (input, message) => {
+            // get the form-field element
+            const formField = input.parentElement
+            // add the error class
+            formField.classList.remove('success')
+            formField.classList.add('error')
+
+            // show the error message
+            const error = formField.querySelector('small')
+            error.textContent = message
+        }
+
+        const showSuccess = (input) => {
+            // get the form-field element
+            const formField = input.parentElement
+
+            // remove the error class
+            formField.classList.remove('error')
+            formField.classList.add('success')
+
+            // hide the error message
+            const error = formField.querySelector('small')
+            error.textContent = ''
+        }
+
+        form.addEventListener('submit', function (e) {
+            // prevent the form from submitting
+            e.preventDefault()
+
+            // validate fields
+            const isEmailValid = checkEmail()
+            const isPasswordValid = checkPassword()
+
+            const isFormValid = isEmailValid && isPasswordValid
+
+            // submit to the server if the form is valid
+            if (isFormValid) {
+                console.log('form is valid')
+                $.ajax({
+                    type: 'POST',
+                    url: '/admin/adminLogin',
+                    data: $('#signIn').serialize(),
+                    success: (response) => {
+                        console.log(response)
+                        if (response.status) {
+                            location.href = '/admin/dashboard'
+                        } else {
+                            location.href = '/admin'
+                        }
+                    }
+                })
+            }
+        })
+
+        const debounce = (fn, delay = 500) => {
+            let timeoutId
+            return (...args) => {
+                // cancel the previous timer
+                if (timeoutId) {
+                    clearTimeout(timeoutId)
+                }
+                // setup a new timer
+                timeoutId = setTimeout(() => {
+                    fn.apply(null, args)
+                }, delay)
+            }
+        }
+
+        form.addEventListener('input', debounce(function (e) {
+            switch (e.target.id) {
+                case 'email':
+                    checkEmail()
+                    break
+                case 'password':
+                    checkPassword()
+                    break
+            }
+        }))
+
+    </script>

@@ -2,6 +2,7 @@ const db = require('../config/connection')
 const collection = require('../config/collections')
 const objectId = require('mongodb').ObjectId
 const { ORDER_COLLECTION } = require('../config/collections')
+const { response } = require('express')
 module.exports = {
   adminLogin: (adminInfo) => {
     return new Promise(async (resolve, reject) => {
@@ -215,14 +216,30 @@ module.exports = {
     return orders
   },
   changeOrderStatus: (orderInfo) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const { orderId, currentStatus, newStatus } = orderInfo
+      const order = await db.get().collection(collection.ORDER_COLLECTION).find({_id: objectId(orderId) }).toArray();
       db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(orderId) },
         {
           $set: {
             status: newStatus
           }
         }).then((response) => {
+        const now = new Date()
+        const dateString = now.toDateString() // e.g. "Sun Mar 07 2023"
+        const timeString = now.toLocaleTimeString() // e.g. "2:37:42 PM"
+        const dateTimeString = `${timeString} ${dateString}` // e.g. "Sun Mar 07 2023 2:37:42 PM"
+        const key = `${newStatus}`
+        const status = { [key]: dateTimeString, orderId }
+        if (order) {
+          db.get().collection(collection.ORDER_SATUS).updateOne({ orderId: orderId }, {
+            $set: {
+              [key]: dateTimeString
+            }
+          }, { upsert: true })
+        } else {
+          db.get().collection(collection.ORDER_SATUS).insertOne({ status })
+        }
         resolve(response)
       })
     })
@@ -253,10 +270,9 @@ module.exports = {
             address: { $arrayElemAt: ['$address', 0] }
           }
         }
-
       ]).toArray()
       resolve(userDetails[0])
-      // console.log(userDetails);
+      // console.log(userDetails)
     })
   }
   // searchUsers:(name)=>{

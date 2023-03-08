@@ -10,22 +10,30 @@
                 <p>Lorem ipsum dolor sit amet.</p>
             </div>
             <div>
-                <input type="text" placeholder="Search order ID" class="form-control bg-white" id="searchInput">
+                {{!-- <input type="text" onchange="filterTableRows()" placeholder="Search..." class="form-control"
+                    id="searchInput"> --}}
             </div>
         </div>
         <div class="card mb-4">
             <header class="card-header">
                 <div class="row gx-3">
                     <div class="col-lg-4 col-md-6 me-auto">
-                        <input type="text" placeholder="Search..." class="form-control">
+                        <input type="text" oninput="filterTableRows()" placeholder="Search..." class="form-control"
+                            id="searchInput">
                     </div>
                     <div class="col-lg-2 col-6 col-md-3">
-                        <select class="form-select">
+                        <select class="form-select" id="statusSelect" onchange="filterTableByStatus()">
                             <option>Status</option>
-                            <option>Active</option>
-                            <option>Disabled</option>
-                            <option>Show all</option>
+                            <option value="all">Show all</option>
+                            <option value="placed">Placed</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="delivery">Out for delivery</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="shipped">Shipped</option>
                         </select>
+
+
                     </div>
                     <div class="col-lg-2 col-6 col-md-3">
                         <select class="form-select">
@@ -65,15 +73,27 @@
                                 <td><span class="badge rounded-pill alert-warning">Pending</span></td>
                                 {{else if (eq status "cancelled")}}
                                 <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
+                                {{else if (eq status "confirmed")}}
+                                <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
+                                {{else if (eq status "shipped")}}
+                                <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
+                                {{else if (eq status "delivery")}}
+                                <td><span class="badge rounded-pill alert-info">Delivery</span></td>
+                                {{else if (eq status "completed")}}
+                                <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
                                 {{/if}}
                                 <td class="">
                                     <div class="status-buttons">
-                                        <button class="placed btn-outline-success btn-sm text-center" title="Placed"
+                                        <button class="btn btn-outline-success btn-sm btn-success" title="Placed"
                                             onclick="changeOrderStatus('{{_id}}','{{status}}','placed')">P</button>
-                                        <button class="pending btn-outline-warning btn-sm text-center" title="Pending"
-                                            onclick="changeOrderStatus('{{_id}}','{{status}}','pending')">P</button>
-                                        <button class="cancelled btn-outline-danger btn-sm text-center" title="Cancell"
-                                            onclick="changeOrderStatus('{{_id}}','{{status}}','cancelled')">C</button>
+                                        <button class="btn btn-outline-warning btn-sm" title="Confirm"
+                                            onclick="changeOrderStatus('{{_id}}','{{status}}','confirmed')">C</button>
+                                        <button class="btn btn-outline-primary btn-sm" title="Shipped"
+                                            onclick="changeOrderStatus('{{_id}}','{{status}}','shipped')">S</button>
+                                        <button class="btn btn-outline-info btn-sm" title="Delivery"
+                                            onclick="changeOrderStatus('{{_id}}','{{status}}','delivery')">D</button>
+                                        <button class="btn btn-outline-secondary btn-sm" title="Completed"
+                                            onclick="changeOrderStatus('{{_id}}','{{status}}','completed')">C</button>
                                     </div>
                                 </td>
                                 <td class="">
@@ -90,19 +110,20 @@
         <div class="pagination-area mt-15 mb-50">
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-start">
-                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                    <li class="page-item active"><a class="page-link" href="#" data-page="1">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#" data-page="2">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#" data-page="3">3</a></li>
                     <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                    <li class="page-item"><a class="page-link" href="#"><i
+                    <li class="page-item"><a class="page-link" href="#" data-page="16">16</a></li>
+                    <li class="page-item"><a class="page-link" href="#" id="nextPage"><i
                                 class="material-icons md-chevron_right"></i></a></li>
                 </ul>
             </nav>
+
         </div>
+
     </section> <!-- content-main end// -->
     {{>admin-footer}}
-
     <script>
         const changeOrderStatus = (orderId, currStatus, newStatus) => {
             console.log(orderId, currStatus, newStatus)
@@ -133,23 +154,138 @@
             })
         }
 
+        function filterTableRows() {
+            var searchInput = document.getElementById("searchInput");
+            var filter = searchInput.value.toUpperCase();
+            var table = document.getElementById("userTable");
+            var rows = table.getElementsByTagName("tr");
+            var numRows = rows.length;
+            var headerRow = rows[0];
+            var dataRows = [];
 
-        const searchInput = document.getElementById('searchInput');
-        const userTable = document.getElementById('userTable');
+            for (var i = 1; i < numRows; i++) {
+                dataRows.push(rows[i]);
+            }
 
-        searchInput.addEventListener('input', function () {
-            const searchString = searchInput.value.toLowerCase();
-            console.log(searchString)
-            const rows = userTable.querySelectorAll('tbody tr');
-            console.log(rows)
+            var matchingRows = [];
 
-            rows.forEach(row => {
-                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                if (name.includes(searchString)) {
-                    row.style.display = 'table-row';
+            for (var i = 0; i < dataRows.length; i++) {
+                var nameCell = dataRows[i].getElementsByTagName("td")[1];
+                if (nameCell) {
+                    var name = nameCell.textContent || nameCell.innerText;
+                    if (name.toUpperCase().indexOf(filter) > -1) {
+                        matchingRows.push(dataRows[i]);
+                    }
+                }
+            }
+
+            headerRow.style.display = (matchingRows.length > 0) ? "" : "none";
+
+            for (var i = 0; i < dataRows.length; i++) {
+                dataRows[i].style.display = "none";
+            }
+
+            var noMatchesRow = table.querySelector("tr:last-of-type");
+            if (noMatchesRow && noMatchesRow.cells[0].innerHTML === "No matches found.") {
+                table.deleteRow(-1);
+            }
+
+            if (matchingRows.length === 0) {
+                noMatchesRow = table.insertRow(-1);
+                var noMatchesCell = noMatchesRow.insertCell(0);
+                noMatchesCell.colSpan = numRows;
+                noMatchesCell.innerHTML = "No matches found.";
+            } else {
+                for (var i = 0; i < matchingRows.length; i++) {
+                    matchingRows[i].style.display = "";
+                }
+            }
+        }
+
+        function filterTableByStatus() {
+            var selectBox = document.getElementById("statusSelect");
+            var status = selectBox.options[selectBox.selectedIndex].value;
+            var rows = document.querySelectorAll("#userTable tbody tr");
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var rowStatus = row.querySelector("td:nth-child(6)").textContent.trim().toLowerCase();
+                if (status === "all" || rowStatus === status.toLowerCase()) {
+                    row.style.display = "";
                 } else {
-                    row.style.display = 'none';
+                    row.style.display = "none";
+                }
+            }
+        }
+
+
+
+        // Get the pagination links and next button
+        var paginationLinks = document.querySelectorAll(".page-link");
+        var nextPageButton = document.getElementById("nextPage");
+
+        // Hide all but the first 5 rows initially
+        var rows = document.querySelectorAll("#userTable tbody tr");
+        for (var i = 5; i < rows.length; i++) {
+            rows[i].style.display = "none";
+        }
+
+        // Add event listeners to the pagination links
+        for (var i = 0; i < paginationLinks.length; i++) {
+            paginationLinks[i].addEventListener("click", function (event) {
+                event.preventDefault();
+
+                // Get the selected page number
+                var page = parseInt(event.target.getAttribute("data-page"));
+
+                // Highlight the active page
+                var activePage = document.querySelector(".page-item.active");
+                if (activePage) {
+                    activePage.classList.remove("active");
+                }
+                event.target.parentNode.classList.add("active");
+
+                // Show the rows for the selected page and hide the others
+                var rows = document.querySelectorAll("#userTable tbody tr");
+                for (var j = 0; j < rows.length; j++) {
+                    if (j >= (page - 1) * 5 && j < page * 5) {
+                        rows[j].style.display = "";
+                    } else {
+                        rows[j].style.display = "none";
+                    }
                 }
             });
+        }
+
+        // Add event listener to the next button
+        nextPageButton.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            // Get the current active page
+            var activePage = document.querySelector(".page-item.active");
+            var currentPage = parseInt(activePage.querySelector(".page-link").getAttribute("data-page"));
+
+            // Get the next page number
+            var nextPage = currentPage + 1;
+            if (nextPage > 16) {
+                nextPage = 16;
+            }
+
+            // Highlight the next page
+            activePage.classList.remove("active");
+            var nextPageLink = document.querySelector(".page-link[data-page='" + nextPage + "']");
+            nextPageLink.parentNode.classList.add("active");
+
+            // Show the rows for the next page and hide the others
+            var rows = document.querySelectorAll("#userTable tbody tr");
+            for (var i = 0; i < rows.length; i++) {
+                if (i >= (nextPage - 1) * 5 && i < nextPage * 5) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
         });
+
+
+
     </script>

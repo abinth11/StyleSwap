@@ -224,7 +224,10 @@ input[type=radio]{
   font-size: 22px;
   padding-top: 2.6em;
 }
- .status-box ul li.step-completed:before{
+.status-box ul li:nth-child(5) span:after{
+  box-shadow: 0 20px 1px 20px white;
+}
+ /* .status-box ul li.step-completed:before{
  background:grey;
 }
 .status-box ul li.step-completed span:after{
@@ -234,14 +237,91 @@ input[type=radio]{
   color: grey;
  }
 
-.status-box ul li:nth-child(5) span:after{
-  box-shadow: 0 20px 1px 20px white;
-}
- 
 .status-box ul li.current-status span{
    color: rgb(11, 186, 11);
 }
 .status-box ul li.current-status span:after{
   background-color:rgb(11, 186, 11);
-}
+} */
 
+	.btn-danger {
+			background-color: #ff2d55;
+			border: none;
+			color: white;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			border-radius: 5px;
+			transition: all 0.3s ease;
+			cursor: pointer;
+		}
+		.btn-danger:hover {
+			background-color: #ff3b69;
+			transform: scale(1.05);
+		}
+		.btn-danger:focus {
+			outline: none;
+		}
+		.btn-danger:active {
+			background-color: #ff2d55;
+			transform: scale(0.95);
+		}
+
+    .btn-cancel {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .btn-cancel:hover {
+      background-color: #c82333;
+      transform: scale(1.05);
+    }
+    
+    .btn-cancel:focus {
+      outline: none;
+    }
+    
+    .btn-cancel:active {
+      background-color: #b71c1c;
+      transform: scale(0.95);
+    }
+    
+    .btn-help {
+      background-color: #007bff;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .btn-help:hover {
+      background-color: #0069d9;
+      transform: scale(1.05);
+    }
+    
+    .btn-help:focus {
+      outline: none;
+    }
+    
+    .btn-help:active {
+      background-color: #0062cc;
+      transform: scale(0.95);
+    }
+    

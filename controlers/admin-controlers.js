@@ -10,18 +10,21 @@ module.exports = {
     }
   },
   adminLoginPost: (req, res) => {
+    console.log(req.body)
     adminHelpers.adminLogin(req.body).then((response) => {
       if (response.status) {
         req.session.adminLoggedIn = true
         req.session.admin = response.admin
-        console.log(req.session)
-        res.redirect('/admin/dashboard')
+        res.json({ status: true })
+        // res.redirect('/admin/dashboard')
       } else if (response.notExist) {
         req.session.loginError = 'Invalid email address...'
-        res.redirect('/admin')
+        res.json({ status: false })
+        // res.redirect('/admin')
       } else {
         req.session.loginError = 'Incorrect password '
-        res.redirect('/admin')
+        res.json({ status: false })
+        // res.redirect('/admin')
       }
     })
   },
@@ -47,7 +50,6 @@ module.exports = {
   },
   addProducts3Get: (req, res) => {
     adminHelpers.getAllCategories().then((category) => {
-      console.log(category)
       res.render('admin/add-product3', { category, productAddingErr: req.session.addProductError, productAddingSucc: req.session.addProductSuccess, Prostatus: req.session.addProductStatus })
       req.session.addProductError = null
       req.session.addProductStatus = null
@@ -55,11 +57,12 @@ module.exports = {
     })
   },
   addProducts3Post: (req, res) => {
+    console.log('post called for product add')
     const errors = validationResult(req)
     req.session.addProductError = errors.errors
     if (req.session.addProductError.length === 0) {
       adminHelpers.addProducts(req.body).then((data) => {
-        const image = req.files.product_image
+        const image = req.files?.product_image
         const objId = data.insertedId
         image.mv('./public/images/' + objId + '.jpg', err => {
           if (!err) {
@@ -196,8 +199,8 @@ module.exports = {
     const products = await adminHelpers.getCurrentProducts(req.params.id)
     const address = await adminHelpers.getallUserAddress(req.params.id)
     orders = orders[0]
-    console.log(orders)
-    console.log(products)
+    // console.log(orders)
+    // console.log(products)
     console.log(address)
     res.render('admin/view-more-orders', { orders, products, address })
   },
