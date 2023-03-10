@@ -25,6 +25,35 @@
         </div>
     </div> --}}
 
+    {{!-- Modal for add to cart --}}
+
+      <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                    <p class="">Added to cart</p>
+                    <div class="row justify-content-center " style="margin-top: 1.5em;">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-success btn-sm btn-sm-custom">
+                                <i class="fas fa-shopping-cart " style="margin-bottom: 3px;"></i>
+                            </button>
+
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-success btn-sm btn-sm-custom">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick view -->
     <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -496,7 +525,7 @@
                                             <span class="old-price">$245.8</span>
                                         </div>
                                         <div class="product-action-1 show">
-                                            <button aria-label=" Cart" class="action-btn hover-up" onclick="addToCart('{{_id}}')"><i class="fi-rs-shopping-bag-add"></i></button>
+<button id="myModalButton" aria-label=" Cart" class="action-btn hover-up" onclick="addToCart('{{_id}}'); hideModalButton()" data-bs-toggle="modal" data-bs-target="#myModal"><i class="fi-rs-shopping-bag-add"></i></button>
                                             {{!-- <a aria-label="Cart" class="action-btn hover-up" href="/add-to-cart/{{_id}}"><i class="fi-rs-shopping-bag-add"></i></a> --}}
                                         </div>
                                     </div>

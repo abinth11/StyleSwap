@@ -5,6 +5,7 @@ const { ObjectId } = require('mongodb')
 const Razorpay = require('razorpay')
 const { response } = require('express')
 const { resolve } = require('path')
+let sotoredAmount
 module.exports = {
   regisUserUser: (userData) => {
     userData.active = true
@@ -467,7 +468,7 @@ module.exports = {
         key_secret: 'gvv1U5AQUyqTxHzkwWIt8M7x'
       })
       const options = {
-        amount: totalAmout, // amount in paise
+        amount: totalAmout * 100, // amount in paise
         currency: 'INR',
         receipt: '' + orderId,
         payment_capture: 1
@@ -487,13 +488,94 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const crypto = require('crypto')
       let hmac = crypto.createHmac('sha256', 'gvv1U5AQUyqTxHzkwWIt8M7x')
-      hmac.update(paymentInfo['payment[razorpay_order_id'] + '|' + paymentInfo['payment[razorpay_signature'])
+      hmac.update(paymentInfo['order[razorpay_order_id]'] + '|' + paymentInfo['order[razorpay_payment_id]'])
       hmac = hmac.digest('hex')
-      if (hmac === paymentInfo['payment[razorpay_signature']) {
-        resolve()
+      if (hmac === paymentInfo['order[razorpay_signature]']) {
+        resolve({ status: true })
       } else {
-        reject({ error: 'Payment failed' })
+        reject(new Error('Payment failed'))
       }
+    })
+  },
+  getPaypal: (orderId, totalAmout) => {
+    console.log(totalAmout)
+    if (!sotoredAmount) {
+      sotoredAmount = totalAmout
+    }
+    console.log(sotoredAmount)
+    return new Promise((resolve, reject) => {
+      const paypal = require('paypal-rest-sdk')
+      paypal.configure({
+        mode: 'sandbox', // sandbox or live
+        client_id: 'AZbtScy5kHVy2okDeiOijRVYzqnbrZxhWn_cz9tzKWyxpHmrwV-Qza41PSQ86MNy3azk8n4bDFCofo4t',
+        client_secret: 'EIK1cBzckhi8oSS5ZqyhjkYExGq5nbcwPQD-zB3u2QefLmoOu9Q4qVwBqItgOaJ4IHuhuKuybsaIlIKX'
+      })
+      const createPaymentJson = {
+        intent: 'sale',
+        payer: {
+          payment_method: 'paypal'
+        },
+        redirect_urls: {
+          return_url: 'http://localhost:3000/view-orders',
+          cancel_url: 'http://localhost:3000/proceed-to-checkout'
+        },
+        transactions: [{
+          item_list: {
+            items: [{
+              name: 'item',
+              sku: 'item',
+              price: sotoredAmount,
+              currency: 'USD',
+              quantity: 1
+            }]
+          },
+          amount: {
+            currency: 'USD',
+            total: sotoredAmount
+          },
+          description: 'This is the payment description.'
+        }]
+      }
+      paypal.payment.create(createPaymentJson, function (error, payment) {
+        if (error) {
+          console.log(error)
+        } else {
+          console.log(payment)
+          const paypalResponse = { paypal: true }
+          for (let i = 0; i < payment.links.length; i++) {
+            if (payment.links[i].rel === 'approval_url') {
+              const redirectUrl = payment.links[i].href
+              paypalResponse.reUrl = redirectUrl
+              resolve(paypalResponse)
+            }
+          }
+        }
+      })
+    })
+  },
+  verifyPaypal: () => {
+    return new Promise((resolve, reject) => {
+      const paypal = require('paypal-rest-sdk')
+      const executePaymentJson = {
+        payer_id: 'Appended to redirect url',
+        transactions: [{
+          amount: {
+            currency: 'INR',
+            total: '1'
+          }
+        }]
+      }
+      const paymentId = 'PAYMENT id created in previous step'
+      paypal.payment.execute(paymentId, executePaymentJson, function (error, payment) {
+        if (error) {
+          console.log(error.response)
+          throw error
+        } else {
+          console.log('Get Payment Response')
+          console.log(JSON.stringify(payment))
+          resolve(payment)
+        }
+      })
     })
   },
   changePaymentStatus: (orderId) => {

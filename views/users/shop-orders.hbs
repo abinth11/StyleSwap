@@ -1,5 +1,6 @@
 ﻿{{>head-user}}
 {{>user-header}}
+
 <div class="mobile-header-active mobile-header-wrapper-style">
     <div class="mobile-header-wrapper-inner">
         <div class="mobile-header-top">
@@ -212,21 +213,21 @@
                                     </td>
                                     <td class="price" data-title="Price"><span>${{product.product_price}}</span>
                                     </td>
-                                     {{#if (eq status "placed")}}
-                                <td><span class="badge rounded-pill alert-success">Placed</span></td>
-                                {{else if (eq status "pending")}}
-                                <td><span class="badge rounded-pill alert-warning">Pending</span></td>
-                                {{else if (eq status "cancelled")}}
-                                <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
-                                {{else if (eq status "confirmed")}}
-                                <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
-                                {{else if (eq status "shipped")}}
-                                <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
-                                {{else if (eq status "delivery")}}
-                                <td><span class="badge rounded-pill alert-info">Delivery</span></td>
-                                {{else if (eq status "completed")}}
-                                <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
-                                {{/if}}
+                                    {{#if (eq status "placed")}}
+                                    <td><span class="badge rounded-pill alert-success">Placed</span></td>
+                                    {{else if (eq status "pending")}}
+                                    <td><span class="badge rounded-pill alert-warning">Pending</span></td>
+                                    {{else if (eq status "cancelled")}}
+                                    <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
+                                    {{else if (eq status "confirmed")}}
+                                    <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
+                                    {{else if (eq status "shipped")}}
+                                    <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
+                                    {{else if (eq status "delivery")}}
+                                    <td><span class="badge rounded-pill alert-info">Delivery</span></td>
+                                    {{else if (eq status "completed")}}
+                                    <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
+                                    {{/if}}
 
                                     <td>
                                         <div>
@@ -258,8 +259,11 @@
             </div>
         </div>
     </section>
+
 </main>
+
 {{>foot-user}}
+
 <script>
     const cancellOrder = (orderId) => {
         $.ajax({

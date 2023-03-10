@@ -3,7 +3,6 @@ const router = express.Router()
 const userControler = require('../controlers/user-controlers')
 const userValidation = require('../validation/userValidation')
 const sessionChecker = require('../middlewares/session-checks')
-const userHelpers = require('../helpers/user-helpers')
 
 /* GET home page. */
 router.get('/', userControler.userHome)
@@ -47,6 +46,11 @@ router.put('/remove-cart-product', userControler.removeProducts)
 router.route('/proceed-to-checkout')
   .get(sessionChecker.isUserExist, userControler.proceedToCheckOutGet)
   .post(userControler.proceedToCheckOutPost)
+
+// order placed landing page
+router.get('/order-placed-landing', userControler.orderPlacedLanding)
+// buy now for each products
+router.get('/buyNow', userControler.proceedToCheckOutGet)
 
 // for verifying the payment
 router.post('/verify-payment', userControler.verifyRazorpayPayment)

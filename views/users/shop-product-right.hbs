@@ -982,3 +982,17 @@
         
     </main>
   {{>foot-user}}
+  <script>
+    const buyNow(productId) => {
+        $.ajax({
+            url:"/buy-now",
+            dataType:{
+                productId:productId
+            },
+            method:'get'
+            success: (res) =>{
+                console.log('product buyed successfully')
+            }
+        })
+    }
+  </script>

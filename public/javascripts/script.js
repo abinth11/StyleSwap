@@ -27,8 +27,13 @@ const changeQuantity = (cartId, productId, userId, count) => {
     },
     success: (response) => {
       if (response.removed) {
-        alert('Product reomove from your cart')
-        location.reload()
+        // Show the "Product Removed" modal
+        $('#productRemovedModal').modal('show')
+
+        // Reload the page after the modal is closed
+        $('#productRemovedModal').on('hidden.bs.modal', function () {
+          location.reload()
+        })
       } else {
         document.getElementById(productId).innerHTML = quantity + count
         const total = response.total.total
@@ -61,7 +66,7 @@ const deleteCartProduct = (cartId, productId) => {
     },
     success: (response) => {
       if (response.removed) {
-        alert('deleted item')
+        // alert('deleted item')
         location.reload()
       } else {
         alert('deletion failed')
@@ -71,4 +76,26 @@ const deleteCartProduct = (cartId, productId) => {
       alert(err)
     }
   })
+}
+
+// Add this function to your JavaScript file or script tag on the page
+function hideModalButton() {
+  setTimeout(function () {
+    $('#myModal').modal('hide')
+  }, 3000)
+}
+
+function setModalData(cartId, productId) {
+  // Set the value of the input fields to the cartId and productId values
+  document.getElementById('cartIdToDelete').value = cartId
+  document.getElementById('productIdToDelete').value = productId
+}
+
+function deleteCartProductModal() {
+  // Get the cartId and productId values from the input fields
+  const cartId = document.getElementById('cartIdToDelete').value
+  const productId = document.getElementById('productIdToDelete').value
+
+  // Delete the cart product using the cartId and productId values
+  deleteCartProduct(cartId, productId)
 }

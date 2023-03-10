@@ -136,8 +136,8 @@ module.exports = {
   },
   userCartGet: async (req, res) => {
     // let cartItems = await userHelpers.getcartProducts(req.session?.user._id)
-    const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
     const cartItems = await userHelpers.getcartProducts(req.session.user._id)
+    const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
     // console.log(cartItems);
     const cartId = cartItems?._id
     res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId })
@@ -179,19 +179,22 @@ module.exports = {
       totalPrice = await userHelpers.findTotalAmout(req.body.userId)
     }
     userHelpers.placeOrders(req.body, products, totalPrice).then((response) => {
-      // console.log(response)
+      console.log(req.body)
       const insertedOrderId = response.insertedId
-      // userHelpers.createStatusCollection(insertedOrderId)
+      const total = totalPrice?.total
       if (req.body.payment_method === 'cod') {
         res.json({ statusCod: true })
       } else if (req.body.payment_method === 'razorpay') {
-        const total = totalPrice?.total
-        console.log(total)
         userHelpers.getRazorpay(insertedOrderId, total).then((response) => {
-          // console.log(response)
           res.json(response)
         })
         console.log('razorpay selected')
+      } else if (req.body.payment_method === 'paypal') {
+        console.log('paypal selected')
+        userHelpers.getPaypal(insertedOrderId, total).then((response) => {
+          console.log(response)
+          res.json(response)
+        })
       } else {
         res.json({ status: false })
       }
@@ -199,17 +202,20 @@ module.exports = {
       // console.log(response)
     })
   },
+  orderPlacedLanding: (req, res) => {
+    res.render('users/order-placed-landing')
+  },
   verifyRazorpayPayment: (req, res) => {
     console.log(req.body)
     userHelpers.verifyRazorpayPayments(req.body).then((response) => {
       console.log(response)
-      userHelpers.changePaymentStatus(req.body['order[reciept]']).then(() => {
+      userHelpers.changePaymentStatus(req.body['payment[receipt]']).then(() => {
         console.log('Payment is success')
         res.json({ status: true })
       })
     }).catch((err) => {
       console.log(err)
-      res.json({ status: false, errorMsg: 'Payment failed' })
+      res.json({ status: false, errorMsg: err })
     })
   },
   getUserOrders: async (req, res) => {

@@ -222,7 +222,7 @@ input[type=radio]{
 }
 .status-li{
   font-size: 22px;
-  padding-top: 2.6em;
+  padding-top: 2.3em;
 }
 .status-box ul li:nth-child(5) span:after{
   box-shadow: 0 20px 1px 20px white;
@@ -325,3 +325,9 @@ input[type=radio]{
       transform: scale(0.95);
     }
     
+/* modal tick mark */
+.btn-sm-custom {
+  width: 50px;
+  height: 35px;
+}
+
