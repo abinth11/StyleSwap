@@ -1,185 +1,192 @@
 {{>admin-head-html}}
-    <div class="screen-overlay"></div>
+<div class="screen-overlay"></div>
 {{>admin-navbar}}
-    <main class="main-wrap">
-{{>admin-header}}
-        <section class="content-main">
-            <form  enctype="multipart/form-data" id="add-product-3" >
-                <div class="row">
-                    <div class="col-9">
-                        <div class="content-header">
-                            <h2 class="content-title">Add New Product</h2>
+<main class="main-wrap">
+    {{>admin-header}}
+    <section class="content-main">
+        <form action="/admin/addProduct3" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Product</h2>
 
 
-                            <div>
+                        <div>
 
-                                <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to
-                                    draft</button>
-                                <button class="btn btn-md rounded font-sm hover-up"  type="submit">Publish</button>
-                            </div>
+                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to
+                                draft</button>
+                            <button class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
                         </div>
                     </div>
-                    {{!-- <div class="row" style="width: 75%;"> --}}
-                        {{#if Prostatus}}
-                        <p class="alert alert-success mt-3 text-center" style="width: 75%;">{{productAddingSucc}}</p>
-                        {{else if productAddingErr.0.msg }}
-                        <p class="alert alert-danger mt-3 text-center" style="width: 75%;">{{ productAddingErr.0.msg}}
-                        </p>
-                        {{else}}
-                        {{/if}}
-                        {{!--
-                    </div> --}}
-                    <div class="col-lg-6">
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <div class="mb-4">
-                                    <label for="product_title" class="form-label">Product title</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_title"
-                                        name="product_title">
-                                        <small class="error-msg text-danger"></small>
-                                </div>
-                                <div class="row gx-3">
-                                    <div class="col-md-4  mb-3">
-                                        <label for="product_sku" class="form-label">SKU</label>
-                                        <input type="text" placeholder="Type here" class="form-control" id="product_sku"
-                                            name="product_sku">
-                                            <small class="error-msg text-danger"></small>
-                                    </div>
-                                    <div class="col-md-4  mb-3">
-                                        <label for="product_color" class="form-label">Color</label>
-                                        <input type="text" placeholder="Type here" class="form-control"
-                                            id="product_color" name="product_color">
-                                            <small class="error-msg text-danger"></small>
-                                    </div>
-                                    <div class="col-md-4  mb-3">
-                                        <label for="product_size" class="form-label">Size</label>
-                                        <input type="text" placeholder="Type here" class="form-control"
-                                            id="product_size" name="product_size">
-                                            <small class="error-msg text-danger"></small>
-                                    </div>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="product_brand" class="form-label">Brand</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_brand"
-                                        name="product_brand">
-                                        <small class="error-msg text-danger"></small>
-                                </div>
-                            </div>
-                        </div> <!-- card end// -->
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <div>
-                                    <label class="form-label">Description</label>
-                                    <textarea placeholder="Type here" class="form-control" rows="4"
-                                        name="product_description" id="description"></textarea>
-                                        <small class="error-msg text-danger"></small>
-                                </div>
-                            </div>
-                        </div> <!-- card end// -->
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <h4>Media</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="input-upload">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView">
-                                            <input class="form-control" type="file" name="product_image" required onchange="viewImage(event)">
-                                        </div>
-                                    </div>
-                                </div> <!-- card end// -->
-                            </div>
-                        </div> <!-- card end// -->
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <div class="mb-4">
-                                    <label class="form-label">Price</label>
-                                    <input type="text" placeholder="Type here" class="form-control"
-                                        name="product_price" id="product_price">
-                                        <small class="error-msg text-danger"></small>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Warranty</label>
-                                    <input type="text" placeholder="Type here" class="form-control"
-                                        name="product_warranty" id="product_warranty">
-                                        <small class="error-msg text-danger"></small>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Return</label>
-                                    <input type="text" placeholder="Type here" class="form-control"
-                                        name="product_return" id="product_return">
-                                        <small class="error-msg text-danger"></small>
-                                </div>
-                                 <div class="mb-4">
-                                    <label class="form-label">Quantity</label>
-                                    <input type="number" placeholder="Type here" class="form-control"
-                                        name="product_quantity" id="product_quantity">
-                                        <small class="error-msg text-danger"></small>
-                                </div>
-                               
-                                <div class="mb-4">
-                                    <label class="form-label">Status</label>
-                                    <select class="form-select" name="product_status">
-                                        <option>Published</option>
-                                        <option>Draft</option>
-                                    </select>
-                                    <small class="error-msg text-danger"></small>
-                                </div>
-                                <hr>
-                                <h5 class="mb-3">Categories</h5>
-                                
-
-                                 <div class="mb-4">
-                                    <select class="form-select" name="product_status" id="category">
-                                        {{#each category}}
-                                        <option id="category">{{category_name}}</option>
-                                        {{/each}}
-                                        
-                                    </select>
-                                    <small class="error-msg text-danger"></small>
-                                </div>
-                            </div>
-                            <h5 class="mb-3 ms-3">Delivery Options</h5>
-                            <div class="form-check ms-4">
-                                <input class="form-check-input " type="checkbox" value="" id="product-cat-1" name="delivery">
-                                
-                                <label class="form-check-label" for="product-cat"> Cash On Delivery </label>
-                            </div>
-                            <div class="form-check ms-4">
-                                <input class="form-check-input" type="checkbox" value="" id="product-cat-2" name="delivery">
-                                <label class="form-check-label" for="product-cat-1">Credit Card </label>
-                            </div>
-                            <div class="form-check ms-4">
-                                <input class="form-check-input" type="checkbox" value="" id="product-cat-3" name="delivery">
-                                <label class="form-check-label" for="product-cat-2">Debit Card </label>
-                            </div>
-                            <div class="form-check ms-4">
-                                <input class="form-check-input" type="checkbox" value="" id="product-cat-4" name="delivery">
-                                <label class="form-check-label" for="product-cat-3"> UPI </label>
-                            </div>
-                            <div class="form-check ms-4">
-                                <input class="form-check-input" type="checkbox" value="" id="product-cat-5" name="delivery">
-                                <label class="form-check-label" for="product-cat-4"> Bank Transfer </label>
-                            </div>
-                            <div class="form-check ms-4">
-                                <input class="form-check-input" type="checkbox" value="" id="product-cat-6" name="delivery">
-                                <label class="form-check-label" for="product-cat-5"> Paypal </label>
-                            </div>
-                            <small class="error-msg text-danger"></small>
-
-                            
-                        </div> <!-- card end// -->
-                    </div>
                 </div>
-            </form>
-        </section>
-{{>admin-footer}}
-<script src="/frontendValidations/addProduct.js" type="text/javascript"></script>
-<script>
-    function viewImage(event){
-        document.getElementById('imgView').src=URL.createObjectURL(event.target.files[0])
-    }
-</script>
+                {{!-- <div class="row" style="width: 75%;"> --}}
+                    {{#if Prostatus}}
+                    <p class="alert alert-success mt-3 text-center" style="width: 75%;">{{productAddingSucc}}</p>
+                    {{else if productAddingErr.0.msg }}
+                    <p class="alert alert-danger mt-3 text-center" style="width: 75%;">{{ productAddingErr.0.msg}}
+                    </p>
+                    {{else}}
+                    {{/if}}
+                    {{!--
+                </div> --}}
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label for="product_title" class="form-label">Product title</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="product_title"
+                                    name="product_title">
+                                <small class="error-msg text-danger"></small>
+                            </div>
+                            <div class="row gx-3">
+                                <div class="col-md-4  mb-3">
+                                    <label for="product_sku" class="form-label">SKU</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_sku"
+                                        name="product_sku">
+                                    <small class="error-msg text-danger"></small>
+                                </div>
+                                <div class="col-md-4  mb-3">
+                                    <label for="product_color" class="form-label">Color</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_color"
+                                        name="product_color">
+                                    <small class="error-msg text-danger"></small>
+                                </div>
+                                <div class="col-md-4  mb-3">
+                                    <label for="product_size" class="form-label">Size</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_size"
+                                        name="product_size">
+                                    <small class="error-msg text-danger"></small>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_brand" class="form-label">Brand</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="product_brand"
+                                    name="product_brand">
+                                <small class="error-msg text-danger"></small>
+                            </div>
+                        </div>
+                    </div> <!-- card end// -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" class="form-control" rows="4"
+                                    name="product_description" id="description"></textarea>
+                                <small class="error-msg text-danger"></small>
+                            </div>
+                        </div>
+                    </div> <!-- card end// -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Media</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-upload">
+                                        <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView">
+                                        <input class="form-control" type="file" name="product_image" required
+                                            onchange="viewImage(event)">
+                                    </div>
+                                </div>
+                            </div> <!-- card end// -->
+                        </div>
+                    </div> <!-- card end// -->
+                </div>
+                <div class="col-lg-3">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="form-label">Price</label>
+                                <input type="text" placeholder="Type here" class="form-control" name="product_price"
+                                    id="product_price">
+                                <small class="error-msg text-danger"></small>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Warranty</label>
+                                <input type="text" placeholder="Type here" class="form-control" name="product_warranty"
+                                    id="product_warranty">
+                                <small class="error-msg text-danger"></small>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Return</label>
+                                <input type="text" placeholder="Type here" class="form-control" name="product_return"
+                                    id="product_return">
+                                <small class="error-msg text-danger"></small>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" placeholder="Type here" class="form-control"
+                                    name="product_quantity" id="product_quantity">
+                                <small class="error-msg text-danger"></small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Status</label>
+                                <select class="form-select">
+                                    <option>Published</option>
+                                    <option>Draft</option>
+                                </select>
+                                <small class="error-msg text-danger"></small>
+                            </div>
+                            <hr>
+                            <h5 class="mb-3">Categories</h5>
+
+
+                            <div class="mb-4">
+                                <select class="form-select" name="product_category" id="category">
+                                    {{#each category}}
+                                    <option id="category">{{category_name}}</option>
+                                    {{/each}}
+
+                                </select>
+                                <small class="error-msg text-danger"></small>
+                            </div>
+                        </div>
+                        <h5 class="mb-3 ms-3">Delivery Options</h5>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input " type="checkbox" value="Cash On Delivery" id="product-cat-1"
+                                name="delivery[]">
+                            <label class="form-check-label" for="product-cat-1"> Cash On Delivery </label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" type="checkbox" value="Credit Card" id="product-cat-2"
+                                name="delivery[]">
+                            <label class="form-check-label" for="product-cat-2">Credit Card </label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" type="checkbox" value="Debit Card" id="product-cat-3"
+                                name="delivery[]">
+                            <label class="form-check-label" for="product-cat-3">Debit Card </label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" type="checkbox" value="UPI" id="product-cat-4"
+                                name="delivery[]">
+                            <label class="form-check-label" for="product-cat-4"> UPI </label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" type="checkbox" value="Bank Transfer" id="product-cat-5"
+                                name="delivery[]">
+                            <label class="form-check-label" for="product-cat-5"> Bank Transfer </label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" type="checkbox" value="Paypal" id="product-cat-6"
+                                name="delivery[]">
+                            <label class="form-check-label" for="product-cat-6"> Paypal </label>
+                        </div>
+
+                        <small class="error-msg text-danger"></small>
+
+
+                    </div> <!-- card end// -->
+                </div>
+            </div>
+        </form>
+    </section>
+    {{>admin-footer}}
+    <script src="/frontendValidations/addProduct.js" type="text/javascript"></script>
+    <script>
+        function viewImage(event) {
+            document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+        }
+    </script>

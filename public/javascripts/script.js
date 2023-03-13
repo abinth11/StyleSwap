@@ -99,3 +99,27 @@ function deleteCartProductModal() {
   // Delete the cart product using the cartId and productId values
   deleteCartProduct(cartId, productId)
 }
+
+const setOrderCancellData = (orderId) => {
+  document.getElementById('orderId').value = orderId
+}
+const cancellOrderModal = () => {
+  const orderId = document.getElementById('orderId').value
+  const reason = document.getElementById('reason').value
+  cancellOrder(orderId, reason)
+}
+
+const cancellOrder = (orderId, reason) => {
+  console.log(reason)
+  $.ajax({
+    url: '/cancell-order',
+    data: {
+      orderId,
+      reason
+    },
+    method: 'post',
+    success: (res) => {
+      location.reload()
+    }
+  })
+}

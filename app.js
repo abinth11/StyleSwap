@@ -1,22 +1,24 @@
-let createError = require('http-errors');
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
-let db = require('./config/connection')
-let hbs = require('express-handlebars')
-let Handlebars = require('handlebars')
-let fileUpload = require('express-fileupload')
-let session = require('express-session');
-let nocache = require('nocache');
-require('dotenv').config();
-let usersRouter = require('./routes/users');
-let adminRouter = require('./routes/admin');
-let app = express();
+const createError = require('http-errors')
+const express = require('express')
+const path = require('path')
+const cookieParser = require('cookie-parser')
+const logger = require('morgan')
+const db = require('./config/connection')
+const hbs = require('express-handlebars')
+const Handlebars = require('handlebars')
+const fileUpload = require('express-fileupload')
+const session = require('express-session')
+const nocache = require('nocache')
+require('dotenv').config()
+const usersRouter = require('./routes/users')
+const adminRouter = require('./routes/admin')
+const app = express()
+const cron = require('node-cron')
+const adminHelpers = require('./helpers/admin-helpers')
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'hbs')
 app.engine('hbs', hbs.engine({
   extname: 'hbs',
   defaultLayout: 'layout',
@@ -24,63 +26,72 @@ app.engine('hbs', hbs.engine({
   partialsDir: __dirname + '/views/partials/'
 }))
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(fileUpload());
-const oneDay = 1000 * 60 * 60 * 24;
+app.use(logger('dev'))
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(cookieParser())
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(fileUpload())
+const oneDay = 1000 * 60 * 60 * 24
 app.use(session({
-  secret: "eppudraa",
+  secret: 'eppudraa',
   saveUninitialized: true,
   cookie: { maxAge: oneDay },
   resave: false
-}));
-app.use(nocache());
+}))
+app.use(nocache())
 
-app.use('/', usersRouter);
-app.use('/admin', adminRouter);
+app.use('/', usersRouter)
+app.use('/admin', adminRouter)
 
 db.connect((err) => {
-  err ? console.log("Connection failed") : console.log("successfully connected to the database");
+  err ? console.log('Connection failed') : console.log('successfully connected to the database')
 })
 
-Handlebars.registerHelper("inc", function (value, options) {
-  return parseInt(value) + 1;
-});
+Handlebars.registerHelper('inc', function (value, options) {
+  return parseInt(value) + 1
+})
 
 Handlebars.registerHelper('eq', function (a, b) {
-  return a === b;
-});
+  return a === b
+})
 
 Handlebars.registerHelper('or', function (a, b, options) {
   if (a || b) {
-    return options.fn(this);
+    return options.fn(this)
   } else {
-    return options.inverse(this);
+    return options.inverse(this)
   }
-});
+})
 
-Handlebars.registerHelper('multiply', function(a, b) {
-  return a * b;
-});
+Handlebars.registerHelper('multiply', function (a, b) {
+  return a * b
+})
+
+Handlebars.registerHelper('-', function (a, b) {
+  return a - b
+})
+
+// cron library to run the offer query every day
+cron.schedule('0 0 * * *', () => {
+  adminHelpers.checkOfferExpiration()
+})
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   res.render('users/page-404')
   // next(createError(404));
-});
+})
 
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.message = err.message
+  res.locals.error = req.app.get('env') === 'development' ? err : {}
 
   // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+  res.status(err.status || 500)
+  res.render('error')
+})
 
-module.exports = app;
+module.exports = app

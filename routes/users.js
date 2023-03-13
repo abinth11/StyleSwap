@@ -48,7 +48,7 @@ router.route('/proceed-to-checkout')
   .post(userControler.proceedToCheckOutPost)
 
 // order placed landing page
-router.get('/order-placed-landing', userControler.orderPlacedLanding)
+router.get('/order-placed-landing', sessionChecker.isUserExist, userControler.orderPlacedLanding)
 // buy now for each products
 router.get('/buyNow', userControler.proceedToCheckOutGet)
 
@@ -92,6 +92,9 @@ router.post('/delete-address', userControler.deleteAddress)
 
 // track order
 router.get('/track-order/:id', userControler.trackOrders)
+
+// return order
+router.post('/return-products', userControler.returnProducts)
 
 // User logout
 router.get('/logoutUser', userControler.userLogout)

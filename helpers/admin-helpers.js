@@ -26,6 +26,7 @@ module.exports = {
   },
   addProducts: (product) => {
     product.product_price = parseInt(product.product_price)
+    product.offerPrice = parseInt(product.product_price)
     return new Promise((resolve, reject) => {
       product.isActive = true
       db.get().collection(collection.PRODUCT_COLLECTION).insertOne(product).then((data) => {
@@ -125,8 +126,8 @@ module.exports = {
             product_description: catData.product_description
           }
         }).then((response) => {
-        resolve(response)
-      })
+          resolve(response)
+        })
     })
   },
   deleteProductCategory: (catId) => {
@@ -218,30 +219,30 @@ module.exports = {
   changeOrderStatus: (orderInfo) => {
     return new Promise(async (resolve, reject) => {
       const { orderId, currentStatus, newStatus } = orderInfo
-      const order = await db.get().collection(collection.ORDER_COLLECTION).find({_id: objectId(orderId) }).toArray();
+      const order = await db.get().collection(collection.ORDER_COLLECTION).find({ _id: objectId(orderId) }).toArray();
       db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(orderId) },
         {
           $set: {
             status: newStatus
           }
         }).then((response) => {
-        const now = new Date()
-        const dateString = now.toDateString() // e.g. "Sun Mar 07 2023"
-        const timeString = now.toLocaleTimeString() // e.g. "2:37:42 PM"
-        const dateTimeString = `${timeString} ${dateString}` // e.g. "Sun Mar 07 2023 2:37:42 PM"
-        const key = `${newStatus}`
-        const status = { [key]: dateTimeString, orderId }
-        if (order) {
-          db.get().collection(collection.ORDER_SATUS).updateOne({ orderId: orderId }, {
-            $set: {
-              [key]: dateTimeString
-            }
-          }, { upsert: true })
-        } else {
-          db.get().collection(collection.ORDER_SATUS).insertOne({ status })
-        }
-        resolve(response)
-      })
+          const now = new Date()
+          const dateString = now.toDateString() // e.g. "Sun Mar 07 2023"
+          const timeString = now.toLocaleTimeString() // e.g. "2:37:42 PM"
+          const dateTimeString = `${timeString} ${dateString}` // e.g. "Sun Mar 07 2023 2:37:42 PM"
+          const key = `${newStatus}`
+          const status = { [key]: dateTimeString, orderId }
+          if (order) {
+            db.get().collection(collection.ORDER_SATUS).updateOne({ orderId: orderId }, {
+              $set: {
+                [key]: dateTimeString
+              }
+            }, { upsert: true })
+          } else {
+            db.get().collection(collection.ORDER_SATUS).insertOne({ status })
+          }
+          resolve(response)
+        })
     })
   },
   getallUserAddress: (orderId) => {
@@ -273,6 +274,85 @@ module.exports = {
       ]).toArray()
       resolve(userDetails[0])
       // console.log(userDetails)
+    })
+  },
+  getReturnedOrders: () => {
+    return new Promise(async (resolve, reject) => {
+      const returnedOrders = db.get().collection(collection.ORDER_COLLECTION).find({ returnReason: { $exists: true } }).toArray()
+      resolve(returnedOrders)
+    })
+  },
+  changeReturnStatus: (returnInfo) => {
+    return new Promise((resolve, reject) => {
+      db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(returnInfo.orderId) },
+        {
+          $set: {
+            returnStatus: returnInfo.newStatus
+          }
+        }).then((response) => {
+          resolve(response)
+        })
+    })
+  },
+  setPickUpDate: (pickupInfo) => {
+    return new Promise((resolve, reject) => {
+      db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(pickupInfo.orderId) }, {
+        $set: {
+          pickupDate: pickupInfo.pickupdate
+        }
+      }, { upsert: true })
+      resolve(response)
+    })
+  },
+  addOffer: (offerInfo) => {
+    return new Promise(async (resolve, reject) => {
+      const product = await db.get().collection(collection.PRODUCT_COLLECTION).updateMany(
+        { product_category: offerInfo.category },
+        [
+          {
+            $addFields: {
+              offerPrice: {
+                $subtract: [
+                  '$product_price',
+                  { $multiply: ['$product_price', offerInfo.offer_percentage / 100] }
+                ]
+              }
+            }
+          },
+          {
+            $set: {
+              offerPrice: '$offerPrice',
+              offerEndDate: offerInfo.end_date
+            }
+          }
+        ]
+      )
+      console.log(product)
+      resolve()
+    })
+  },
+  checkOfferExpiration: () => {
+    return new Promise(async (resolve, reject) => {
+      const moment = require('moment')
+      // Calculate the date when the offer ends
+      const offerEndDate = moment().subtract(1, 'days').toDate()
+      // Convert offerEndDate to a string in the format 'YYYY-MM-DD'
+      const isoOfferEndDate = moment(offerEndDate).format('YYYY-MM-DD')
+      // Update the documents whose offer_end_date is in the past
+      const result = await db.get().collection(collection.PRODUCT_COLLECTION).updateMany(
+        { offerEndDate: { $lt: isoOfferEndDate } },
+        {
+          $unset: {
+            offerEndDate: ''
+          },
+          $set: {
+            offerPrice: '$product_price',
+            product_price: '$product_price'
+          }
+        }
+      )
+      resolve()
+      console.log(result)
     })
   }
   // searchUsers:(name)=>{

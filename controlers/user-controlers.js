@@ -138,7 +138,7 @@ module.exports = {
     // let cartItems = await userHelpers.getcartProducts(req.session?.user._id)
     const cartItems = await userHelpers.getcartProducts(req.session.user._id)
     const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
-    // console.log(cartItems);
+    console.log(cartItems)
     const cartId = cartItems?._id
     res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId })
   },
@@ -226,7 +226,7 @@ module.exports = {
   },
   cancellOrders: (req, res) => {
     const orderId = req.body.orderId
-    userHelpers.cancellUserOrder(orderId).then((response) => {
+    userHelpers.cancellUserOrder(orderId, req.body.reason).then((response) => {
       console.log(response)
       res.redirect('/view-orders')
     })
@@ -358,17 +358,21 @@ module.exports = {
     }
   },
   trackOrders: async (req, res) => {
-    // console.log(req.params.id)
-    const orderStatus = await userHelpers.getOrderStatus(req.params.id)
+    const order = await userHelpers.getOrderStatus(req.params.id)
     const statusDates = await userHelpers.getStatusDates(req.params.id)
     // const address = await userHelpers.getAddressforTrackingPage(req.params.id)
-    console.log(statusDates)
-    res.render('users/track-order', { orderStatus, statusDates })
+    res.render('users/track-order', { order, statusDates })
   },
   viewMoreProducts: async (req, res) => {
     const orderedProductsWithSameId = await userHelpers.getProductsWithSameId(req.params.id)
     console.log(orderedProductsWithSameId)
     res.render('users/view-more-orders', { orderedProductsWithSameId })
+  },
+  returnProducts: (req, res) => {
+    console.log(req.body)
+    userHelpers.returnProduct(req.body).then((response) => {
+      console.log(response)
+    })
   },
   userLogout: (req, res) => {
     req.session.user = null

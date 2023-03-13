@@ -29,6 +29,7 @@ module.exports = {
     })
   },
   adminDashboard: (req, res) => {
+    adminHelpers.checkOfferExpiration()
     res.render('admin/index')
   },
   addProducts1Get: (req, res) => {
@@ -57,7 +58,7 @@ module.exports = {
     })
   },
   addProducts3Post: (req, res) => {
-    console.log('post called for product add')
+    console.log(req.body)
     const errors = validationResult(req)
     req.session.addProductError = errors.errors
     if (req.session.addProductError.length === 0) {
@@ -199,14 +200,39 @@ module.exports = {
     const products = await adminHelpers.getCurrentProducts(req.params.id)
     const address = await adminHelpers.getallUserAddress(req.params.id)
     orders = orders[0]
-    // console.log(orders)
+    console.log(orders)
     // console.log(products)
-    console.log(address)
     res.render('admin/view-more-orders', { orders, products, address })
   },
   changeProductStatus: (req, res) => {
     adminHelpers.changeOrderStatus(req.body).then((response) => {
       res.redirect('/admin/admin-view-orders')
+      // console.log(response)
+    })
+  },
+  orderReturn: async (req, res) => {
+    const odr = await adminHelpers.getReturnedOrders()
+    const returnOrders = adminHelpers.ISO_to_Normal_Date(odr)
+    res.render('admin/order-return', { returnOrders })
+  },
+  changeReturnStatus: (req, res) => {
+    adminHelpers.changeReturnStatus(req.body).then((response) => {
+      res.json(response)
+      // console.log(response)
+    })
+  },
+  setPickUpDate: (req, res) => {
+    // console.log(req.body)
+    adminHelpers.setPickUpDate(req.body).then((response) => {
+      console.log(response)
+    })
+  },
+  addOffersGet: (req, res) => {
+    res.render('admin/offer-category')
+  },
+  addOffersPost: (req, res) => {
+    console.log(req.body)
+    adminHelpers.addOffer(req.body).then((response) => {
       console.log(response)
     })
   },

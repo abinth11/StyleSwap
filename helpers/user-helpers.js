@@ -378,6 +378,11 @@ module.exports = {
           $unwind: '$product'
         },
         {
+          $addFields: {
+            offerSubtotal: { $multiply: ['$product.offerPrice', '$products.quantity'] }
+          }
+        },
+        {
           $group: {
             _id: {
               cartId: '$_id',
@@ -385,8 +390,10 @@ module.exports = {
             },
             product_title: { $first: '$product.product_title' },
             product_price: { $first: '$product.product_price' },
+            offerPrice: { $first: '$product.offerPrice' },
             quantity: { $sum: '$products.quantity' },
-            subtotal: { $sum: { $multiply: ['$products.quantity', '$product.product_price'] } }
+            subtotal: { $sum: { $multiply: ['$products.quantity', '$product.product_price'] } },
+            offerSubtotal: { $sum: '$offerSubtotal' }
           }
         },
         {
@@ -397,18 +404,22 @@ module.exports = {
                 product_id: '$_id.productId',
                 product_title: '$product_title',
                 product_price: '$product_price',
+                offerPrice: '$offerPrice',
                 quantity: '$quantity',
-                subtotal: '$subtotal'
+                subtotal: '$subtotal',
+                offerSubtotal: '$offerSubtotal'
               }
             },
-            total: { $sum: '$subtotal' }
+            total: { $sum: '$subtotal' },
+            offerTotal: { $sum: '$offerSubtotal' }
           }
         },
         {
           $project: {
             _id: 1,
             products: 1,
-            total: 1
+            total: 1,
+            offerTotal: 1
           }
         }
       ]).toArray()
@@ -638,13 +649,14 @@ module.exports = {
       resolve(addresses)
     })
   },
-  cancellUserOrder: (orderId) => {
+  cancellUserOrder: (orderId, reason) => {
     return new Promise((resolve, reject) => {
       db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: ObjectId(orderId) }, {
         $set: {
-          status: 'cancelled'
+          status: 'cancelled',
+          reasonTocancell: reason
         }
-      }).then((response) => {
+      }, { upsert: true }).then((response) => {
         resolve()
       })
     })
@@ -705,7 +717,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       const orders = await db.get().collection(collection.ORDER_COLLECTION).find({ _id: ObjectId(orderId) }).toArray()
       // console.log(orders)
-      resolve(orders[0].status)
+      resolve(orders[0])
     })
   },
   getStatusDates: (orderId) => {
@@ -795,6 +807,18 @@ module.exports = {
         }
       ]).toArray()
       resolve(products)
+    })
+  },
+  returnProduct: async (returnInfo) => {
+    return new Promise((resolve, reject) => {
+      db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: ObjectId(returnInfo.orderId) }, {
+        $set: {
+          returnReason: returnInfo.reason,
+          returnStatus: 'pending'
+        }
+      }, { upsert: true }).then((response) => {
+        resolve(response)
+      })
     })
   }
 }

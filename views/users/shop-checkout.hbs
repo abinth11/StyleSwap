@@ -532,7 +532,10 @@
             success: (response) => {
                 console.log(response)
                 if (response.statusCod) {
-                    location.href = '/view-orders'
+                     $('#successModal').modal('show')
+                    setTimeout(function () {
+                        location.href = '/order-placed-landing';
+                    }, 3000);
                 } else if (response.id) {
                     getRazorpay(response);
                 } else if (response.paypal) {
@@ -594,13 +597,13 @@
                 if (response.status) {
                     $('#successModal').modal('show')
                     setTimeout(function () {
-                        location.href = '/view-orders';
-                    }, 4000);
+                        location.href = '/order-placed-landing';
+                    }, 3000);
                 } else {
                     $('#failureModal').modal('show');
                     setTimeout(() => {
                         location.href = '/proceed-to-checkout'
-                    }, 4000)
+                    }, 3000)
                 }
             }
         })

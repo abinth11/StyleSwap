@@ -87,9 +87,19 @@ router.get('/view-order-details/:id', adminControler.viewOrderDetails)
 // change status of ordered products
 router.post('/change-product-status', adminControler.changeProductStatus)
 
-router.post('/checkBoxtest', (req, res) => {
-  console.log(req.body)
-})
+// router.post('/checkBoxtest', (req, res) => {
+//   console.log(req.body)
+// })
+
+// order return
+router.get('/order-return', sessionCheck.isAdminExist, adminControler.orderReturn)
+router.post('/change-return-status', adminControler.changeReturnStatus)
+router.post('/set-pick-up-date', adminControler.setPickUpDate)
+
+// offer management
+router.route('/add-offers')
+  .get(sessionCheck.isAdminExist, adminControler.addOffersGet)
+  .post(adminControler.addOffersPost)
 
 // Logout admin
 router.get('/logoutAdmin', adminControler.logoutAdmin)

@@ -158,7 +158,9 @@ input[type=radio]{
 }
 
 .status-box {
-  padding: 60px 0 0;
+  padding-top: 40px;
+  margin-left: 25em;
+  /* padding-left: 40px; */
 
 }
 .status-box ul li span{
