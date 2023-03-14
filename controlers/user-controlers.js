@@ -172,12 +172,14 @@ module.exports = {
   },
   proceedToCheckOutPost: async (req, res) => {
     const products = await userHelpers.getAllProductsUserCart(req.body.userId)
-    let pro
-    products ? pro = products.products : pro = []
+    // console.log(products)
+    // let pro
+    // products ? pro = products.products : pro = []
     let totalPrice = 0
-    if (pro.length) {
+    if (products[0].products.length) {
       totalPrice = await userHelpers.findTotalAmout(req.body.userId)
     }
+    console.log(totalPrice)
     userHelpers.placeOrders(req.body, products, totalPrice).then((response) => {
       console.log(req.body)
       const insertedOrderId = response.insertedId
@@ -221,7 +223,7 @@ module.exports = {
   getUserOrders: async (req, res) => {
     const odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
     const orders = adminHelpers.ISO_to_Normal_Date(odr)
-    // console.log(orders)
+    console.log(orders)
     res.render('users/shop-orders', { orders })
   },
   cancellOrders: (req, res) => {

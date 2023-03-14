@@ -72,6 +72,14 @@ Handlebars.registerHelper('-', function (a, b) {
   return a - b
 })
 
+Handlebars.registerHelper('notNull', function (value, options) {
+  if (value !== null) {
+    return options.fn(this)
+  } else {
+    return options.inverse(this)
+  }
+})
+
 // cron library to run the offer query every day
 cron.schedule('0 0 * * *', () => {
   adminHelpers.checkOfferExpiration()

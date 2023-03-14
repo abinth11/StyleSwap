@@ -1,168 +1,190 @@
 {{>admin-head-html}}
-    <div class="screen-overlay"></div>
+<div class="screen-overlay"></div>
 {{>admin-navbar}}
-    <main class="main-wrap">
-{{>admin-header}}
-        <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Products List</h2>
-                    <p>Lorem ipsum dolor sit amet.</p>
-                </div>
-                <div>
-                    <a href="#" class="btn btn-light rounded font-md">Export</a>
-                    <a href="#" class="btn btn-light rounded  font-md">Import</a>
-                    <a href="/admin/addProduct3" class="btn btn-primary btn-sm rounded">Create new</a>
-                </div>
+<main class="main-wrap">
+    {{>admin-header}}
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Products List</h2>
+                <p>Lorem ipsum dolor sit amet.</p>
             </div>
-            <div class="card mb-4">
-                <header class="card-header">
+            <div>
+                <a href="#" class="btn btn-light rounded font-md">Export</a>
+                <a href="#" class="btn btn-light rounded  font-md">Import</a>
+                <a href="/admin/addProduct3" class="btn btn-primary btn-sm rounded">Create new</a>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <header class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+                        <select class="form-select">
+                            <option selected>All category</option>
+                            <option>Electronics</option>
+                            <option>Clothes</option>
+                            <option>Automobile</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <input type="date" value="02.05.2021" class="form-control">
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <select class="form-select">
+                            <option selected>Status</option>
+                            <option>Active</option>
+                            <option>Disabled</option>
+                            <option>Show all</option>
+                        </select>
+                    </div>
+                </div>
+            </header> <!-- card-header end// -->
+            <div class="card-body">
+                <article class="itemlist">
                     <div class="row align-items-center">
-                        <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-                            <select class="form-select">
-                                <option selected>All category</option>
-                                <option>Electronics</option>
-                                <option>Clothes</option>
-                                <option>Automobile</option>
-                            </select>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price">
+                            <h6>Id</h6>
                         </div>
-                        <div class="col-md-2 col-6">
-                            <input type="date" value="02.05.2021" class="form-control">
+                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
+                            <h6>Product Name</h6>
                         </div>
-                        <div class="col-md-2 col-6">
-                            <select class="form-select">
-                                <option selected>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
-                            </select>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price">
+                            <h6>Price</h6>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-status">
+                            <h6>Status</h6>
+                        </div>
+                        {{!-- <div class="col-lg-1 col-sm-2 col-4 col-date">
+                            <h6>Date</h6>
+                        </div> --}}
+                        <div class="col-lg-2 col-sm-2 col-4 col-action ">
+                            <h6 class="">Actions</h6>
                         </div>
                     </div>
-                </header> <!-- card-header end// -->
-                <div class="card-body">
-                    {{#each products}}
-                    <article class="itemlist">
-                        <div class="row align-items-center">
-                            <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                                <a class="itemside" href="#">
-                                    {{inc @index}}
-                                    <div class=" ms-3 left">
-                                        <img src="/images/{{_id}}.jpg" class="img-sm img-thumbnail" alt="Item">
-                                    </div>
-                                    <div class="info">
-                                        <h6 class="mb-0">{{product_title}}</h6>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>${{product_price}}</span> </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                {{#if isActive}}
-                                <span class="badge rounded-pill alert-success">Active</span>
-                                {{else}}
-                                <span class="badge rounded-pill alert-danger">Disabled</span>
-                                {{/if}}
+                    <div class="row align-items-center">
+                        <!-- existing code here -->
+                    </div>
+                </article>
 
-                            </div>
-                            <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span>02.11.2021</span>
-                            </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                                <a href="/admin/editProductsList/{{_id}}"
-                                    class="btn btn-sm font-sm rounded btn-warning text-white">
-                                    <i class="material-icons md-edit"></i> Edit
-                                </a>
-                                {{#if isActive}}
-                                <a id="disable" class="btn btn-sm font-sm btn-danger rounded"
-                                    onclick="disableEnableProduct('{{_id}}',{{isActive}})">
-                                    <i class="material-icons md-delete_forever"></i><span id="change">Disable</span> 
-                                </a>
-                                {{else}}
-                                <a id="enable" class="btn btn-sm font-sm btn-success rounded"
-                                    onclick="disableEnableProduct('{{_id}}',{{isActive}})">
-                                    <i class="material-icons md-delete_forever"></i> Enable
-                                </a>
-
-                                {{/if}}
-                            </div>
-                        </div> <!-- row .// -->
-                    </article> <!-- itemlist  .// -->
-                    {{/each}}
-                    {{!-- <article class="itemlist">
-                        <div class="row align-items-center">
-                            <div class="col col-check flex-grow-0">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="">
+                {{#each products}}
+                <article class="itemlist">
+                    <div class="row align-items-center">
+                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
+                            <a class="itemside" href="#">
+                                {{inc @index}}
+                                <div class=" ms-3 left">
+                                    <img src="/images/{{_id}}.jpg" class="img-sm img-thumbnail" alt="Item">
                                 </div>
+                                <div class="info">
+                                    <h6 class="mb-0">{{product_title}}</h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>${{product_price}}</span> </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-status">
+                            {{#if isActive}}
+                            <span class="badge rounded-pill alert-success">Active</span>
+                            {{else}}
+                            <span class="badge rounded-pill alert-danger">Disabled</span>
+                            {{/if}}
+
+                        </div>
+                        {{!-- <div class="col-lg-1 col-sm-2 col-4 col-date">
+                            <span>02.11.2021</span>
+                        </div> --}}
+                        <div class="col-lg-2 col-sm-2 col-4 col-action ">
+                            <a href="/admin/editProductsList/{{_id}}"
+                                class="btn btn-sm font-sm rounded btn-warning text-white" title="Edit">
+                                <i class="material-icons md-edit"></i>
+                            </a>
+                            {{#if isActive}}
+                            <a id="disable" class="btn btn-sm font-sm btn-danger rounded"
+                                onclick="disableEnableProduct('{{_id}}',{{isActive}})">
+                                <i class="material-icons md-delete_forever" title="Disable"></i><span
+                                    id="change"></span>
+                            </a>
+                            <a id="disable" class="btn btn-sm font-sm   rounded" href="/admin/add-offers-for-products?id={{_id}}&&price={{product_price}}"
+                                 style="background-color: purple;color: #fff;">
+                                <i class="fas fa-tag "  title="Add offer"></i><span id="change"></span>
+                            </a>
+                            {{else}}
+                            <a id="enable" class="btn btn-sm font-sm btn-success rounded"
+                                onclick="disableEnableProduct('{{_id}}',{{isActive}})" title="Enable">
+                                <i class="fas fa-unlock text-white"></i>
+                            </a>
+                            {{/if}}
+                        </div>
+                    </div> <!-- row .// -->
+                </article> <!-- itemlist  .// -->
+                {{/each}}
+                {{!-- <article class="itemlist">
+                    <div class="row align-items-center">
+                        <div class="col col-check flex-grow-0">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="">
                             </div>
-                            <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                                <a class="itemside" href="#">
-                                    <div class="left">
-                                        <img src="/assets/imgs/items/5.jpg" class="img-sm img-thumbnail" alt="Item">
-                                    </div>
-                                    <div class="info">
-                                        <h6 class="mb-0">Wallet made of leather brown color</h6>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$18.00</span> </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                <span class="badge rounded-pill alert-warning">Archived</span>
-                            </div>
-                            <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span>02.11.2021</span>
-                            </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                                <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                    <i class="material-icons md-edit"></i> Edit
-                                </a>
-                                <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                    <i class="material-icons md-delete_forever"></i> Delete
-                                </a>
-                            </div>
-                        </div> <!-- row .// -->
-                    </article> <!-- itemlist  .// --> --}}
+                        </div>
+                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
+                            <a class="itemside" href="#">
+                                <div class="left">
+                                    <img src="/assets/imgs/items/5.jpg" class="img-sm img-thumbnail" alt="Item">
+                                </div>
+                                <div class="info">
+                                    <h6 class="mb-0">Wallet made of leather brown color</h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$18.00</span> </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-status">
+                            <span class="badge rounded-pill alert-warning">Archived</span>
+                        </div>
+                        <div class="col-lg-1 col-sm-2 col-4 col-date">
+                            <span>02.11.2021</span>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
+                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
+                                <i class="material-icons md-edit"></i> Edit
+                            </a>
+                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
+                                <i class="material-icons md-delete_forever"></i> Delete
+                            </a>
+                        </div>
+                    </div> <!-- row .// -->
+                </article> <!-- itemlist  .// --> --}}
 
 
-                </div> <!-- card-body end// -->
-            </div> <!-- card end// -->
-            <div class="pagination-area mt-30 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i
-                                    class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
-        </section> <!-- content-main end// -->
-        {{>admin-footer}}
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+        <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                    <li class="page-item"><a class="page-link" href="#">02</a></li>
+                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#">16</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><i
+                                class="material-icons md-chevron_right"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </section> <!-- content-main end// -->
+    {{>admin-footer}}
 
-<script>
-    const disableEnableProduct = (productId, isActive) => {
-        $.ajax({
-            url: "/admin/diableAndEnableProduct",
-            data: {
-                productId: productId,
-                isActive: isActive
-            },
-            method: 'post',
-            success: (res) => {
-                location.reload();
-                {{!-- console.log(res)
-                let change = document.getElementById('change').innerHTML
-                console.log(change)
-                if(change == 'disable'){
-                    document.getElementById('change').innerHTML = 'enable';
-                }else{
-                    document.getElementById('change').innerHTML = 'enab';
-                } --}}
-                
-            }
-        })
+    <script>
+        const disableEnableProduct = (productId, isActive) => {
+            $.ajax({
+                url: "/admin/diableAndEnableProduct",
+                data: {
+                    productId: productId,
+                    isActive: isActive
+                },
+                method: 'post',
+                success: (res) => {
+                    location.reload();
+                }
+            })
 
-    }
-</script>
+        }
+      
+    </script>

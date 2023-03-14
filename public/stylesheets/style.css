@@ -332,4 +332,7 @@ input[type=radio]{
   width: 50px;
   height: 35px;
 }
-
+.btn-purple {
+  background-color: purple;
+  color: #fff;
+}

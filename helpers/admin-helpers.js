@@ -306,53 +306,131 @@ module.exports = {
   },
   addOffer: (offerInfo) => {
     return new Promise(async (resolve, reject) => {
-      const product = await db.get().collection(collection.PRODUCT_COLLECTION).updateMany(
-        { product_category: offerInfo.category },
-        [
-          {
-            $addFields: {
-              offerPrice: {
-                $subtract: [
-                  '$product_price',
-                  { $multiply: ['$product_price', offerInfo.offer_percentage / 100] }
-                ]
-              }
-            }
-          },
-          {
-            $set: {
-              offerPrice: '$offerPrice',
-              offerEndDate: offerInfo.end_date
+      const offerExists = await db.get().collection(collection.PRODUCT_COLLECTION).aggregate([
+        {
+          $match: { offerEndDate: { $exists: true }, product_category: offerInfo.category }
+        },
+        {
+          $project: {
+            _id: 1,
+            product_price: 1,
+            offerPrice: 1,
+            offerEndDate: 1,
+            offerStartDate: 1,
+            product_category: 1,
+            offerPercentage: {
+              $multiply: [
+                { $subtract: ["$product_price", "$offerPrice"] },
+                100,
+                { $divide: [1, "$product_price"] }
+              ]
             }
           }
-        ]
-      )
-      console.log(product)
-      resolve()
+        },
+        {
+          $project: {
+            _id: 1,
+            product_price: 1,
+            offerPrice: 1,
+            offerEndDate: 1,
+            offerStartDate: 1,
+            product_category: 1,
+            offerPercentage: { $round: ["$offerPercentage", 2] }
+          }
+        }
+      ]).toArray()
+      if (offerExists.length) {
+        resolve(offerExists)
+      } else {
+        db.get().collection(collection.PRODUCT_COLLECTION).updateMany(
+          { product_category: offerInfo.category },
+          [
+            {
+              $addFields: {
+                offerPrice: {
+                  $subtract: [
+                    '$product_price',
+                    { $multiply: ['$product_price', offerInfo.offer_percentage / 100] }
+                  ]
+                }
+              }
+            },
+            {
+              $set: {
+                offerPrice: '$offerPrice',
+                offerEndDate: offerInfo.end_date,
+                offerStartDate: offerInfo.start_date
+              }
+            }
+          ]
+        ).then((response) => {
+          resolve(response)
+        })
+      }
+    })
+  },
+  replaceOfers: (replaceInfo) => {
+    console.log(replaceInfo)
+    const offerPercentage = parseInt(replaceInfo.offer_percentage)
+    db.get().collection(collection.PRODUCT_COLLECTION).updateMany(
+      { product_category: replaceInfo.category },
+      [
+        {
+          $addFields: {
+            offerPrice: {
+              $subtract: [
+                '$product_price',
+                { $multiply: ['$product_price', offerPercentage / 100] }
+              ]
+            }
+          }
+        },
+        {
+          $set: {
+            offerPrice: '$offerPrice',
+            offerEndDate: replaceInfo.end_date,
+            offerStartDate: replaceInfo.start_date
+          }
+        }
+      ]
+    ).then((response) => {
+      console.log(response)
     })
   },
   checkOfferExpiration: () => {
-    return new Promise(async (resolve, reject) => {
-      const moment = require('moment')
-      // Calculate the date when the offer ends
-      const offerEndDate = moment().subtract(1, 'days').toDate()
-      // Convert offerEndDate to a string in the format 'YYYY-MM-DD'
-      const isoOfferEndDate = moment(offerEndDate).format('YYYY-MM-DD')
-      // Update the documents whose offer_end_date is in the past
-      const result = await db.get().collection(collection.PRODUCT_COLLECTION).updateMany(
-        { offerEndDate: { $lt: isoOfferEndDate } },
-        {
-          $unset: {
-            offerEndDate: ''
-          },
-          $set: {
-            offerPrice: '$product_price',
-            product_price: '$product_price'
-          }
+    const moment = require('moment')
+    // Calculate the date when the offer ends
+    const offerEndDate = moment().subtract(1, 'days').toDate()
+    // Convert offerEndDate to a string in the format 'YYYY-MM-DD'
+    const isoOfferEndDate = moment(offerEndDate).format('YYYY-MM-DD')
+    // Update the documents whose offer_end_date is in the past
+    db.get().collection(collection.PRODUCT_COLLECTION).updateMany(
+      {
+        offerEndDate: { $lt: isoOfferEndDate }
+      },
+      {
+        $unset: { offerEndDate: 1 },
+        $set: {
+          offerPrice: null
         }
-      )
-      resolve()
-      console.log(result)
+      }
+    ).then((response) => {
+      console.log(response)
+    })
+  },
+  addOfferToProducts: (offerInfo) => {
+    const productPrice = parseInt(offerInfo.product_price)
+    const offerPercentage = parseInt(offerInfo.offer_percentage)
+    db.get().collection(collection.PRODUCT_COLLECTION).updateOne(
+      { _id: objectId(offerInfo.productId) },
+      {
+        $set: {
+          offerPrice: productPrice - (productPrice * (offerPercentage / 100)),
+          offerEndDate: offerInfo.end_date
+        }
+      }
+    ).then((response) => {
+      console.log(response)
     })
   }
   // searchUsers:(name)=>{

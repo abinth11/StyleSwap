@@ -29,7 +29,7 @@ module.exports = {
     })
   },
   adminDashboard: (req, res) => {
-    adminHelpers.checkOfferExpiration()
+    // adminHelpers.checkOfferExpiration()
     res.render('admin/index')
   },
   addProducts1Get: (req, res) => {
@@ -231,10 +231,21 @@ module.exports = {
     res.render('admin/offer-category')
   },
   addOffersPost: (req, res) => {
-    console.log(req.body)
     adminHelpers.addOffer(req.body).then((response) => {
       console.log(response)
+      res.json(response)
     })
+  },
+  replaceOfers: (req, res) => {
+    console.log('jsdkfsdkfsjflksdf')
+    adminHelpers.replaceOfers(req.body)
+  },
+  addOffersProducts: (req, res) => {
+    res.render('admin/offer-products', { prodInfo: req.query })
+  },
+  addOffersProductsPost: (req, res) => {
+    console.log(req.body)
+    adminHelpers.addOfferToProducts(req.body)
   },
   logoutAdmin: (req, res) => {
     req.session.admin = null

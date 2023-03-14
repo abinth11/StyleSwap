@@ -3,8 +3,6 @@ const collection = require('../config/collections')
 const bcrypt = require('bcrypt')
 const { ObjectId } = require('mongodb')
 const Razorpay = require('razorpay')
-const { response } = require('express')
-const { resolve } = require('path')
 let sotoredAmount
 module.exports = {
   regisUserUser: (userData) => {
@@ -379,7 +377,13 @@ module.exports = {
         },
         {
           $addFields: {
-            offerSubtotal: { $multiply: ['$product.offerPrice', '$products.quantity'] }
+            offerSubtotal: {
+              $cond: {
+                if: { $ifNull: ['$product.offerPrice', false] },
+                then: { $multiply: ['$product.offerPrice', '$products.quantity'] },
+                else: { $multiply: ['$product.product_price', '$products.quantity'] }
+              }
+            }
           }
         },
         {
@@ -428,13 +432,55 @@ module.exports = {
   },
   getAllProductsUserCart: (userId) => {
     return new Promise(async (resolve, reject) => {
-      const cart = await db.get().collection(collection.CART_COLLECTION).findOne({ userId: ObjectId(userId) })
+      const cart = await db.get().collection(collection.CART_COLLECTION).aggregate([
+        {
+          $match: { userId: ObjectId(userId) }
+        },
+        {
+          $unwind: '$products'
+        },
+        {
+          $lookup: {
+            from: collection.PRODUCT_COLLECTION,
+            localField: 'products.item',
+            foreignField: '_id',
+            as: 'product'
+          }
+        },
+        {
+          $unwind: "$product"
+        },
+        {
+          $project: {
+            "_id": 0,
+            "userId": 1,
+            "products": {
+              "item": "$products.item",
+              "quantity": "$products.quantity",
+              "offerPrice": {
+                $ifNull: ["$product.offerPrice", "$product.price"]
+              }
+            }
+          }
+        },
+        {
+          $group: {
+            "_id": "$userId",
+            "products": {
+              $push: "$products"
+            }
+          }
+        }
+      ]).toArray()
+      // console.log(cart)
+      // console.log(cart[0].products)
       resolve(cart)
     })
   },
-  placeOrders: (orderInfo, product, totalPrice) => {
+  placeOrders: (orderInfo, products, totalPrice) => {
     return new Promise((resolve, reject) => {
       // console.log(orderInfo, product, totalPrice)
+      // console.log(products.products)
       const orderStatus = orderInfo.payment_method === 'cod' ? 'placed' : 'pending'
       const order = {
         userId: ObjectId(orderInfo.userId),
@@ -442,14 +488,14 @@ module.exports = {
         mobile: orderInfo.mobile,
         deliveryAddressId: ObjectId(orderInfo.deliveryAddress),
         paymentMethod: orderInfo.payment_method,
-        totalPrice: totalPrice?.total,
+        totalPrice: totalPrice.total,
         orderStatus,
         status: 'placed',
         date: new Date(),
         deliveryDetails: {
           mobile_no: orderInfo.mobile_
         },
-        products: product?.products
+        products: products[0].products
       }
       db.get().collection(collection.ORDER_COLLECTION).insertOne(order).then((resp) => {
         db.get().collection(collection.CART_COLLECTION).deleteOne({ userId: ObjectId(orderInfo.userId) }).then((response) => {

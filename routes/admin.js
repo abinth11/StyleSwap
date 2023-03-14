@@ -4,6 +4,7 @@ const adminControler = require('../controlers/admin-controlers')
 const adminValidate = require('../validation/adminValidation')
 const { upload } = require('../middlewares/multer')
 const sessionCheck = require('../middlewares/session-checks')
+const adminHelpers = require('../helpers/admin-helpers')
 /* GET users listing. */
 router.get('/', adminControler.adminLoginGet)
 
@@ -100,6 +101,12 @@ router.post('/set-pick-up-date', adminControler.setPickUpDate)
 router.route('/add-offers')
   .get(sessionCheck.isAdminExist, adminControler.addOffersGet)
   .post(adminControler.addOffersPost)
+
+router.post('/replace-offer', adminControler.replaceOfers)
+
+router.route('/add-offers-for-products')
+  .get(adminControler.addOffersProducts)
+  .post(adminControler.addOffersProductsPost)
 
 // Logout admin
 router.get('/logoutAdmin', adminControler.logoutAdmin)

@@ -241,7 +241,11 @@
                                             <p class="font-xs">Maboriosam in a tonto nesciung eget<br> distingy magndapibus.
                                             </p>
                                         </td>
+                                        {{#notNull offerPrice}}
                                         <td class="price" data-title="Price"><span>${{offerPrice}}</span></td>
+                                        {{else}}
+                                        <td class="price" data-title="Price"><span>${{product_price}}</span></td>
+                                        {{/notNull}}
                                         <td class="text-center" data-title="Stock">
                                             <div class="detail-qty border radius m-auto">
                                                 {{!-- <a class="qty-down" onclick="changeQuantity('{{_id}}','{{product._id}}',1)"><i class="fi-rs-angle-small-down"></i></a>
