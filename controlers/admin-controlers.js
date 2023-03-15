@@ -1,5 +1,8 @@
 const adminHelpers = require('../helpers/admin-helpers')
 const { validationResult } = require('express-validator')
+const otherHelpers = require('../helpers/otherHelpers')
+const generateReport = require('../middlewares/salesReport')
+const fs = require('fs')
 module.exports = {
   adminLoginGet: (req, res) => {
     if (req.session.admin) {
@@ -28,9 +31,15 @@ module.exports = {
       }
     })
   },
-  adminDashboard: (req, res) => {
+  adminDashboard: async (req, res) => {
     // adminHelpers.checkOfferExpiration()
-    res.render('admin/index')
+    let totoalRevenue = await adminHelpers.calculateTotalRevenue()
+    const totalOrders = await adminHelpers.calculateTotalOrders()
+    const totalProducts = await adminHelpers.calculateTotalNumberOfProducts()
+    let monthlyEarnings = await adminHelpers.calculateMonthlyEarnings()
+    totoalRevenue = otherHelpers.currencyFormatter(totoalRevenue)
+    monthlyEarnings = otherHelpers.currencyFormatter(monthlyEarnings)
+    res.render('admin/index', { totoalRevenue, totalOrders, totalProducts, monthlyEarnings })
   },
   addProducts1Get: (req, res) => {
     res.render('admin/add-product')
@@ -246,6 +255,59 @@ module.exports = {
   addOffersProductsPost: (req, res) => {
     console.log(req.body)
     adminHelpers.addOfferToProducts(req.body)
+  },
+  makeReport: async (req, res) => {
+    const { format } = req.body
+    // Check if format field is present
+    if (!format) {
+      return res.status(400).send('Format field is required')
+    }
+    // Generate the sales report using your e-commerce data
+    const salesData = {}
+    try {
+      salesData.totalRevenue = await adminHelpers.calculateTotalRevenue()
+      salesData.totalOrders = await adminHelpers.calculateTotalOrders()
+      salesData.totalProducts = await adminHelpers.calculateTotalNumberOfProducts()
+      salesData.monthlyEarnings = await adminHelpers.calculateMonthlyEarnings()
+    } catch (err) {
+      console.log('Error calculating sales data:', err)
+      return res.status(500).send('Error calculating sales data')
+    }
+    try {
+      // Convert the report into the selected file format and get the name of the generated file
+      const reportFile = await generateReport(format, salesData)
+      // Set content type and file extension based on format
+      let contentType, fileExtension
+      if (format === 'pdf') {
+        contentType = 'application/pdf'
+        fileExtension = 'pdf'
+      } else if (format === 'excel') {
+        console.log('proper format')
+        contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        fileExtension = 'xlsx'
+      } else {
+        return res.status(400).send('Invalid format specified')
+      }
+      // Send the report back to the client and download it
+      res.setHeader('Content-Disposition', `attachment; filename=sales-report.${fileExtension}`)
+      res.setHeader('Content-Type', contentType)
+      const fileStream = fs.createReadStream(reportFile)
+      fileStream.pipe(res)
+      fileStream.on('end', () => {
+        console.log('File sent successfully!')
+        // Remove the file from the server
+        fs.unlink(reportFile, (err) => {
+          if (err) {
+            console.log('Error deleting file:', err)
+          } else {
+            console.log('File deleted successfully!')
+          }
+        })
+      })
+    } catch (err) {
+      console.log('Error generating report:', err)
+      return res.status(500).send('Error generating report')
+    }
   },
   logoutAdmin: (req, res) => {
     req.session.admin = null

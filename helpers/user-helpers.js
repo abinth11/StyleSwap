@@ -263,8 +263,8 @@ module.exports = {
         {
           $pull: { products: { item: ObjectId(productId) } }
         }).then(() => {
-          resolve({ removed: true })
-        })
+        resolve({ removed: true })
+      })
     })
   },
   findTotalAmout: (userId) => {
@@ -302,7 +302,25 @@ module.exports = {
         {
           $group: {
             _id: null,
-            total: { $sum: { $multiply: ['$quantity', '$product.product_price'] } }
+            offerTotal: {
+              $sum: {
+                $multiply: [
+                  '$quantity',
+                  {
+                    $cond: {
+                      if: { $gt: ['$product.offerPrice', 0] },
+                      then: '$product.offerPrice',
+                      else: '$product.product_price'
+                    }
+                  }
+                ]
+              }
+            },
+            total: {
+              $sum: {
+                $multiply: ['$quantity', '$product.product_price']
+              }
+            }
           }
         }
       ]
@@ -489,6 +507,8 @@ module.exports = {
         deliveryAddressId: ObjectId(orderInfo.deliveryAddress),
         paymentMethod: orderInfo.payment_method,
         totalPrice: totalPrice.total,
+        offerTotal: totalPrice.offerTotal,
+        priceAfterDiscount: totalPrice.discountPrice,
         orderStatus,
         status: 'placed',
         date: new Date(),

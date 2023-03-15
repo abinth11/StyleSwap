@@ -108,6 +108,9 @@ router.route('/add-offers-for-products')
   .get(adminControler.addOffersProducts)
   .post(adminControler.addOffersProductsPost)
 
+// create sales report
+router.post('/create-report', adminControler.makeReport)
+
 // Logout admin
 router.get('/logoutAdmin', adminControler.logoutAdmin)
 

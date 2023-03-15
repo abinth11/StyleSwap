@@ -432,6 +432,53 @@ module.exports = {
     ).then((response) => {
       console.log(response)
     })
+  },
+  calculateTotalRevenue: async () => {
+    const revenue = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+      {
+        $match: {
+          status: 'completed',
+          returnReason: { $exists: false }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: '$offerTotal' }
+        }
+      }
+    ]).toArray()
+    return revenue[0].totalRevenue
+  },
+  calculateTotalOrders: async () => {
+    const orders = await db.get().collection(collection.ORDER_COLLECTION).countDocuments()
+    return orders
+  },
+  calculateTotalNumberOfProducts: async () => {
+    const products = await db.get().collection(collection.PRODUCT_COLLECTION).countDocuments()
+    return products
+  },
+  calculateMonthlyEarnings: async () => {
+    const monthlyIncome = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+      {
+        $match: {
+          status: 'completed',
+          returnReason: { $exists: false },
+          date: {
+            $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            $lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          monthlyRevenue: { $sum: '$offerTotal' }
+        }
+      }
+    ]).toArray()
+    console.log(monthlyIncome)
+    return monthlyIncome[0].monthlyRevenue
   }
   // searchUsers:(name)=>{
   //     return new Promise((resolve,reject)=>{
