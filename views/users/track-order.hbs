@@ -115,7 +115,10 @@
 				orderId,
 				reason
 			},
-			method: 'post'
+			method: 'post',
+			success: () => {
+				location.href = '/return-prducts'
+			}
 
 		})
 	}

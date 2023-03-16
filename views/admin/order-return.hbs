@@ -70,6 +70,8 @@
                                 <td><span class="badge rounded-pill alert-warning">Pending</span></td>
                                 {{else if (eq returnStatus "declined")}}
                                 <td><span class="badge rounded-pill alert-danger">Declined</span></td>
+                                 {{else if (eq returnStatus "completed")}}
+                                <td><span class="badge rounded-pill alert-primary">Completed</span></td>
                                 {{/if}}
                                 <td class="">
                                     <div class="status-buttons">
@@ -77,6 +79,8 @@
                                             onclick="changeReturnStatus('{{_id}}','{{status}}','accepted')">A</button>
                                         <button class="btn btn-outline-warning btn-sm" title="Decline"
                                             onclick="changeReturnStatus('{{_id}}','{{status}}','declined')">D</button>
+                                                                      <button class="btn btn-outline-warning btn-sm" title="Completed"
+                                            onclick="changeReturnStatus('{{_id}}','{{status}}','completed')">C</button>
                                     </div>
                                 </td>
                                 <td class="">

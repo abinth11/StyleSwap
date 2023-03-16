@@ -111,6 +111,9 @@ router.route('/add-offers-for-products')
 // create sales report
 router.post('/create-report', adminControler.makeReport)
 
+// amount refund
+router.post('/refund-amount', adminControler.refundAmount)
+
 // Logout admin
 router.get('/logoutAdmin', adminControler.logoutAdmin)
 

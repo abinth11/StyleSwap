@@ -594,6 +594,17 @@
                             }
                         })
                     } else {
+                        Swal.fire({
+                            title: 'Download failed please try again later..!',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Try again',
+                            cancelButtonText: 'ok'
+                        }).then((result)=>{
+                            if(result.isConfirmed){
+                                location.href = '/admin/create-report'
+                            }
+                        })
                         // Unsupported file type
                         console.error('Unsupported file type:', contentType)
                     }

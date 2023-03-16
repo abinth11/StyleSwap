@@ -479,6 +479,25 @@ module.exports = {
     ]).toArray()
     console.log(monthlyIncome)
     return monthlyIncome[0].monthlyRevenue
+  },
+  refundAmont: async (refundInfo) => {
+    console.log(refundInfo)
+    const userId = objectId(refundInfo.userId)
+    const refundAmount = parseInt(refundInfo.amount)
+    const orderId = refundInfo.orderId
+    const result = await db.get().collection(collection.WALLET).updateOne(
+      { userid: userId },
+      {
+        $inc: { balance: refundAmount },
+        $push: {
+          transactions: {
+            $each: [{ orderId, amount: refundAmount }],
+            $position: 0
+          }
+        }
+      }
+    )
+    return result
   }
   // searchUsers:(name)=>{
   //     return new Promise((resolve,reject)=>{

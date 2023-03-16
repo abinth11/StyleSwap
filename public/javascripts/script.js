@@ -123,3 +123,18 @@ const cancellOrder = (orderId, reason) => {
     }
   })
 }
+
+// Example of adding funds to the wallet
+$('.modal-body form').submit(function(event) {
+  event.preventDefault();
+  var amount = parseFloat($('#amount').val());
+  var currentBalance = parseFloat($('.balance h3').text().replace('$', ''));
+  if (isNaN(amount)) {
+    alert('Please enter a valid amount.');
+    return;
+  }
+  var newBalance = currentBalance + amount;
+  $('.balance h3').text('$' + newBalance.toFixed(2));
+  $('#amount').val('');
+  alert('Funds added successfully.');
+});

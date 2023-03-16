@@ -49,4 +49,4 @@ async function generateReport(reportType, data) {
         throw error
     }
 }
-module.exports = generateReport;
+module.exports = generateReport

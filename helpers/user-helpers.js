@@ -497,7 +497,7 @@ module.exports = {
   },
   placeOrders: (orderInfo, products, totalPrice) => {
     return new Promise((resolve, reject) => {
-      // console.log(orderInfo, product, totalPrice)
+      console.log(totalPrice)
       // console.log(products.products)
       const orderStatus = orderInfo.payment_method === 'cod' ? 'placed' : 'pending'
       const order = {
@@ -886,5 +886,24 @@ module.exports = {
         resolve(response)
       })
     })
+  },
+  createWallet: (userInfo, userId) => {
+    const now = new Date()
+    const currentDateTime = now.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })
+    const wallet = {}
+    wallet.userid = userId._id
+    wallet.name = userInfo.name
+    wallet.email = userInfo.email
+    wallet.mobile = userInfo.mobile
+    wallet.active = userInfo.active
+    wallet.balance = 0
+    wallet.transactions = []
+    wallet.createdAt = currentDateTime
+    wallet.updatedAt = currentDateTime
+    db.get().collection(collection.WALLET).insertOne(wallet)
+  },
+  getWalletData: async (userId) => {
+    const wallet = await db.get().collection(collection.WALLET).findOne({ userid: ObjectId(userId) })
+    return wallet
   }
 }

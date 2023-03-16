@@ -40,6 +40,8 @@ module.exports = {
         } else if (response.status) {
           req.session.loggedIn = true
           req.session.user = response.userData
+          const user = req.session.user
+          userHelpers.createWallet(req.body, user)
           res.json({ status: true })
           // res.redirect('/');
         }
@@ -175,7 +177,7 @@ module.exports = {
     // console.log(products)
     // let pro
     // products ? pro = products.products : pro = []
-    let totalPrice = 0
+    let totalPrice = {}
     if (products[0].products.length) {
       totalPrice = await userHelpers.findTotalAmout(req.body.userId)
     }
@@ -375,6 +377,10 @@ module.exports = {
     userHelpers.returnProduct(req.body).then((response) => {
       console.log(response)
     })
+  },
+  getWallet: async (req, res) => {
+    const walletData = await userHelpers.getWalletData(req.session.user._id)
+    res.render('users/wallet', { walletData })
   },
   userLogout: (req, res) => {
     req.session.user = null

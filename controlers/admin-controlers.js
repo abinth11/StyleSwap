@@ -309,6 +309,15 @@ module.exports = {
       return res.status(500).send('Error generating report')
     }
   },
+  refundAmount: async (req, res) => {
+    const result = await adminHelpers.refundAmont(req.body)
+    console.log(result)
+    if (result.modifiedCount === 1) {
+      res.json({ status: false })
+    } else {
+      res.json({ status: false })
+    }
+  },
   logoutAdmin: (req, res) => {
     req.session.admin = null
     res.redirect('/admin')
