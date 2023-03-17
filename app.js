@@ -1,4 +1,3 @@
-const createError = require('http-errors')
 const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
@@ -22,8 +21,8 @@ app.set('view engine', 'hbs')
 app.engine('hbs', hbs.engine({
   extname: 'hbs',
   defaultLayout: 'layout',
-  layoutsDir: __dirname + '/views/layout/',
-  partialsDir: __dirname + '/views/partials/'
+  layoutsDir: path.join(__dirname, 'views', 'layout'),
+  partialsDir: path.join(__dirname, 'views', 'partials')
 }))
 
 app.use(logger('dev'))
@@ -44,9 +43,13 @@ app.use(nocache())
 app.use('/', usersRouter)
 app.use('/admin', adminRouter)
 
-db.connect((err) => {
-  err ? console.log('Connection failed') : console.log('successfully connected to the database')
-})
+db.connect()
+  .then(() => {
+    console.log('Successfully connected to the database')
+  })
+  .catch((err) => {
+    console.log('Connection failed', err)
+  })
 
 Handlebars.registerHelper('inc', function (value, options) {
   return parseInt(value) + 1

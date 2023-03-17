@@ -1,16 +1,23 @@
-const mongoClient = require('mongodb').MongoClient;
+const mongoClient = require('mongodb').MongoClient
+
 const state = {
-    db: null
+  db: null
 }
-module.exports.connect = (done) => {
-    const url = 'mongodb://localhost:27017'
-    const dbname = 'shoppingCart';
-    mongoClient.connect(url, (err, data) => {
-        if (err) return done(err);
-        state.db = data.db(dbname)
-        done();
+
+module.exports.connect = () => {
+  const url = 'mongodb://localhost:27017'
+  const dbname = 'shoppingCart'
+  return mongoClient.connect(url)
+    .then((client) => {
+      state.db = client.db(dbname)
+      return state.db
+    })
+    .catch((err) => {
+      console.error('Failed to connect to MongoDB', err)
+      throw err // rethrow the error to be caught by the caller
     })
 }
+
 module.exports.get = () => {
-    return state.db
+  return state.db
 }

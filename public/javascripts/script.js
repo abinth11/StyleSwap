@@ -1,5 +1,9 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 
+// eslint-disable-next-line no-unused-vars
 const addToCart = (productId) => {
+  // eslint-disable-next-line no-undef
   $.ajax({
     url: '/add-to-cart/' + productId,
     method: 'get',
@@ -79,19 +83,19 @@ const deleteCartProduct = (cartId, productId) => {
 }
 
 // Add this function to your JavaScript file or script tag on the page
-function hideModalButton() {
+function hideModalButton () {
   setTimeout(function () {
     $('#myModal').modal('hide')
   }, 3000)
 }
 
-function setModalData(cartId, productId) {
+function setModalData (cartId, productId) {
   // Set the value of the input fields to the cartId and productId values
   document.getElementById('cartIdToDelete').value = cartId
   document.getElementById('productIdToDelete').value = productId
 }
 
-function deleteCartProductModal() {
+function deleteCartProductModal () {
   // Get the cartId and productId values from the input fields
   const cartId = document.getElementById('cartIdToDelete').value
   const productId = document.getElementById('productIdToDelete').value
@@ -125,16 +129,16 @@ const cancellOrder = (orderId, reason) => {
 }
 
 // Example of adding funds to the wallet
-$('.modal-body form').submit(function(event) {
-  event.preventDefault();
-  var amount = parseFloat($('#amount').val());
-  var currentBalance = parseFloat($('.balance h3').text().replace('$', ''));
+$('.modal-body form').submit(function (event) {
+  event.preventDefault()
+  const amount = parseFloat($('#amount').val())
+  const currentBalance = parseFloat($('.balance h3').text().replace('$', ''))
   if (isNaN(amount)) {
-    alert('Please enter a valid amount.');
-    return;
+    alert('Please enter a valid amount.')
+    return
   }
-  var newBalance = currentBalance + amount;
-  $('.balance h3').text('$' + newBalance.toFixed(2));
-  $('#amount').val('');
-  alert('Funds added successfully.');
-});
+  const newBalance = currentBalance + amount
+  $('.balance h3').text('$' + newBalance.toFixed(2))
+  $('#amount').val('')
+  alert('Funds added successfully.')
+})

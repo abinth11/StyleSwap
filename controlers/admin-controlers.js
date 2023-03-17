@@ -5,41 +5,57 @@ const generateReport = require('../middlewares/salesReport')
 const fs = require('fs')
 module.exports = {
   adminLoginGet: (req, res) => {
-    if (req.session.admin) {
-      res.redirect('/admin/dashboard')
-    } else {
-      res.render('admin/loginAdmin', { loginErr: req.session.loginError })
-      req.session.loginError = null
+    const { admin, loginError } = req.session
+    if (admin) {
+      return res.redirect('/admin/dashboard')
     }
+    res.render('admin/loginAdmin', { loginErr: loginError })
+    req.session.loginError = null
   },
-  adminLoginPost: (req, res) => {
-    console.log(req.body)
-    adminHelpers.adminLogin(req.body).then((response) => {
+  adminLoginPost: async (req, res) => {
+    try {
+      const response = await adminHelpers.adminLogin(req.body)
       if (response.status) {
         req.session.adminLoggedIn = true
         req.session.admin = response.admin
         res.json({ status: true })
-        // res.redirect('/admin/dashboard')
       } else if (response.notExist) {
         req.session.loginError = 'Invalid email address...'
         res.json({ status: false })
-        // res.redirect('/admin')
       } else {
         req.session.loginError = 'Incorrect password '
         res.json({ status: false })
-        // res.redirect('/admin')
       }
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: 'Server Error' })
+    }
   },
   adminDashboard: async (req, res) => {
-    // adminHelpers.checkOfferExpiration()
-    let totoalRevenue = await adminHelpers.calculateTotalRevenue()
-    const totalOrders = await adminHelpers.calculateTotalOrders()
-    const totalProducts = await adminHelpers.calculateTotalNumberOfProducts()
-    let monthlyEarnings = await adminHelpers.calculateMonthlyEarnings()
-    totoalRevenue = otherHelpers.currencyFormatter(totoalRevenue)
-    monthlyEarnings = otherHelpers.currencyFormatter(monthlyEarnings)
-    res.render('admin/index', { totoalRevenue, totalOrders, totalProducts, monthlyEarnings })
+    try {
+      const [
+        totoalRevenue,
+        totalOrders,
+        totalProducts,
+        monthlyEarnings
+      ] = await Promise.all([
+        adminHelpers.calculateTotalRevenue(),
+        adminHelpers.calculateTotalOrders(),
+        adminHelpers.calculateTotalNumberOfProducts(),
+        adminHelpers.calculateMonthlyEarnings()
+      ])
+      const formattedRevenue = otherHelpers.currencyFormatter(totoalRevenue)
+      const formattedMonthlyEarnings = otherHelpers.currencyFormatter(monthlyEarnings)
+      res.render('admin/index', {
+        totoalRevenue: formattedRevenue,
+        totalOrders,
+        totalProducts,
+        monthlyEarnings: formattedMonthlyEarnings
+      })
+    } catch (error) {
+      console.log(error)
+      res.render('error', { message: 'Error fetching dashboard data' })
+    }
   },
   addProducts1Get: (req, res) => {
     res.render('admin/add-product')
@@ -58,36 +74,40 @@ module.exports = {
   addProducts2Get: (req, res) => {
     res.render('admin/add-product2')
   },
-  addProducts3Get: (req, res) => {
-    adminHelpers.getAllCategories().then((category) => {
+  addProducts3Get: async (req, res) => {
+    try {
+      const category = await adminHelpers.getAllCategories()
       res.render('admin/add-product3', { category, productAddingErr: req.session.addProductError, productAddingSucc: req.session.addProductSuccess, Prostatus: req.session.addProductStatus })
       req.session.addProductError = null
       req.session.addProductStatus = null
       req.session.addProductSuccess = null
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
-  addProducts3Post: (req, res) => {
-    console.log(req.body)
-    const errors = validationResult(req)
-    req.session.addProductError = errors.errors
-    if (req.session.addProductError.length === 0) {
-      adminHelpers.addProducts(req.body).then((data) => {
-        const image = req.files?.product_image
-        const objId = data.insertedId
-        image.mv('./public/images/' + objId + '.jpg', err => {
-          if (!err) {
-            req.session.addProductSuccess = 'Successfully added product you can add another product...'
-            req.session.addProductStatus = true
-            res.redirect('/admin/addProduct3')
-          } else {
-            req.session.addProductStatus = false
-            res.redirect('/admin/addProduct3')
-          }
-        })
+  addProducts3Post: async (req, res) => {
+    const { body, files } = req
+    console.log(body)
+    const { errors } = validationResult(req)
+    req.session.addProductError = errors
+    try {
+      if (errors.length !== 0) throw new Error('Validation error')
+      const { insertedId } = await adminHelpers.addProducts(body)
+      console.log(insertedId)
+      await files?.product_image.mv(`./public/images/${insertedId}.jpg`)
+      req.session.addProductSuccess = 'Successfully added product you can add another product...'
+      req.session.addProductStatus = true
+      req.session.save(() => {
+        res.redirect('/admin/addProduct3')
       })
-    } else {
+    } catch (err) {
+      console.error(err)
       req.session.addProductStatus = false
-      res.redirect('/admin/addProduct3')
+      req.session.save(() => {
+        res.redirect('/admin/addProduct3')
+      })
+      throw err
     }
   },
   addProducts4Get: (req, res) => {
@@ -100,42 +120,48 @@ module.exports = {
   },
   editProductsListGet: (req, res) => {
     const productId = req.params.id
-    adminHelpers.getProductDetails(productId).then((product) => {
+    adminHelpers.getProductDetails(productId).then(product => {
       console.log(product)
       res.render('admin/edit-product', { product, Prostatus: req.session.updateProductStatus, updateErr: req.session.updateProductError, updateMsg: req.session.updateMsg })
-      req.session.updateProductError = null
-      req.session.updateProductStatus = null
+      req.session.updateProductError = req.session.updateProductStatus = null
       req.session.updateMsg = false
     })
   },
-  editProductsListPut: (req, res) => {
-    const productId = req.params.id
-    console.log(req.session)
-    const errors = validationResult(req)
-    console.log(errors)
-    req.session.updateProductError = errors.errors
-    if (req.session.updateProductError.length === 0) {
-      adminHelpers.updateProductsList(productId, req.body).then(() => {
-        req.session.updateProductStatus = true
-        req.session.updateMsg = 'Product updated successfully..'
-        res.redirect('/admin/viewPoductsList')
-        if (req.files) {
-          const image = req.files.product_image
-          const objId = req.params.id
-          image.mv('./public/post-images/' + objId + '.jpg')
-        }
-      })
-    } else {
-      req.session.updateProductStatus = false
-      res.redirect(`/admin/editProductsList/${productId}`)
+  editProductsListPut: async (req, res) => {
+    try {
+      const productId = req.params.id
+      console.log(req.session)
+      const errors = validationResult(req)
+      console.log(errors)
+      req.session.updateProductError = errors.errors
+      if (req.session.updateProductError.length !== 0) {
+        req.session.updateProductStatus = false
+        return res.redirect(`/admin/editProductsList/${productId}`)
+      }
+      await adminHelpers.updateProductsList(productId, req.body)
+      req.session.updateProductStatus = true
+      req.session.updateMsg = 'Product updated successfully..'
+      res.redirect('/admin/viewPoductsList')
+      if (req.files) {
+        const image = req.files.product_image
+        const objId = req.params.id
+        image.mv(`./public/post-images/${objId}.jpg`)
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
     }
   },
-  disableAndEnableProduct: (req, res) => {
-    const { productId, isActive } = req.body
-    adminHelpers.disableEnableProduct(productId, isActive).then((resp) => {
+  disableAndEnableProduct: async (req, res) => {
+    try {
+      const { productId, isActive } = req.body
+      const resp = await adminHelpers.disableEnableProduct(productId, isActive)
       res.json(resp.value)
       console.log(resp.value)
-    })
+    } catch (error) {
+      console.log(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
   viewProductsGrid: (req, res) => {
     res.render('admin/view-products-grid')
@@ -143,40 +169,50 @@ module.exports = {
   viewProductsGrid2: (req, res) => {
     res.render('admin/view-products-grid2')
   },
-  addCategoryGet: (req, res) => {
-    adminHelpers.getAllCategories().then((category) => {
-      res.render('admin/view-products-category', { category, deletedCategory: req.session.categoryDeleted, addedCategory: req.session.addedCategory })
-      req.session.categoryDeleted = null
-      req.session.addedCategory = null
-    })
+  addCategoryGet: async (req, res) => {
+    try {
+      const category = await adminHelpers.getAllCategories()
+      res.render('admin/view-products-category', {
+        category,
+        deletedCategory: req.session.categoryDeleted,
+        addedCategory: req.session.addedCategory
+      })
+      req.session.categoryDeleted = req.session.addedCategory = null
+    } catch (error) {
+      console.log(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
   addCategoryPost: (req, res) => {
-    console.log(req.body)
-    adminHelpers.addCategories(req.body).then((data) => {
-      req.session.addedCategory = 'Added Category you can add another one'
-      res.redirect('/admin/addProductCategory')
-    })
+    const { body } = req
+    adminHelpers.addCategories(body)
+      .then(() => {
+        req.session.addedCategory = 'Added Category you can add another one'
+        res.redirect('/admin/addProductCategory')
+      })
   },
   editCategoryGet: (req, res) => {
-    const catId = req.params.id
-    adminHelpers.getCurrentCategory(catId).then((category) => {
-      res.render('admin/edit-product-category', { category })
-    })
+    const { id } = req.params
+    adminHelpers.getCurrentCategory(id)
+      .then((category) => {
+        res.render('admin/edit-product-category', { category })
+      })
   },
   editCategoryPut: (req, res) => {
-    const catId = req.params.id
-    adminHelpers.updateCurrentCategory(catId, req.body).then((status) => {
-      console.log(status)
-      res.redirect('/admin/addProductCategory')
-    })
+    const { id } = req.params
+    adminHelpers.updateCurrentCategory(id, req.body)
+      .then((status) => {
+        console.log(status)
+        res.redirect('/admin/addProductCategory')
+      })
   },
   deleteProductCategory: (req, res) => {
-    const catId = req.params.id
-    adminHelpers.deleteProductCategory(catId).then((response) => {
-      console.log(response)
-      req.session.categoryDeleted = 'Deleted Category'
-      res.redirect('/admin/addProductCategory')
-    })
+    const { id } = req.params
+    adminHelpers.deleteProductCategory(id)
+      .then(() => {
+        req.session.categoryDeleted = 'Deleted Category'
+        res.redirect('/admin/addProductCategory')
+      })
   },
   viewUsers: (req, res) => {
     adminHelpers.viewAllUser().then((users) => {
@@ -184,39 +220,31 @@ module.exports = {
     })
   },
   blockAndUnblockUsers: (req, res) => {
-    console.log(req.body)
     adminHelpers.blockUnblockUsers(req.body).then((userStat) => {
-      console.log(userStat)
       res.json(userStat)
     })
   },
   getBlockedUsers: (req, res) => {
     adminHelpers.blockedUsers().then((blockeduser) => {
       res.render('admin/blocked-users', { blockeduser })
-      console.log(blockeduser)
     })
   },
   viewAllOrders: async (req, res) => {
     const orders = await adminHelpers.getAllUserOrders()
     const odr = adminHelpers.ISO_to_Normal_Date(orders)
-    console.log(odr[0].products)
     res.render('admin/page-orders-1', { odr })
   },
   viewOrderDetails: async (req, res) => {
-    console.log(req.params.id)
     const odr = await adminHelpers.getCurrentOrderMore(req.params.id)
     let orders = adminHelpers.ISO_to_Normal_Date(odr)
     const products = await adminHelpers.getCurrentProducts(req.params.id)
     const address = await adminHelpers.getallUserAddress(req.params.id)
     orders = orders[0]
-    console.log(orders)
-    // console.log(products)
     res.render('admin/view-more-orders', { orders, products, address })
   },
   changeProductStatus: (req, res) => {
-    adminHelpers.changeOrderStatus(req.body).then((response) => {
+    adminHelpers.changeOrderStatus(req.body).then(() => {
       res.redirect('/admin/admin-view-orders')
-      // console.log(response)
     })
   },
   orderReturn: async (req, res) => {
@@ -227,33 +255,26 @@ module.exports = {
   changeReturnStatus: (req, res) => {
     adminHelpers.changeReturnStatus(req.body).then((response) => {
       res.json(response)
-      // console.log(response)
     })
   },
   setPickUpDate: (req, res) => {
-    // console.log(req.body)
-    adminHelpers.setPickUpDate(req.body).then((response) => {
-      console.log(response)
-    })
+    adminHelpers.setPickUpDate(req.body)
   },
   addOffersGet: (req, res) => {
     res.render('admin/offer-category')
   },
   addOffersPost: (req, res) => {
     adminHelpers.addOffer(req.body).then((response) => {
-      console.log(response)
       res.json(response)
     })
   },
   replaceOfers: (req, res) => {
-    console.log('jsdkfsdkfsjflksdf')
     adminHelpers.replaceOfers(req.body)
   },
   addOffersProducts: (req, res) => {
     res.render('admin/offer-products', { prodInfo: req.query })
   },
   addOffersProductsPost: (req, res) => {
-    console.log(req.body)
     adminHelpers.addOfferToProducts(req.body)
   },
   makeReport: async (req, res) => {
@@ -310,12 +331,18 @@ module.exports = {
     }
   },
   refundAmount: async (req, res) => {
-    const result = await adminHelpers.refundAmont(req.body)
-    console.log(result)
-    if (result.modifiedCount === 1) {
-      res.json({ status: false })
-    } else {
-      res.json({ status: false })
+    try {
+      const { orderId } = req.body
+      const result = await adminHelpers.refundAmont(req.body)
+      if (result.modifiedCount === 1) {
+        adminHelpers.updateRefundStatus(orderId)
+        res.json({ status: true })
+      } else {
+        res.json({ status: false })
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(500).send('Internal Server Error')
     }
   },
   logoutAdmin: (req, res) => {

@@ -181,37 +181,36 @@
         error.textContent = '';
     }
 
-
-    form.addEventListener('submit', function (e) {
+    $('#login-form').submit(function (e) {
         // prevent the form from submitting
         e.preventDefault();
 
         // validate fields
-        let isUsernameValid = checkUsername(),
-            isPasswordValid = checkPassword()
-        let isFormValid = isUsernameValid &&
-            isPasswordValid
+        let isUsernameValid = checkUsername();
+        let isPasswordValid = checkPassword();
+        let isFormValid = isUsernameValid && isPasswordValid;
+
         // submit to the server if the form is valid
         if (isFormValid) {
-            console.log("form is valid")
-            $("#login-form").submit((e) => {
-                e.preventDefault()
-                $.ajax({
-                    type: "POST",
-                    url: '/userLogin',
-                    data: $('#login-form').serialize(),
-                    success: (response) => {
-                        if(response.status){
-                            location.href='/'
-                        }else{
-                            location.href='/userLogin'
-                        }
-                    }
-                })
-            })
+            console.log("form is valid");
 
+            $.ajax({
+                type: "POST",
+                url: '/userLogin',
+                data: $('#login-form').serialize(),
+                success: (response) => {
+                    if (response.status) {
+                        location.href = '/';
+                    } else {
+                        location.href = '/userLogin';
+                    }
+                }
+            });
         }
     });
+
+
+
 
 
     const debounce = (fn, delay = 500) => {

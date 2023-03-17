@@ -3,7 +3,6 @@ const router = express.Router()
 const userControler = require('../controlers/user-controlers')
 const userValidation = require('../validation/userValidation')
 const sessionChecker = require('../middlewares/session-checks')
-const userHelpers = require('../helpers/user-helpers')
 
 /* GET home page. */
 router.get('/', userControler.userHome)
@@ -99,6 +98,7 @@ router.post('/return-products', userControler.returnProducts)
 
 // wallet management
 router.get('/open-wallet', sessionChecker.isUserExist, userControler.getWallet)
+router.post('/wallet-payment', userControler.walletPayment)
 
 // User logout
 router.get('/logoutUser', userControler.userLogout)

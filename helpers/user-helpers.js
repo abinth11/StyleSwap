@@ -499,7 +499,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       console.log(totalPrice)
       // console.log(products.products)
-      const orderStatus = orderInfo.payment_method === 'cod' ? 'placed' : 'pending'
+      const paymentStatus = orderInfo.payment_method === 'cod' ? 'done' : 'pending'
       const order = {
         userId: ObjectId(orderInfo.userId),
         name: orderInfo.name,
@@ -509,13 +509,13 @@ module.exports = {
         totalPrice: totalPrice.total,
         offerTotal: totalPrice.offerTotal,
         priceAfterDiscount: totalPrice.discountPrice,
-        orderStatus,
+        paymentStatus,
         status: 'placed',
         date: new Date(),
         deliveryDetails: {
           mobile_no: orderInfo.mobile_
         },
-        products: products[0].products
+        products: products[0]?.products
       }
       db.get().collection(collection.ORDER_COLLECTION).insertOne(order).then((resp) => {
         db.get().collection(collection.CART_COLLECTION).deleteOne({ userId: ObjectId(orderInfo.userId) }).then((response) => {
@@ -531,7 +531,7 @@ module.exports = {
       const dateString = now.toDateString() // e.g. "Sun Mar 07 2023"
       const status = { [key]: dateString, orderId }
       db.get().collection(collection.ORDER_SATUS).insertOne(status).then((reponse) => {
-        console.log(response)
+        // console.log(response)
         resolve(reponse)
       })
     })
@@ -659,7 +659,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: ObjectId(orderId) }, {
         $set: {
-          orderStatus: 'placed'
+          paymentStatus: 'done'
         }
       }).then(() => {
         resolve()
@@ -905,5 +905,22 @@ module.exports = {
   getWalletData: async (userId) => {
     const wallet = await db.get().collection(collection.WALLET).findOne({ userid: ObjectId(userId) })
     return wallet
+  },
+  getUserWallet: async (orderId, total, userId) => {
+    console.log(orderId, userId)
+    console.log(total)
+    const walletCollection = await db.get().collection(collection.WALLET)
+    const ordersCollection = await db.get().collection(collection.ORDER_COLLECTION)
+    const balance = await walletCollection.findOne({ userid: ObjectId(userId) }, { balance: 1 })
+    if (balance && balance.balance >= total) {
+      const paymentStatusUpdated = await ordersCollection.updateOne({ _id: ObjectId(orderId) }, { $set: { paymentStatus: 'done' } })
+      if (paymentStatusUpdated.modifiedCount === 1) {
+        const updatedBalance = balance.balance - total
+        await walletCollection.updateOne({ userid: ObjectId(userId) }, { $set: { balance: updatedBalance, type: 'debited' } })
+        return updatedBalance
+      }
+    }
+    console.log(balance)
+    return null
   }
 }

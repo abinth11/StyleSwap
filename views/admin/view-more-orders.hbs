@@ -177,6 +177,17 @@
                             </div>
                         </div>
                         {{/if}}
+
+                        {{#if (eq orders.refundStatus 'completed')}}
+                        <!-- Refund completed and refund amount -->
+                        <div class="box shadow-sm bg-light mt-4" style="height: 150px;">
+                            <h6 class="mb-15 text-success">Refund Completed</h6>
+                            <div class="d-flex align-items-center justify-content-center mb-3">
+                                <span class="fs-5 me-2">₹</span>
+                                <span id="refund-completed" class="fs-5 fw-bold">{{orders.offerTotal}}</span>
+                            </div>
+                        </div>
+                        {{else}}
                         {{#if (eq orders.returnStatus 'completed')}}
                         <div class="box shadow-sm bg-light mt-4">
                             <h6 class="mb-15 text-danger">Refund Amount</h6>
@@ -191,7 +202,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        {{/if}}
                         {{/if}}
                         {{!-- <div class="box shadow-sm bg-light mt-3">
                             <h6 class="mb-15">Payment info</h6>
@@ -243,10 +254,7 @@
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script>
-        // check if the button should be disabled when the page loads
-        {{!-- if (localStorage.getItem("disableButton") === "true") {
-            document.getElementById("refundButton").disabled = true;
-        } --}}
+
 
         $(document).ready(function () {
             $('#myDatepicker').datepicker({
@@ -300,10 +308,11 @@
                             text: 'Please wait while we process your money transfer.',
                             showConfirmButton: true,
                             confirmButtonText: 'Close'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
                         });
-                        document.getElementById("refundButton").disabled = true;
-                        // store flag in local storage to indicate that the button should be disabled
-                        localStorage.setItem("disableButton", "true");
                     } else {
                         Swal.fire({
                             imageUrl: 'https://media.giphy.com/media/Km2YiI2mzRKgw/giphy.gif',
@@ -320,4 +329,5 @@
                 }
             })
         }
+    
     </script>

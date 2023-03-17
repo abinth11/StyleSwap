@@ -4,7 +4,6 @@ const adminControler = require('../controlers/admin-controlers')
 const adminValidate = require('../validation/adminValidation')
 const { upload } = require('../middlewares/multer')
 const sessionCheck = require('../middlewares/session-checks')
-const adminHelpers = require('../helpers/admin-helpers')
 /* GET users listing. */
 router.get('/', adminControler.adminLoginGet)
 
