@@ -29,39 +29,27 @@
     <div class="col-12">
       <h3 class="mb-3">Transactions</h3>
       <ul class="list-group">
+        {{#each walletData.transactions}}
         <li class="list-group-item">
           <div class="row align-items-center">
             <div class="col-lg-6">
-              <p class="mb-0">March 14, 2023</p>
-              <p class="mb-0">$50.00 - Payment Received</p>
+              <p class="mb-0">{{date}}</p>
+              {{#if (eq type 'credited')}}
+              <p class="mb-0 text-success">${{amount}} - {{type}}</p>
+              {{/if}}
+              {{#if (eq type 'debited')}}
+              <p class="mb-0 text-danger">${{amount}} - {{type}}</p>
+              {{/if}}
+              {{#if (eq type 'failed')}}
+              <p class="mb-0 text-warning">${{amount}} - {{type}}</p>
+              {{/if}}
             </div>
             <div class="col-lg-6 text-lg-end mt-3 mt-lg-0">
               <button type="button" class="btn btn-secondary">View Details</button>
             </div>
           </div>
         </li>
-        <li class="list-group-item">
-          <div class="row align-items-center">
-            <div class="col-lg-6">
-              <p class="mb-0">March 12, 2023</p>
-              <p class="mb-0">$100.00 - Purchase</p>
-            </div>
-            <div class="col-lg-6 text-lg-end mt-3 mt-lg-0">
-              <button type="button" class="btn btn-secondary">View Details</button>
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item">
-          <div class="row align-items-center">
-            <div class="col-lg-6">
-              <p class="mb-0">March 10, 2023</p>
-              <p class="mb-0">$75.00 - Payment Sent</p>
-            </div>
-            <div class="col-lg-6 text-lg-end mt-3 mt-lg-0">
-              <button type="button" class="btn btn-secondary">View Details</button>
-            </div>
-          </div>
-        </li>
+        {{/each}}
       </ul>
     </div>
   </div>

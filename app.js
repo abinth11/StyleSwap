@@ -5,13 +5,14 @@ const logger = require('morgan')
 const db = require('./config/connection')
 const hbs = require('express-handlebars')
 const Handlebars = require('handlebars')
-const fileUpload = require('express-fileupload')
 const session = require('express-session')
 const nocache = require('nocache')
 require('dotenv').config()
 const usersRouter = require('./routes/users')
 const adminRouter = require('./routes/admin')
 const app = express()
+const multer = require('multer')
+const CustomError = require('./middlewares/errorHandler')
 const cron = require('node-cron')
 const adminHelpers = require('./helpers/admin-helpers')
 
@@ -30,7 +31,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(fileUpload())
 const oneDay = 1000 * 60 * 60 * 24
 app.use(session({
   secret: 'eppudraa',
@@ -100,9 +100,27 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
 
-  // render the error page
-  res.status(err.status || 500)
-  res.render('error')
+  // determine error status and message
+  let status, message
+  if (err instanceof CustomError) {
+    status = err.status
+    message = err.message
+  } else if (err instanceof multer.MulterError) {
+    status = 400
+    message = 'File upload error: ' + err.message
+  } else {
+    status = err.status || 500
+    message = err.message || 'Internal Server Error'
+  }
+
+  // send error response
+  res.status(status).json({
+    error: {
+      message,
+      code: err.code, // include any custom error codes you may have defined
+      stack: err.stack // include stack trace of the error
+    }
+  })
 })
 
 module.exports = app

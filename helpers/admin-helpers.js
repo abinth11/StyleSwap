@@ -25,9 +25,20 @@ module.exports = {
       throw new Error('Login failed')
     }
   },
-  addProducts: async (product) => {
-    const { productPrice, ...rest } = product
-    const productData = { ...rest, product_price: parseInt(productPrice), offerPrice: parseInt(productPrice), isActive: true }
+  addProducts: async (product, urls) => {
+    console.log(urls)
+    const { product_price: productPrice, ...rest } = product
+    const productData = {
+      ...rest,
+      product_price: parseInt(productPrice),
+      offerPrice: parseInt(productPrice),
+      isActive: true,
+      images: {
+        image1: urls[0],
+        image2: urls[1],
+        images3: urls[2]
+      }
+    }
     try {
       const result = await db.get().collection(collection.PRODUCT_COLLECTION).insertOne(productData)
       return { ...result, productData }
@@ -547,7 +558,7 @@ module.exports = {
         }
       ]).toArray()
       if (monthlyIncome.length) {
-        return monthlyIncome[0]?.totalRevenue
+        return monthlyIncome[0].monthlyRevenue
       } else {
         return 0
       }
@@ -561,15 +572,23 @@ module.exports = {
       const userId = objectId(refundInfo.userId)
       const refundAmount = parseInt(refundInfo.amount)
       const orderId = refundInfo.orderId
+      const currentDate = new Date()
+      const optionsDate = { month: 'long', day: 'numeric', year: 'numeric' }
+      const optionsTime = { hour: 'numeric', minute: '2-digit' }
+      const dateString = currentDate.toLocaleDateString(undefined, optionsDate)
+      const timeString = currentDate.toLocaleTimeString(undefined, optionsTime)
+      const dateTimeString = `${dateString} at ${timeString}`
       const result = await db.get().collection(collection.WALLET).updateOne(
         { userid: userId },
         {
           $inc: { balance: refundAmount },
           $push: {
             transactions: {
-              $each: [{ orderId, amount: refundAmount, type: 'credited' }],
-              $position: 0
+              $each: [{ orderId, amount: refundAmount, type: 'credited', date: dateTimeString }]
             }
+          },
+          $set: {
+            updatedAt: dateTimeString
           }
         }
       )
@@ -590,6 +609,10 @@ module.exports = {
       console.log(error)
       throw new Error(error)
     }
+  },
+  uploadImageUrlIntoDataBase: (images) => {
+    db.get().collection(collection.PRODUCT_COLLECTION).insertOne()
+
   }
   // searchUsers:(name)=>{
   //     return new Promise((resolve,reject)=>{

@@ -89,18 +89,43 @@ module.exports = {
   addProducts3Post: async (req, res) => {
     const { body, files } = req
     console.log(body)
+    console.log(files)
     const { errors } = validationResult(req)
-    req.session.addProductError = errors
+    console.log(errors)
     try {
-      if (errors.length !== 0) throw new Error('Validation error')
-      const { insertedId } = await adminHelpers.addProducts(body)
-      console.log(insertedId)
-      await files?.product_image.mv(`./public/images/${insertedId}.jpg`)
-      req.session.addProductSuccess = 'Successfully added product you can add another product...'
-      req.session.addProductStatus = true
-      req.session.save(() => {
+      if (errors.length === 0) {
+        // Process the uploaded files and respond to the client
+        const cloudinary = require('cloudinary').v2
+
+        cloudinary.config({
+          cloud_name: process.env.CLOUD_NAME,
+          api_key: process.env.API_KEY,
+          api_secret: process.env.API_SECRET
+        })
+        async function uploadImages (images) {
+          const urls = []
+          for (let i = 0; i < images.length; i++) {
+            const result = await cloudinary.uploader.upload(images[i].path)
+            urls.push(result.secure_url)
+          }
+          return urls
+        }
+        uploadImages(files)
+          .then(async (urls) => {
+            // Store the URLs in your database here
+            // console.log(urls)
+            await adminHelpers.addProducts(body, urls)
+            req.session.addProductSuccess = 'Successfully added product you can add another product...'
+            req.session.addProductStatus = true
+            res.redirect('/admin/addProduct3')
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      } else {
+        req.session.addProductError = errors
         res.redirect('/admin/addProduct3')
-      })
+      }
     } catch (err) {
       console.error(err)
       req.session.addProductStatus = false
@@ -134,18 +159,19 @@ module.exports = {
       const errors = validationResult(req)
       console.log(errors)
       req.session.updateProductError = errors.errors
-      if (req.session.updateProductError.length !== 0) {
+      if (req.session.updateProductError.length === 0) {
+        await adminHelpers.updateProductsList(productId, req.body)
+        req.session.updateProductStatus = true
+        req.session.updateMsg = 'Product updated successfully..'
+        res.redirect('/admin/viewPoductsList')
+        if (req.files) {
+          const image = req.files.product_image
+          const objId = req.params.id
+          image.mv(`./public/post-images/${objId}.jpg`)
+        }
+      } else {
         req.session.updateProductStatus = false
         return res.redirect(`/admin/editProductsList/${productId}`)
-      }
-      await adminHelpers.updateProductsList(productId, req.body)
-      req.session.updateProductStatus = true
-      req.session.updateMsg = 'Product updated successfully..'
-      res.redirect('/admin/viewPoductsList')
-      if (req.files) {
-        const image = req.files.product_image
-        const objId = req.params.id
-        image.mv(`./public/post-images/${objId}.jpg`)
       }
     } catch (error) {
       console.error(error)
@@ -343,6 +369,43 @@ module.exports = {
     } catch (error) {
       console.log(error)
       res.status(500).send('Internal Server Error')
+    }
+  },
+  addPrdocuts1Post: (req, res) => {
+    try {
+      // Access the uploaded files using `req.files`
+      console.log(req.files)
+      console.log(req.body)
+      // Process the uploaded files and respond to the client
+      const cloudinary = require('cloudinary').v2
+
+      cloudinary.config({
+        cloud_name: process.env.CLOUD_NAME,
+        api_key: process.env.API_KEY,
+        api_secret: process.env.API_SECRET
+      })
+      async function uploadImages (images) {
+        const urls = []
+        for (let i = 0; i < images.length; i++) {
+          const result = await cloudinary.uploader.upload(images[i].path)
+          urls.push(result.secure_url)
+        }
+        return urls
+      }
+      const images = req.files
+      uploadImages(images)
+        .then((urls) => {
+          // Store the URLs in your database here
+          console.log(urls)
+          adminHelpers.uploadImageUrlIntoDataBase(urls)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      res.status(200).json({ message: 'File upload successful!' })
+    } catch (error) {
+      console.log(error)
+      throw new Error(error)
     }
   },
   logoutAdmin: (req, res) => {

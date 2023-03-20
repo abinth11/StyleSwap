@@ -43,6 +43,29 @@
 
 
 
+{{!-- Modal for the guest User --}}
+
+<div class="modal fade" id="login-signup-modal" tabindex="-1" role="dialog" aria-labelledby="login-signup-modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="border: none;">
+        <h5 class="modal-title text-center" id="login-signup-modal-title">Please log in or sign up</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="border: none;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="text-center">Log in or sign up to proceed with the checkout process.</p>
+      </div>
+      <div class="modal-footer" style="border: none;">
+        <button type="button" class="btn btn-primary btn-block" id="login-btn">Log in</button>
+        <button type="button" class="btn btn-outline-primary btn-block" id="signup-btn">Sign up</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 
     <div class="mobile-header-active mobile-header-wrapper-style">
@@ -614,7 +637,12 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <a href="/proceed-to-checkout" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+                                    {{#if guestUser}}
+                                    <a class="btn " id="guest-checkout"> <i class="fi-rs-box-alt mr-10"></i> Proceed To Check</a>
+                                    {{else}}
+                                    <a href="/proceed-to-checkout" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To Checkout</a>
+                                    {{/if}}
+
                                 </div>
                             </div>
                         </div>
@@ -624,3 +652,81 @@
         </section>
     </main>
  {{>foot-user}}
+ <script>
+// Trigger the modal when the user clicks the checkout button
+$('#guest-checkout').click(function() {
+  $('#login-signup-modal').modal('show');
+});
+
+// Redirect to login or signup page when the user clicks the corresponding button
+$('#login-btn').click(function() {
+  window.location.href = '/userLogin?from=cart';
+});
+
+$('#signup-btn').click(function() {
+  window.location.href = '/userSignup';
+});
+ </script>
+ <style>
+    .my-swal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+  padding: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.my-swal-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.my-swal-text {
+  font-size: 18px;
+}
+
+.my-swal-confirm-button {
+  background-color: #721c24;
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-top: 20px;
+}
+
+.my-swal-confirm-button:hover {
+  background-color: #6b1a22;
+  cursor: pointer;
+}
+
+ </style>
+ <script>  
+   window.onload = function () {
+  if (localStorage.getItem('display_sweet_alert') === 'true') {
+    Swal.fire({
+      title: 'Account Products Included',
+      text: 'The products in your existing account have been added to your cart. Please review your cart before proceeding to checkout.',
+      icon: 'warning',
+      customClass: {
+        container: 'my-swal',
+        title: 'my-swal-title',
+        text: 'my-swal-text',
+        confirmButton: 'my-swal-confirm-button'
+      },
+      showCancelButton: false,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+      confirmButtonText: 'OK',
+    }).then(() => {
+      // Do nothing, the user has closed the alert
+    });
+    localStorage.removeItem('display_sweet_alert'); // Remove the flag so the alert doesn't appear again
+  }
+}
+</script>

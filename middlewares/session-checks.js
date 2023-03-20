@@ -14,5 +14,17 @@ module.exports = {
       console.log(error)
       res.send(500).json({ message: 'session error while login' })
     }
+  },
+  isUserOrGuestExist: (req, res, next) => {
+    try {
+      if (req.session.user || req.session.guestUser) {
+        next()
+      } else {
+        res.redirect('/')
+      }
+    } catch (error) {
+      console.log(error)
+      throw new Error('session handling error for user and guest')
+    }
   }
 }

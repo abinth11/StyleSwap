@@ -31,10 +31,10 @@ router.route('/otpValidate')
   .post(userControler.otpValidatePost)
 
 // Cart for user
-router.get('/userCart', sessionChecker.isUserExist, userControler.userCartGet)
+router.get('/userCart', sessionChecker.isUserOrGuestExist, userControler.userCartGet)
 
 // add to the cart
-router.get('/add-to-cart/:id', sessionChecker.isUserExist, userControler.addToCartGet)
+router.get('/add-to-cart/:id', userControler.addToCartGet)
 
 // change product quantity in the cart
 router.post('/change-quantity', userControler.changeCartProductQuantity)

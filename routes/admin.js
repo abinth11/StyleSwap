@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const adminControler = require('../controlers/admin-controlers')
 const adminValidate = require('../validation/adminValidation')
-const { upload } = require('../middlewares/multer')
+const upload = require('../middlewares/multer')
 const sessionCheck = require('../middlewares/session-checks')
 /* GET users listing. */
 router.get('/', adminControler.adminLoginGet)
@@ -16,17 +16,8 @@ router.get('/dashboard', sessionCheck.isAdminExist, adminControler.adminDashboar
 // Admin add product get and post methods
 router.route('/addProduct1')
   .get(sessionCheck.isAdminExist, adminControler.addProducts1Get)
-  .post(upload.single('product_image'), adminControler.addProducts1Post)
 
-router.get('/addProduct1', sessionCheck.isAdminExist, adminControler.addProducts1Get)
-
-// const upload = multer({ dest: 'uploads/' });
-
-router.post('/add-product-1', upload.single('image'), (req, res) => {
-  console.log(req.body)
-  console.log(req.file)
-  console.log('llllllllllllllllll')
-})
+router.post('/addProduct1', upload.array('product_image', 10), adminControler.addPrdocuts1Post)
 
 router.route('/addProduct2')
   .get(sessionCheck.isAdminExist, adminControler.addProducts2Get)
@@ -34,7 +25,7 @@ router.route('/addProduct2')
 // For adding products like clothes and shoes
 router.route('/addProduct3')
   .get(sessionCheck.isAdminExist, adminControler.addProducts3Get)
-  .post(adminValidate.addProductValidate, adminControler.addProducts3Post)
+  .post(upload.array('product_image', 10), adminValidate.addProductValidate, adminControler.addProducts3Post)
 
 router.route('/addProduct4')
   .get(sessionCheck.isAdminExist, adminControler.addProducts4Get)
@@ -115,10 +106,5 @@ router.post('/refund-amount', adminControler.refundAmount)
 
 // Logout admin
 router.get('/logoutAdmin', adminControler.logoutAdmin)
-
-// router.post('/uploadImages',multer.uploadImage.array('images',3),(req,res)=>{
-//     res.status(500).json(error);
-//     console.log("images uploaded")
-// })
 
 module.exports = router

@@ -533,8 +533,11 @@
     }
 </script>
 <script>
+    const currencyFormatter = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR'
+    });
 
-    
     $("#place-order").submit((e) => {
         e.preventDefault()
         $.ajax({
@@ -553,13 +556,14 @@
                 } else if (response.paypal) {
                     location.href = response.reUrl
                 } else if (response.wallet) {
-                    const walletBalance = response.balance
+                    const walletBalance = currencyFormatter.format(response.balance)
                     const walletId = response._id
+                    const total = response.total
                     Swal.fire({
                         title: 'Your Wallet Information',
                         html:
                             '<p><strong>Wallet ID:</strong>' + walletId + '</p>' +
-                            '<p><strong>Balance:</strong> &#x20b9;' + walletBalance.toFixed(2) + '</p>',
+                            '<p><strong>Balance:</strong>' + walletBalance + '</p>',
                         showCloseButton: false,
                         showCancelButton: true,
                         focusConfirm: false,
@@ -578,28 +582,43 @@
                             $.ajax({
                                 type: "POST",
                                 url: "/wallet-payment",
-                                data: { confirmed: true },
+                                data: { confirmed: true, total },
                                 success: function (response) {
                                     console.log(response)
                                     // Handle payment success
-                                    const amountPaid = 00;
-                                    const newBalance = 50.00;
-                                    Swal.fire({
-                                        title: 'Payment Successful!',
-                                        html:
-                                            '<p><strong>Amount Paid:</strong> &#x20b9;' + amountPaid.toFixed(2) + '</p>' +
-                                            '<p><strong>New Balance:</strong> &#x20b9;' + newBalance.toFixed(2) + '</p>',
-                                        icon: 'success',
-                                        showConfirmButton: true,
-                                        confirmButtonText: 'Close',
-                                        customClass: {
-                                            container: 'my-swal'
-                                        }
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            location.reload();
-                                        }
-                                    });
+                                    if (response.paid) {
+                                        const amountPaid = currencyFormatter.format(response.amountPaid);
+                                        const newBalance = currencyFormatter.format(response.updatedBalance);
+                                        Swal.fire({
+                                            title: 'Payment Successful!',
+                                            html:
+                                                '<p><strong>Amount Paid:</strong>' + amountPaid + '</p>' +
+                                                '<p><strong>New Balance:</strong> ' + newBalance + '</p>',
+                                            icon: 'success',
+                                            showConfirmButton: true,
+                                            confirmButtonText: 'Close',
+                                            customClass: {
+                                                container: 'my-swal'
+                                            }
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                setTimeout(function () {
+                                                    location.href = '/order-placed-landing';
+                                                }, 1000);
+                                            }
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Insufficient Balance!',
+                                            text: 'Your account balance is not enough to complete this transaction.',
+                                            icon: 'error',
+                                            showConfirmButton: true,
+                                            confirmButtonText: 'OK',
+                                            customClass: {
+                                                container: 'my-swal'
+                                            }
+                                        });
+                                    }
                                 },
                                 error: function (xhr, status, error) {
                                     // Handle payment error
@@ -617,9 +636,6 @@
                             });
                         }
                     });
-
-
-
                 }
             }
         })

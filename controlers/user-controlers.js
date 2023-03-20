@@ -1,8 +1,8 @@
 const userHelpers = require('../helpers/user-helpers')
 const adminHelpers = require('../helpers/admin-helpers')
 const twilio = require('../middlewares/twilio')
+const uuid = require('uuid')
 const { validationResult } = require('express-validator')
-let err
 module.exports = {
   userHome: async (req, res) => {
     try {
@@ -10,6 +10,7 @@ module.exports = {
       if (req.session.user) {
         cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
       }
+      console.log(req.session)
       const products = await userHelpers.viewProduct()
       res.render('index', { user: req.session.user, products, cartCount })
     } catch (error) {
@@ -61,10 +62,13 @@ module.exports = {
   },
   userLoginGet: (req, res) => {
     try {
+      let from
+      req.query.from ? from = req.query.from : from = 'home'
+      console.log(from)
       if (req.session.user) {
         res.redirect('/')
       } else {
-        res.render('users/login', { loginErr: req.session.loginError })
+        res.render('users/login', { loginErr: req.session.loginError, from })
         req.session.loginError = null
       }
     } catch (error) {
@@ -140,9 +144,15 @@ module.exports = {
   },
   userLoginPost: async (req, res) => {
     try {
+      const { from } = req.body
       const errors = validationResult(req)
+      const successResponse = {
+        from,
+        status: true
+      }
       const err = errors.errors
       req.session.mobile = req.body.mobile
+      const guestId = req.session.guestUser?.id
       if (err.length === 0) {
         const response = await userHelpers.loginUser(req.body)
         if (response.block) {
@@ -150,7 +160,15 @@ module.exports = {
           res.json({ status: false })
         } else if (response.status) {
           req.session.user = response.user
-          res.json({ status: true })
+          const userId = req.session.user._id
+          if (from === 'cart') {
+            console.log(userId, guestId)
+            await userHelpers.mergeGuestCartIntoUserCart(userId, guestId)
+            req.session.guestUser = null
+            res.json(successResponse)
+          } else {
+            res.json(successResponse)
+          }
         } else {
           req.session.loginError = 'Invalid phone number or password'
           res.json({ status: false })
@@ -165,6 +183,7 @@ module.exports = {
     try {
       const { id } = req.params
       const product = await userHelpers.viewCurrentProduct(id)
+      console.log(product)
       res.render('users/shop-product-right', { user: req.session.user, product })
     } catch (error) {
       console.error(error)
@@ -173,10 +192,21 @@ module.exports = {
   },
   userCartGet: async (req, res) => {
     try {
-      const cartItems = await userHelpers.getcartProducts(req.session.user._id)
-      const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
-      const cartId = cartItems?._id
-      res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId })
+      const user = req.session.user?._id
+      const guestUser = req.session.guestUser?.id
+      console.log(user, guestUser)
+      if (user) {
+        console.log(user)
+        const cartItems = await userHelpers.getcartProducts(req.session.user._id)
+        const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
+        const cartId = cartItems?._id
+        res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId })
+      } else if (guestUser) {
+        console.log(guestUser)
+        console.log('guest user cart')
+        const cartItems = await userHelpers.getGuestUserCartProducts(req.session.guestUser.id)
+        res.render('users/shop-cart', { cartItems, guestUser })
+      }
     } catch (error) {
       console.error(error)
       res.status(500).send('Internal Server Error')
@@ -184,9 +214,16 @@ module.exports = {
   },
   addToCartGet: async (req, res) => {
     try {
-      const { id } = req.params
-      const userId = req.session?.user._id
-      await userHelpers.addToCart(id, userId)
+      const guestUser = {}
+      guestUser.id = uuid.v4()
+      if (!req.session.guestUser) {
+        req.session.guestUser = guestUser
+      }
+      const { id: productId } = req.params
+      const userId = req.session.user?._id
+      const guestUserId = req.session.guestUser.id
+      userId && await userHelpers.addToCart(productId, userId, guestUserId)
+      guestUserId && await userHelpers.createGuestUser(guestUserId, productId)
       res.json({ status: true })
     } catch (error) {
       console.error(error)
@@ -249,6 +286,7 @@ module.exports = {
       } else if (paymentMethod === 'wallet') {
         const walletDetails = await userHelpers.getWalletData(req.session.user?._id)
         walletDetails.wallet = true
+        walletDetails.total = total
         req.session.orderId = insertedOrderId
         res.json(walletDetails)
       } else {
@@ -278,7 +316,6 @@ module.exports = {
         console.log(err)
         res.json({ status: false, errorMsg: err })
       })
-      res.json({ status: true })
     } catch (error) {
       console.log(error)
       res.status(500).json({ message: 'Internal server error' })
@@ -495,6 +532,8 @@ module.exports = {
   getWallet: async (req, res) => {
     try {
       const walletData = await userHelpers.getWalletData(req.session.user._id)
+      walletData.transactions = walletData.transactions.reverse()
+      console.log(walletData)
       res.render('users/wallet', { walletData })
     } catch (error) {
       console.log(error)
@@ -503,15 +542,14 @@ module.exports = {
   },
   walletPayment: async (req, res) => {
     try {
+      console.log(req.body)
       const insertedOrderId = req.session.orderId
       const userId = req.session.user._id
-      const products = await userHelpers.getAllProductsUserCart(userId)
-      let totalPrice = {}
-      if (products[0]?.products.length) {
-        totalPrice = await userHelpers.findTotalAmout(userId)
-      }
-      const total = totalPrice?.offerTotal
-      const response = await userHelpers.getUserWallet(insertedOrderId, total, userId)
+      const { total } = req.body
+      console.log(total)
+      console.log(userId)
+      const response = await userHelpers.getUserWallet(insertedOrderId, parseInt(total), userId)
+      console.log(response)
       res.json(response)
     } catch (error) {
       console.log(error)
