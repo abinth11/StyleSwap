@@ -2,9 +2,14 @@
   "name": "ecommercewebsite",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "lint": "eslint ./"
+    "start": "nodemon ./bin/www.js",
+    "lint": "eslint ./",
+    "build": "babel src -d dist"
+  },
+  "bin": {
+    "www": "bin/www.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -17,6 +22,7 @@
     "express-handlebars": "^6.0.6",
     "express-session": "^1.17.3",
     "express-validator": "^6.14.2",
+    "handlebars": "^4.7.7",
     "hbs": "^4.2.0",
     "http-errors": "~1.6.3",
     "moment": "^2.29.4",
@@ -33,6 +39,10 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.3",
+    "@babel/node": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
     "eslint": "^8.35.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.27.5",

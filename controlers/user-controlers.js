@@ -1,9 +1,9 @@
-const userHelpers = require('../helpers/user-helpers')
-const adminHelpers = require('../helpers/admin-helpers')
-const twilio = require('../middlewares/twilio')
-const uuid = require('uuid')
-const { validationResult } = require('express-validator')
-module.exports = {
+import userHelpers from '../helpers/user-helpers.js'
+import adminHelpers from '../helpers/admin-helpers.js'
+import twilio  from 'twilio'
+import { v4 as uuidv4 } from 'uuid';
+import { validationResult } from 'express-validator'
+export const userControler = {
   userHome: async (req, res) => {
     try {
       let cartCount
@@ -194,17 +194,18 @@ module.exports = {
     try {
       const user = req.session.user?._id
       const guestUser = req.session.guestUser?.id
-      console.log(user, guestUser)
+      // console.log(user, guestUser)
       if (user) {
-        console.log(user)
+        // console.log(user)
         const cartItems = await userHelpers.getcartProducts(req.session.user._id)
         const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
         const cartId = cartItems?._id
         res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId })
       } else if (guestUser) {
-        console.log(guestUser)
+        // console.log(guestUser)
         console.log('guest user cart')
         const cartItems = await userHelpers.getGuestUserCartProducts(req.session.guestUser.id)
+        console.log(cartItems)
         res.render('users/shop-cart', { cartItems, guestUser })
       }
     } catch (error) {
@@ -215,7 +216,7 @@ module.exports = {
   addToCartGet: async (req, res) => {
     try {
       const guestUser = {}
-      guestUser.id = uuid.v4()
+      guestUser.id = uuidv4()
       if (!req.session.guestUser) {
         req.session.guestUser = guestUser
       }

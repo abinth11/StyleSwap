@@ -145,7 +145,7 @@
             event.preventDefault(); // prevent the form from submitting normally
             $.ajax({
                 type: 'POST',
-                url: '/admin/add-offers',
+                url: '/admin/dashboard/add-offers-by-category',
                 data: $('#add-offer').serialize(),
                 success: function (response) {
                     console.log(response);

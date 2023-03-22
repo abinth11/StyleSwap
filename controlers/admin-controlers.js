@@ -1,9 +1,10 @@
-const adminHelpers = require('../helpers/admin-helpers')
-const { validationResult } = require('express-validator')
-const otherHelpers = require('../helpers/otherHelpers')
-const generateReport = require('../middlewares/salesReport')
-const fs = require('fs')
-module.exports = {
+import adminHelpers from '../helpers/admin-helpers.js'
+import { validationResult } from 'express-validator'
+import otherHelpers from '../helpers/otherHelpers.js'
+import generateReport from '../middlewares/salesReport.js'
+import fs from 'fs'
+import { v2 as cloudinary } from 'cloudinary'
+const adminControler = {
   adminLoginGet: (req, res) => {
     const { admin, loginError } = req.session
     if (admin) {
@@ -57,23 +58,6 @@ module.exports = {
       res.render('error', { message: 'Error fetching dashboard data' })
     }
   },
-  addProducts1Get: (req, res) => {
-    res.render('admin/add-product')
-  },
-  addProducts1Post: (req, res) => {
-    console.log(req.body)
-    // console.log(req.files)
-    res.send('uploaded')
-    // console.log(req.files)
-    // const errors = validationResult(req);
-    // console.log(errors);
-    // adminHelpers.addProducts(req.body).then((data) => {
-    //     console.log(data)
-    // })
-  },
-  addProducts2Get: (req, res) => {
-    res.render('admin/add-product2')
-  },
   addProducts3Get: async (req, res) => {
     try {
       const category = await adminHelpers.getAllCategories()
@@ -95,14 +79,12 @@ module.exports = {
     try {
       if (errors.length === 0) {
         // Process the uploaded files and respond to the client
-        const cloudinary = require('cloudinary').v2
-
         cloudinary.config({
           cloud_name: process.env.CLOUD_NAME,
           api_key: process.env.API_KEY,
           api_secret: process.env.API_SECRET
         })
-        async function uploadImages (images) {
+        async function uploadImages(images) {
           const urls = []
           for (let i = 0; i < images.length; i++) {
             const result = await cloudinary.uploader.upload(images[i].path)
@@ -117,26 +99,23 @@ module.exports = {
             await adminHelpers.addProducts(body, urls)
             req.session.addProductSuccess = 'Successfully added product you can add another product...'
             req.session.addProductStatus = true
-            res.redirect('/admin/addProduct3')
+            res.redirect('/admin/dashboard/view-products-in-list/add-products')
           })
           .catch((error) => {
             console.log(error)
           })
       } else {
         req.session.addProductError = errors
-        res.redirect('/admin/addProduct3')
+        res.redirect('/admin/dashboard/view-products-in-list/add-products ')
       }
     } catch (err) {
       console.error(err)
       req.session.addProductStatus = false
       req.session.save(() => {
-        res.redirect('/admin/addProduct3')
+        res.redirect('/admin/dashboard/add-product-category')
       })
       throw err
     }
-  },
-  addProducts4Get: (req, res) => {
-    res.render('admin/add-product4')
   },
   viewProductList: (req, res) => {
     adminHelpers.viewProduct().then((products) => {
@@ -163,7 +142,7 @@ module.exports = {
         await adminHelpers.updateProductsList(productId, req.body)
         req.session.updateProductStatus = true
         req.session.updateMsg = 'Product updated successfully..'
-        res.redirect('/admin/viewPoductsList')
+        res.redirect('/admin/dashboard/view-products-in-list')
         if (req.files) {
           const image = req.files.product_image
           const objId = req.params.id
@@ -171,7 +150,7 @@ module.exports = {
         }
       } else {
         req.session.updateProductStatus = false
-        return res.redirect(`/admin/editProductsList/${productId}`)
+        return res.redirect(`/admin/dashboard/view-product-list/edit-products-list/${productId}`)
       }
     } catch (error) {
       console.error(error)
@@ -192,9 +171,6 @@ module.exports = {
   viewProductsGrid: (req, res) => {
     res.render('admin/view-products-grid')
   },
-  viewProductsGrid2: (req, res) => {
-    res.render('admin/view-products-grid2')
-  },
   addCategoryGet: async (req, res) => {
     try {
       const category = await adminHelpers.getAllCategories()
@@ -210,26 +186,35 @@ module.exports = {
     }
   },
   addCategoryPost: (req, res) => {
-    const { body } = req
-    adminHelpers.addCategories(body)
-      .then(() => {
-        req.session.addedCategory = 'Added Category you can add another one'
-        res.redirect('/admin/addProductCategory')
-      })
+    try {
+      const { body } = req
+      adminHelpers.addCategories(body)
+        .then(() => {
+          req.session.addedCategory = 'Added Category you can add another one'
+          res.redirect('/admin/dashboard/add-product-category')
+        })
+    } catch (error) {
+      console.log(error)
+    }
   },
   editCategoryGet: (req, res) => {
-    const { id } = req.params
-    adminHelpers.getCurrentCategory(id)
-      .then((category) => {
-        res.render('admin/edit-product-category', { category })
-      })
+    try {
+      const { id } = req.params
+      adminHelpers.getCurrentCategory(id)
+        .then((category) => {
+          console.log(category)
+          res.render('admin/edit-product-category', { category })
+        })
+    } catch (error) {
+      console.log(error)
+    }
   },
   editCategoryPut: (req, res) => {
     const { id } = req.params
     adminHelpers.updateCurrentCategory(id, req.body)
       .then((status) => {
         console.log(status)
-        res.redirect('/admin/addProductCategory')
+        res.redirect('/admin/dashboard/add-product-category')
       })
   },
   deleteProductCategory: (req, res) => {
@@ -237,7 +222,7 @@ module.exports = {
     adminHelpers.deleteProductCategory(id)
       .then(() => {
         req.session.categoryDeleted = 'Deleted Category'
-        res.redirect('/admin/addProductCategory')
+        res.redirect('/admin/dashboard/add-product-category')
       })
   },
   viewUsers: (req, res) => {
@@ -257,16 +242,15 @@ module.exports = {
   },
   viewAllOrders: async (req, res) => {
     const orders = await adminHelpers.getAllUserOrders()
+    console.log(orders)
     const odr = adminHelpers.ISO_to_Normal_Date(orders)
-    res.render('admin/page-orders-1', { odr })
+    res.render('admin/page-orders-1', { odr })  
   },
   viewOrderDetails: async (req, res) => {
-    const odr = await adminHelpers.getCurrentOrderMore(req.params.id)
-    let orders = adminHelpers.ISO_to_Normal_Date(odr)
-    const products = await adminHelpers.getCurrentProducts(req.params.id)
-    const address = await adminHelpers.getallUserAddress(req.params.id)
-    orders = orders[0]
-    res.render('admin/view-more-orders', { orders, products, address })
+    const orderDetails = await adminHelpers.getCurrentProducts(req.params.id)
+    // let orders = adminHelpers.ISO_to_Normal_Date(odr)
+    console.log(orderDetails)
+    res.render('admin/view-more-orders', { orderDetails })
   },
   changeProductStatus: (req, res) => {
     adminHelpers.changeOrderStatus(req.body).then(() => {
@@ -301,7 +285,13 @@ module.exports = {
     res.render('admin/offer-products', { prodInfo: req.query })
   },
   addOffersProductsPost: (req, res) => {
-    adminHelpers.addOfferToProducts(req.body)
+    adminHelpers.addOfferToProducts(req.body).then(()=>{
+      res.redirect('/admin/dashboard/view-product-list/add-offers-for-products')
+    })
+  },
+  viewOffers: (req, res) => {
+    res.render('admin/view-offers')
+
   },
   makeReport: async (req, res) => {
     const { format } = req.body
@@ -371,41 +361,45 @@ module.exports = {
       res.status(500).send('Internal Server Error')
     }
   },
-  addPrdocuts1Post: (req, res) => {
+  addProductsVariants: (req, res) => {
     try {
-      // Access the uploaded files using `req.files`
-      console.log(req.files)
-      console.log(req.body)
-      // Process the uploaded files and respond to the client
-      const cloudinary = require('cloudinary').v2
-
-      cloudinary.config({
-        cloud_name: process.env.CLOUD_NAME,
-        api_key: process.env.API_KEY,
-        api_secret: process.env.API_SECRET
-      })
-      async function uploadImages (images) {
-        const urls = []
-        for (let i = 0; i < images.length; i++) {
-          const result = await cloudinary.uploader.upload(images[i].path)
-          urls.push(result.secure_url)
-        }
-        return urls
-      }
-      const images = req.files
-      uploadImages(images)
-        .then((urls) => {
-          // Store the URLs in your database here
-          console.log(urls)
-          adminHelpers.uploadImageUrlIntoDataBase(urls)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-      res.status(200).json({ message: 'File upload successful!' })
+      res.render('admin/product-variants')
     } catch (error) {
       console.log(error)
-      throw new Error(error)
+    }
+  },
+  addSubCategoryGet: async (req, res) => {
+    try {
+      const subCategories = await adminHelpers.getAllSubCategories()
+      res.render('admin/add-sub-category', { subCategories })
+    } catch (error) {
+      console.log(error)
+      res.status(500).send('Internal server error')
+
+    }
+  },
+  addSubCategoryPost: async (req, res) => {
+    try {
+      console.log(req.body)
+      const response = await adminHelpers.addSubCategory(req.body)
+      console.log(response)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+      res.status(500).send('Internal Server Error')
+    }
+  },
+  editSubCategory: (req, res) => {
+    console.log(req.body)
+
+  },
+  deleteSubCategory: async (req, res) => {
+    try {
+      const response = await adminHelpers.deleteSubCategory(req.params.id)
+      res.status(200).json({ message: response });
+    } catch (error) {
+      console.log(error)
+      res.status(500).send('Internal server error')
     }
   },
   logoutAdmin: (req, res) => {
@@ -413,3 +407,4 @@ module.exports = {
     res.redirect('/admin')
   }
 }
+export default adminControler

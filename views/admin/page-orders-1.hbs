@@ -17,11 +17,18 @@
         <div class="card mb-4">
             <header class="card-header">
                 <div class="row gx-3">
-                    <div class="col-lg-4 col-md-6 me-auto">
+                    <div class="col-lg-2 col-md-4 ">
                         <input type="text" oninput="filterTableRows()" placeholder="Search..." class="form-control"
                             id="searchInput">
                     </div>
-                    <div class="col-lg-2 col-6 col-md-3">
+                    <div class="col-lg-2 col-md-4 me-auto">
+                        <select class="form-select" id="sort">
+                            <option selected disabled>Sort</option>
+                            <option>By date</option>
+                            <option>By Price</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-4 col-md-3">
                         <select class="form-select" id="statusSelect" onchange="filterTableByStatus()">
                             <option>Status</option>
                             <option value="all">Show all</option>
@@ -52,60 +59,91 @@
                                 <th>#ID</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Mobile</th>
-                                <th scope="col">Total</th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Actions</th>
-                                <th scope="col"> More </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each odr}}
-                            <tr>
-                                <td>0901</td>
-                                <td><b>{{name}}</b></td>
-                                <td>{{mobile}}</td>
-                                <td>${{totalPrice}}</td>
-                                <td>{{date}}</td>
-                                {{#if (eq status "placed")}}
-                                <td><span class="badge rounded-pill alert-success">Placed</span></td>
-                                {{else if (eq status "pending")}}
-                                <td><span class="badge rounded-pill alert-warning">Pending</span></td>
-                                {{else if (eq status "cancelled")}}
-                                <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
-                                {{else if (eq status "confirmed")}}
-                                <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
-                                {{else if (eq status "shipped")}}
-                                <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
-                                {{else if (eq status "delivery")}}
-                                <td><span class="badge rounded-pill alert-info">Delivery</span></td>
-                                {{else if (eq status "completed")}}
-                                <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
-                                {{/if}}
-                                <td class="">
-                                    <div class="status-buttons">
-                                        <button class="btn btn-outline-success btn-sm btn-success" title="Placed"
-                                            onclick="changeOrderStatus('{{_id}}','{{status}}','placed')">P</button>
-                                        <button class="btn btn-outline-warning btn-sm" title="Confirm"
-                                            onclick="changeOrderStatus('{{_id}}','{{status}}','confirmed')">C</button>
-                                        <button class="btn btn-outline-primary btn-sm" title="Shipped"
-                                            onclick="changeOrderStatus('{{_id}}','{{status}}','shipped')">S</button>
-                                        <button class="btn btn-outline-info btn-sm" title="Delivery"
-                                            onclick="changeOrderStatus('{{_id}}','{{status}}','delivery')">D</button>
-                                        <button class="btn btn-outline-secondary btn-sm" title="Completed"
-                                            onclick="changeOrderStatus('{{_id}}','{{status}}','completed')">C</button>
+                                <th>
+                                    <div style="display: inline-flex; align-items: center;">
+                                        <div>Total</div>
+                                        <div class="ms-2"
+                                            style="display: flex; flex-direction: column;width: 2em;height: 2em;">
+                                            <div style="height: 1em; cursor: pointer;">
+                                                <button style="border: none;"><i class="fas fa-chevron-up"
+                                                        style="display: inline-block;"></i></button>
+                                            </div>
+                                            <div style="height: 1em;cursor: pointer;">
+                                                <button style="border:none"><i class="fas fa-chevron-down"
+                                                        style="display: inline-block;"></i></button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </td>
-                                <td class="">
-                                    <a href="/admin/view-order-details/{{_id}}"
-                                        class="btn btn-md rounded font-sm">Details</a>
-                                </td>
-                            </tr>
-                            {{/each}}
-                        </tbody>
-                    </table>
-                </div> <!-- table-responsive //end -->
-            </div> <!-- card-body end// -->
+                </div>
+            </div>
+        </div>
+        </th>
+        <th>
+            <div style="display: inline-flex; align-items: center;">
+                <div>Date</div>
+                <div class="ms-2" style="display: flex; flex-direction: column;width: 2em;height: 2em;">
+                    <div style="height: 1em; cursor: pointer;">
+                        <button style="border: none;" onclick="sortByDate('asc')"><i class="fas fa-chevron-up"
+                                style="display: inline-block;"></i></button>
+                    </div>
+                    <div style="height: 1em;cursor: pointer;">
+                        <button style="border: none;" onclick="sortByDate('desc')"><i class="fas fa-chevron-down"
+                                style="display: inline-block;"></i></button>
+                    </div>
+                </div>
+            </div>
+        <th scope="col">Status</th>
+        <th scope="col">Actions</th>
+        <th scope="col">More</th>
+        </tr>
+        </thead>
+        <tbody>
+            {{#each odr}}
+            <tr>
+                <td>0901</td>
+                <td><b>{{name}}</b></td>
+                <td>{{mobile}}</td>
+                <td>${{totalPrice}}</td>
+                <td id="order-date">{{date}}</td>
+                {{#if (eq status "placed")}}
+                <td><span class="badge rounded-pill alert-success">Placed</span></td>
+                {{else if (eq status "pending")}}
+                <td><span class="badge rounded-pill alert-warning">Pending</span></td>
+                {{else if (eq status "cancelled")}}
+                <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
+                {{else if (eq status "confirmed")}}
+                <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
+                {{else if (eq status "shipped")}}
+                <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
+                {{else if (eq status "delivery")}}
+                <td><span class="badge rounded-pill alert-info">Delivery</span></td>
+                {{else if (eq status "completed")}}
+                <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
+                {{/if}}
+                <td class="">
+                    <div class="status-buttons">
+                        <select class="form-select form-select-sm"
+                            onchange="changeOrderStatus('{{_id}}','{{status}}', this.value)"
+                            style="font-size: 13px;width: 140px;">
+                            <option selected disabled>Change status</option>
+                            <option value="placed">Placed</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivery">Delivery</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </td>
+                <td class="">
+                    <a href="/admin/dashboard/admin-view-orders/view-order-details/{{_id}}"
+                        class="btn btn-md rounded font-sm">Details</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+        </table>
+        </div> <!-- table-responsive //end -->
+        </div> <!-- card-body end// -->
         </div> <!-- card end// -->
         <div class="pagination-area mt-15 mb-50">
             <nav aria-label="Page navigation example">
@@ -140,6 +178,8 @@
                 }
             })
         }
+
+
         const viewMoreOrders = (orderId) => {
             console.log(orderId);
             $.ajax({
@@ -287,5 +327,42 @@
         });
 
 
+
+    </script>
+
+    <script>
+
+
+
+        function sortByDate(order) {
+            console.log(order)
+            // Get the table element
+            const table = document.getElementById("userTable");
+
+            // Get all the rows in the table except for the first row (header)
+            const rows = Array.from(table.rows).slice(1);
+
+            // Sort the rows by date
+            rows.sort((row1, row2) => {
+                // Get the dates from the date column of each row
+                const date1 = new Date(row1.cells[1].innerText);
+                const date2 = new Date(row2.cells[1].innerText);
+
+                // Compare the dates based on the current sorting order
+                if (order === "asc") {
+                    return date1 - date2;
+                } else if (order === "desc") {
+                    return date2 - date1;
+                }
+            });
+
+            // Remove all the rows from the table
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+
+            // Add the sorted rows back to the table
+            rows.forEach((row) => table.appendChild(row));
+        }
 
     </script>

@@ -1,13 +1,13 @@
-const mongoClient = require('mongodb').MongoClient
+import { MongoClient } from 'mongodb'
 
 const state = {
   db: null
 }
 
-module.exports.connect = () => {
+ export const connect = async () => {
   const url = 'mongodb://localhost:27017'
   const dbname = 'shoppingCart'
-  return mongoClient.connect(url)
+  return MongoClient.connect(url)
     .then((client) => {
       state.db = client.db(dbname)
       return state.db
@@ -18,6 +18,36 @@ module.exports.connect = () => {
     })
 }
 
-module.exports.get = () => {
+  const get = () => {
   return state.db
 }
+
+const db = {
+  connect,
+  get,
+  state
+}
+
+export default db
+// connection.js
+// import { MongoClient } from 'mongodb';
+
+// const url = process.env.MONGODB_URL || 'mongodb://localhost:27017';
+// const dbName = 'shoppingCart';
+
+// let db;
+
+// export const  connect = async () => {
+//   const client = await MongoClient.connect(url);
+//   db = client.db(dbName);
+//   return { get };
+// };
+
+// export const get = () => {
+//   if (!db) {
+//     throw new Error('Database not initialized');
+//   }
+//   return db;
+// };
+
+// export default { connect, get };

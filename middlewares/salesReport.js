@@ -1,7 +1,6 @@
-const PDFDocument = require('pdfkit')
-const ExcelJS = require('exceljs')
-const fs = require('fs')
-
+import PDFDocument from 'pdfkit'
+import ExcelJS from 'exceljs'
+import fs from 'fs'
 async function generateReport (reportType, data) {
   console.log(reportType)
   try {
@@ -49,4 +48,4 @@ async function generateReport (reportType, data) {
     throw error
   }
 }
-module.exports = generateReport
+export default generateReport

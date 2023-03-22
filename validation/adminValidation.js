@@ -1,5 +1,5 @@
-const { check } = require('express-validator')
-module.exports = {
+import { check } from 'express-validator'
+const adminValidate = {
   adminLoginValidate: [
     check('email')
       .notEmpty()
@@ -79,3 +79,4 @@ module.exports = {
   ]
 
 }
+export default adminValidate

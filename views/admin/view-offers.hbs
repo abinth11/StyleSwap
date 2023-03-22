@@ -11,15 +11,18 @@
                 <table class="table align-middle mb-0 bg-white">
                     <thead class="bg-light">
                         <tr>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Status</th>
+                            <th>ID</th>
+                            <th>Category</th>
+                            <th>Percentage</th>
+                            <th>From</th>
+                            <th>To</th>
                             <th></th>
                         </tr>
                     </thead>
-                    {{#each blockeduser}}
+                    {{#each users}}
                     <tbody>
                         <tr>
+                            <td>{{inc @index}}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <img src="https://mdbootstrap.com/img/new/avatars/6.jpg" class="rounded-circle"
@@ -48,7 +51,7 @@
                                 <div class="col-lg-4 col-sm-4 col-4 col-action text-center ">
                                    
                                     {{#if active}}
-                                     <button id="block-btn" style="width:90px;"  onclick="blockAndUnblockUsers('{{_id}}',{{active}})" class="btn  font-sm rounded btn-danger  ">Block<i class="fa fa-ban " aria-hidden="true" style="margin-left:5px ;"></i>
+                                    <button id="block-btn" style="width:90px;"  onclick="blockAndUnblockUsers('{{_id}}',{{active}})" class="btn  font-sm rounded btn-danger  ">Block<i class="fa fa-ban " aria-hidden="true" style="margin-left:5px ;"></i>
                                     </button>
                                     {{else}}
                                     <button id="block-btn2" style="width:90px;"   onclick="blockAndUnblockUsers('{{_id}}',{{active}})" class="btn   font-sm btn-success rounded text-white mt-2">Unblock<i class="fa fa-unlock " aria-hidden="true" style="margin-left:5px ;"></i>                               
@@ -81,20 +84,8 @@
                 </nav>
             </div>
         </section> <!-- content-main end// -->
- {{>admin-footer}}
+{{>admin-footer}}
 
 <script>
-    const blockAndUnblockUsers=(userId,currStatus) => {
-            $.ajax({
-        url:"/admin/dashboard/view-users/block-and-unblock-users",
-        data:{
-            userId:userId,
-            currentStat:currStatus
-        },
-        method:'post',
-        success:(res)=>{
-            location.reload();
-        }
-      })
-    }
+  
 </script>

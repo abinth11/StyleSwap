@@ -9,32 +9,33 @@
                 <h2 class="content-title card-title">Products List</h2>
                 <p>Lorem ipsum dolor sit amet.</p>
             </div>
-            <div>
-                <a href="#" class="btn btn-light rounded font-md">Export</a>
-                <a href="#" class="btn btn-light rounded  font-md">Import</a>
-                <a href="/admin/addProduct3" class="btn btn-primary btn-sm rounded">Create new</a>
+            <div class="me-5">
+                {{!-- <a href="#" class="btn btn-light rounded font-md">Export</a>
+                <a href="#" class="btn btn-light rounded  font-md">Import</a> --}}
+                <a href="/admin/dashboard/view-products-in-list/add-products" class="btn btn-primary btn-sm rounded">Create new</a>
             </div>
         </div>
         <div class="card mb-4">
             <header class="card-header">
                 <div class="row align-items-center">
                     <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-                        <select class="form-select">
-                            <option selected>All category</option>
-                            <option>Electronics</option>
-                            <option>Clothes</option>
-                            <option>Automobile</option>
+                        <select class="form-select" id="category-filter">
+                            <option selected disabled>category</option>
+                            <option value="all">Show all</option>
+                            <option value="mens">Mens</option>
+                            <option value="womens">Womens</option>
+                            <option value="kids">Kids</option>
                         </select>
                     </div>
                     <div class="col-md-2 col-6">
                         <input type="date" value="02.05.2021" class="form-control">
                     </div>
                     <div class="col-md-2 col-6">
-                        <select class="form-select">
-                            <option selected>Status</option>
-                            <option>Active</option>
-                            <option>Disabled</option>
-                            <option>Show all</option>
+                        <select class="form-select" id="status-filter">
+                            <option selected disabled>Status</option>
+                            <option value="active">Active</option>
+                            <option value="disabled">Disabled</option>
+                            <option value="all">Show all</option>
                         </select>
                     </div>
                 </div>
@@ -42,14 +43,17 @@
             <div class="card-body">
                 <article class="itemlist">
                     <div class="row align-items-center">
-                        <div class="col-lg-2 col-sm-2 col-4 col-price">
+                        <div class="col-lg-1 col-sm-1 col-3 col-price">
                             <h6>Id</h6>
                         </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
+                        <div class="col-lg-3 col-sm-3 col-7 flex-grow-1 col-name">
                             <h6>Product Name</h6>
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-price">
                             <h6>Price</h6>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price">
+                            <h6>Category</h6>
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-status">
                             <h6>Status</h6>
@@ -67,13 +71,13 @@
                 </article>
 
                 {{#each products}}
-                <article class="itemlist">
+                <article class="itemlist product-item">
                     <div class="row align-items-center">
                         <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
                             <a class="itemside" href="#">
                                 {{inc @index}}
                                 <div class=" ms-3 left">
-                                    <img src="/images/{{_id}}.jpg" class="img-sm img-thumbnail" alt="Item">
+                                    <img src="{{images.image1}}" class="img-sm img-thumbnail" alt="Item">
                                 </div>
                                 <div class="info">
                                     <h6 class="mb-0">{{product_title}}</h6>
@@ -81,7 +85,9 @@
                             </a>
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>${{product_price}}</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
+                        <div class="col-lg-2 col-sm-2 col-4 col-category category"> <span>{{product_category}}</span>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-status status">
                             {{#if isActive}}
                             <span class="badge rounded-pill alert-success">Active</span>
                             {{else}}
@@ -93,7 +99,7 @@
                             <span>02.11.2021</span>
                         </div> --}}
                         <div class="col-lg-2 col-sm-2 col-4 col-action ">
-                            <a href="/admin/editProductsList/{{_id}}"
+                            <a href="/admin/dashboard/view-product-list/edit-products-list/{{_id}}"
                                 class="btn btn-sm font-sm rounded btn-warning text-white" title="Edit">
                                 <i class="material-icons md-edit"></i>
                             </a>
@@ -103,9 +109,10 @@
                                 <i class="material-icons md-delete_forever" title="Disable"></i><span
                                     id="change"></span>
                             </a>
-                            <a id="disable" class="btn btn-sm font-sm   rounded" href="/admin/add-offers-for-products?id={{_id}}&&price={{product_price}}"
-                                 style="background-color: purple;color: #fff;">
-                                <i class="fas fa-tag "  title="Add offer"></i><span id="change"></span>
+                            <a id="disable" class="btn btn-sm font-sm   rounded"
+                                href="/admin/dashboard/view-product-list/add-offers-for-products?id={{_id}}&&price={{product_price}}"
+                                style="background-color: purple;color: #fff;">
+                                <i class="fas fa-tag " title="Add offer"></i><span id="change"></span>
                             </a>
                             {{else}}
                             <a id="enable" class="btn btn-sm font-sm btn-success rounded"
@@ -117,40 +124,6 @@
                     </div> <!-- row .// -->
                 </article> <!-- itemlist  .// -->
                 {{/each}}
-                {{!-- <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="/assets/imgs/items/5.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Wallet made of leather brown color</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$18.00</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-warning">Archived</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2021</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// --> --}}
 
 
             </div> <!-- card-body end// -->
@@ -174,7 +147,7 @@
     <script>
         const disableEnableProduct = (productId, isActive) => {
             $.ajax({
-                url: "/admin/diableAndEnableProduct",
+                url: "/admin/dashboard/view-product-list/diable-and-enable-products",
                 data: {
                     productId: productId,
                     isActive: isActive
@@ -186,5 +159,43 @@
             })
 
         }
-      
+
+    </script>
+    <script>
+        function filterList() {
+            var status = document.getElementById("status-filter").value;
+            var items = document.getElementsByClassName("product-item");
+            for (var i = 0; i < items.length; i++) {
+                var itemStatus = items[i].getElementsByClassName("status")[0];
+                if (status === "all" || itemStatus.textContent.toLowerCase().indexOf(status) !== -1) {
+                    items[i].style.display = "block";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+        // add event listener to the status dropdown
+        document.getElementById('status-filter').addEventListener('change', filterList);
+
+
+
+        function filterByCategory() {
+            var category = document.getElementById("category-filter").value;
+            var items = document.getElementsByClassName("product-item");
+            for (var i = 0; i < items.length; i++) {
+                var itemCategory = items[i].getElementsByClassName("category")[0];
+                if (category === "all" || itemCategory.textContent.toLowerCase().indexOf(category) !== -1) {
+                    items[i].style.display = "block";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+
+
+
+        // add event listener to the catogory dropdown
+        document.getElementById('category-filter').addEventListener('change', filterByCategory);
+
+
     </script>

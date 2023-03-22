@@ -1,8 +1,8 @@
-const express = require('express')
+import express from 'express';
 const router = express.Router()
-const userControler = require('../controlers/user-controlers')
-const userValidation = require('../validation/userValidation')
-const sessionChecker = require('../middlewares/session-checks')
+import { userControler } from '../controlers/user-controlers.js'
+import  userValidation  from '../validation/userValidation.js'
+import  sessionChecker  from '../middlewares/session-checks.js'
 
 /* GET home page. */
 router.get('/', userControler.userHome)
@@ -103,4 +103,4 @@ router.post('/wallet-payment', userControler.walletPayment)
 // User logout
 router.get('/logoutUser', userControler.userLogout)
 
-module.exports = router
+export default router

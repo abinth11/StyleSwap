@@ -7,17 +7,16 @@
         <div class="content-header">
             <div>
                 <h2 class="content-title card-title">Order detail</h2>
-                <p>Details for Order ID: 3453012</p>
+                <p>Details for Order ID: {{orderDetails._id}}</p>
             </div>
         </div>
         <div class="card">
             <header class="card-header">
                 <div class="row align-items-center">
                     <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
-                        <span>
-                            <i class="material-icons md-calendar_today"></i> <b>{{orders.date}}</b>
+                        <span class="">
+                            <i class="material-icons md-calendar_today"></i> <b>{{orderDetails.date}}</b>
                         </span> <br>
-                        <small class="text-muted">Order ID: 3453012</small>
                     </div>
                     <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                         <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
@@ -43,9 +42,9 @@
                             <div class="text">
                                 <h6 class="mb-1">Customer</h6>
                                 <p class="mb-1">
-                                    {{orders.name}} <br> <template class="__cf_email__"
+                                    {{orderDetails.name}} <br> <template class="__cf_email__"
                                         data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template>
-                                    <br> +998 99 22123456
+                                    <br> +91 {{orderDetails.mobile}}
                                 </p>
                                 <a href="#">View profile</a>
                             </div>
@@ -59,8 +58,8 @@
                             <div class="text">
                                 <h6 class="mb-1">Order info</h6>
                                 <p class="mb-1">
-                                    Shipping: Fargo express <br> Pay method: {{orders.paymentMethod}} <br> Status:
-                                    {{orders.status}}
+                                    Shipping: Fargo express <br> Pay method: {{orderDetails.paymentMethod}} <br> Status:
+                                    {{orderDetails.status}}
                                 </p>
                                 <a href="#">Download info</a>
                             </div>
@@ -74,9 +73,9 @@
                             <div class="text">
                                 <h6 class="mb-1">Deliver to</h6>
                                 <p class="mb-1">
-                                    City: {{address.address.city}},
-                                    {{address.address.state}}<br>{{address.address.landmark}},
-                                    {{address.address.pincode}}, {{address.address.locality}} <br> Po Box 10000
+                                    City: {{orderDetails.deliveryDetails.city}},
+                                    {{address.address.state}}<br>{{orderDetails.deliveryDetails.landmark}},
+                                    {{orderDetails.deliveryDetails.pincode}}, {{orderDetails.deliveryDetails.locality}} <br> Po Box 10000
                                 </p>
                                 <a href="#">View profile</a>
                             </div>
@@ -96,20 +95,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{#each products}}
+                                    {{#each orderDetails.products}}
                                     <tr>
                                         <td>
                                             <a class="itemside" href="#">
                                                 <div class="left">
-                                                    <img src="/images/{{item}}.jpg" width="40" height="40"
+                                                    <img src="{{item.images.image1}}" width="40" height="40"
                                                         class="img-xs" alt="Item">
                                                 </div>
-                                                <div class="info"> {{product.product_title}} </div>
+                                                <div class="info"> {{item.product_title}} </div>
                                             </a>
                                         </td>
-                                        <td> ${{product.product_price}}</td>
+                                        {{#if offerPrice}}
+                                        <td> ${{offerPrice}}</td>
+                                        {{else}}
+                                        <td> ${{item.product_price}}</td>
+                                        {{/if}}
                                         <td> {{quantity}}</td>
-                                        <td class="text-end"> $99.50 </td>
+                                        <td class="text-end"> $ {{multiply offerPrice quantity}} </td>
                                     </tr>
                                     {{/each}}
 
@@ -120,7 +123,7 @@
                                             <article class="float-end">
                                                 <dl class="dlist">
                                                     <dt>Subtotal:</dt>
-                                                    <dd>$973.35</dd>
+                                                    <dd>${{orderDetails.offerTotal}}</dd>
                                                 </dl>
                                                 <dl class="dlist">
                                                     <dt>Shipping cost:</dt>
@@ -128,7 +131,7 @@
                                                 </dl>
                                                 <dl class="dlist">
                                                     <dt>Grand total:</dt>
-                                                    <dd> <b class="h5">${{orders.totalPrice}}</b> </dd>
+                                                    <dd> <b class="h5">${{orderDetails.offerTotal}}</b> </dd>
                                                 </dl>
                                                 <dl class="dlist">
                                                     <dt class="text-muted">Status:</dt>
@@ -147,23 +150,23 @@
                     </div> <!-- col// -->
                     <div class="col-lg-1"></div>
                     <div class="col-lg-4">
-                        {{#if orders.reasonTocancell}}
+                        {{#if orderDetails.reasonTocancell}}
                         <div class="box shadow-sm bg-light">
                             <h6 class="mb-15 text-danger">This order has been cancelled by the user</h6>
                             <p>
-                                Reason: {{orders.reasonTocancell}}
+                                Reason: {{orderDetails.reasonTocancell}}
                             </p>
                         </div>
                         {{/if}}
-                        {{#if orders.returnReason}}
+                        {{#if orderDetails.returnReason}}
                         <div class="box shadow-sm bg-light">
                             <h6 class="mb-15 text-danger">This order has been returned by the user</h6>
                             <p>
-                                Reason: {{orders.returnReason}}
+                                Reason: {{orderDetails.returnReason}}
                             </p>
                         </div>
                         {{/if}}
-                        {{#if (eq orders.returnStatus 'accepted')}}
+                        {{#if (eq orderDetails.returnStatus 'accepted')}}
                         <div class="box shadow-sm bg-light mt-4">
                             <h6 class="mb-15 text-success">Select expected pick up date</h6>
                             <label for="date-input">Select a date:</label>
@@ -172,33 +175,33 @@
                                 <div class="col-12 text-center mt-3">
                                     <button id="updateDateButton" class="btn btn-primary btn-sm mx-auto"
                                         data-bs-toggle="modal" data-bs-target="#successModal"
-                                        onclick="setPickUpDate('{{orders._id}}')" disabled>Submit</button>
+                                        onclick="setPickUpDate('{{orderDetails._id}}')" disabled>Submit</button>
                                 </div>
                             </div>
                         </div>
                         {{/if}}
 
-                        {{#if (eq orders.refundStatus 'completed')}}
+                        {{#if (eq orderDetails.refundStatus 'completed')}}
                         <!-- Refund completed and refund amount -->
                         <div class="box shadow-sm bg-light mt-4" style="height: 150px;">
                             <h6 class="mb-15 text-success">Refund Completed</h6>
                             <div class="d-flex align-items-center justify-content-center mb-3">
                                 <span class="fs-5 me-2">₹</span>
-                                <span id="refund-completed" class="fs-5 fw-bold">{{orders.offerTotal}}</span>
+                                <span id="refund-completed" class="fs-5 fw-bold">{{orderDetails.offerTotal}}</span>
                             </div>
                         </div>
                         {{else}}
-                        {{#if (eq orders.returnStatus 'completed')}}
+                        {{#if (eq orderDetails.returnStatus 'completed')}}
                         <div class="box shadow-sm bg-light mt-4">
                             <h6 class="mb-15 text-danger">Refund Amount</h6>
                             <div class="d-flex align-items-center justify-content-center mb-3">
                                 <span class="fs-5 me-2">₹</span>
-                                <span id="refund-amount" class="fs-5 fw-bold">{{orders.offerTotal}}</span>
+                                <span id="refund-amount" class="fs-5 fw-bold">{{orderDetails.offerTotal}}</span>
                             </div>
                             <div class="row">
                                 <div class="col-12 text-center mt-3">
                                     <button id="refundButton" class="btn btn-danger btn-sm mx-auto"
-                                        onclick="refundAmount('{{orders._id}}','{{orders.userId}}','{{orders.offerTotal}}')">Refund</button>
+                                        onclick="refundAmount('{{orderDetails._id}}','{{orderDetails.userId}}','{{orderDetails.offerTotal}}')">Refund</button>
                                 </div>
                             </div>
                         </div>

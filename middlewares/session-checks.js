@@ -1,4 +1,4 @@
-module.exports = {
+const sessionCheck = {
   isAdminExist: (req, res, next) => {
     try {
       req.session.admin ? next() : res.redirect('/admin')
@@ -28,3 +28,4 @@ module.exports = {
     }
   }
 }
+export default sessionCheck

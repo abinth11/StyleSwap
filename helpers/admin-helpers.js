@@ -1,7 +1,7 @@
-const db = require('../config/connection')
-const collection = require('../config/collections')
-const objectId = require('mongodb').ObjectId
-module.exports = {
+import db from '../config/connection.js'
+import collection from '../config/collections.js'
+import { ObjectId as objectId } from 'mongodb'
+  const adminHelpers = {
   adminLogin: async (adminInfo) => {
     try {
       const response = {}
@@ -179,16 +179,7 @@ module.exports = {
   },
   getAllUserOrders: async () => {
     try {
-      const orders = await db.get().collection(collection.ORDER_COLLECTION).find({}).toArray()
-      return orders
-    } catch (error) {
-      console.log(error)
-      throw new Error(error)
-    }
-  },
-  getCurrentOrderMore: async (orderId) => {
-    try {
-      const orders = db.get().collection(collection.ORDER_COLLECTION).find({ _id: objectId(orderId) }).toArray()
+      const orders = await db.get().collection(collection.ORDER_COLLECTION).find({}).sort([("date", 1)]).toArray()
       return orders
     } catch (error) {
       console.log(error)
@@ -197,38 +188,83 @@ module.exports = {
   },
   getCurrentProducts: async (orderId) => {
     try {
-      const order = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
-        {
-          $match: {
-            _id: objectId(orderId)
+      const order = await db.get().collection(collection.ORDER_COLLECTION).aggregate(
+        [
+          {
+               $match: {
+                 _id: objectId(orderId)
+               }
+           },
+          {
+            $addFields: {
+              deliveryAddressId: { $toObjectId: "$deliveryAddressId" }
+            }
+          },
+          {
+            $lookup: {
+              from: collection.ADDRESS_COLLECTION,
+              localField: "deliveryAddressId",
+              foreignField: "_id",
+              as: "deliveryAddress"
+            }
+          },
+          {
+            $addFields: {
+              deliveryDetails: {
+                $mergeObjects: {
+                  $arrayElemAt: ["$deliveryAddress", 0]
+                }
+              }
+            }
+          },
+          {
+            $project: {
+              deliveryAddress: 0
+            }
+          },
+          {
+            $unwind: "$products"
+          },
+          {
+            $lookup: {
+              from: collection.PRODUCT_COLLECTION,
+              localField: "products.item",
+              foreignField: "_id",
+              as: "products.item"
+            }
+          },
+          {
+            $addFields: {
+              "products.item": {
+                $arrayElemAt: ["$products.item", 0]
+              }
+            }
+          },
+          {
+            $group: {
+              _id: "$_id",
+              userId: { $first: "$userId" },
+              name: { $first: "$name" },
+              mobile: { $first: "$mobile" },
+              deliveryAddressId: { $first: "$deliveryAddressId" },
+              paymentMethod: { $first: "$paymentMethod" },
+              totalPrice: { $first: "$totalPrice" },
+              offerTotal: { $first: "$offerTotal" },
+              priceAfterDiscount: { $first: "$priceAfterDiscount" },
+              paymentStatus: { $first: "$paymentStatus" },
+              status: { $first: "$status" },
+              date: { $first: "$date" },
+              deliveryDetails: { $first: "$deliveryDetails" },
+              reasonTocancell: {$first : "$reasonTocancell"},
+              returnReason: {$first: '$returnReason'},
+              returnStatus: {$first : '$returnStatus'},
+              refundStatus: {$first: '$refundStatus'},
+              products: { $push: "$products" }
+            }
           }
-        },
-        {
-          $unwind: '$products'
-        },
-        {
-          $project: {
-            item: '$products.item',
-            quantity: '$products.quantity'
-          }
-        },
-        {
-          $lookup: {
-            from: collection.PRODUCT_COLLECTION,
-            localField: 'item',
-            foreignField: '_id',
-            as: 'product'
-          }
-        },
-        {
-          $project: {
-            item: 1,
-            quantity: 1,
-            product: { $arrayElemAt: ['$product', 0] }
-          }
-        }
-      ]).toArray()
-      return order
+        ] 
+      ).toArray()
+      return order[0]
     } catch (error) {
       console.log(error)
       throw new Error(error)
@@ -285,39 +321,6 @@ module.exports = {
       throw new Error(error)
     }
   },
-  getallUserAddress: async (orderId) => {
-    try {
-      const userDetails = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
-        {
-          $match: {
-            _id: objectId(orderId)
-          }
-        },
-        {
-          $project: {
-            addressId: '$deliveryAddressId'
-          }
-        },
-        {
-          $lookup: {
-            from: collection.ADDRESS_COLLECTION,
-            localField: 'addressId',
-            foreignField: '_id',
-            as: 'address'
-          }
-        },
-        {
-          $project: {
-            address: { $arrayElemAt: ['$address', 0] }
-          }
-        }
-      ]).toArray()
-      return userDetails[0]
-    } catch (error) {
-      console.log(error)
-      throw new Error(error)
-    }
-  },
   getReturnedOrders: async () => {
     try {
       const returnedOrders = await db.get().collection(collection.ORDER_COLLECTION).find({ returnReason: { $exists: true } }).toArray()
@@ -357,6 +360,7 @@ module.exports = {
   },
   addOffer: async (offerInfo) => {
     try {
+      console.log(offerInfo)
       const offerExists = await db.get().collection(collection.PRODUCT_COLLECTION).aggregate([
         {
           $match: { offerEndDate: { $exists: true }, product_category: offerInfo.category }
@@ -422,7 +426,7 @@ module.exports = {
     }
   },
   replaceOfers: (replaceInfo) => {
-    try {
+    try {  
       const offerPercentage = parseInt(replaceInfo.offer_percentage)
       db.get().collection(collection.PRODUCT_COLLECTION).updateMany(
         { product_category: replaceInfo.category },
@@ -451,7 +455,7 @@ module.exports = {
       throw new Error(error)
     }
   },
-  checkOfferExpiration: () => {
+   checkOfferExpiration : () => {
     try {
       const moment = require('moment')
       // Calculate the date when the offer ends
@@ -475,11 +479,11 @@ module.exports = {
       throw new Error(error)
     }
   },
-  addOfferToProducts: (offerInfo) => {
+  addOfferToProducts: async(offerInfo) => {
     try {
       const productPrice = parseInt(offerInfo.product_price)
       const offerPercentage = parseInt(offerInfo.offer_percentage)
-      db.get().collection(collection.PRODUCT_COLLECTION).updateOne(
+      const result = await db.get().collection(collection.PRODUCT_COLLECTION).updateOne(
         { _id: objectId(offerInfo.productId) },
         {
           $set: {
@@ -488,6 +492,7 @@ module.exports = {
           }
         }
       )
+      return result
     } catch (error) {
       console.log(error)
       throw new Error(error)
@@ -610,10 +615,32 @@ module.exports = {
       throw new Error(error)
     }
   },
-  uploadImageUrlIntoDataBase: (images) => {
-    db.get().collection(collection.PRODUCT_COLLECTION).insertOne()
-
+  addSubCategory: async (subCategoryInfo) => {
+    try {
+      subCategoryInfo.active = true
+      const result = await db.get().collection(collection.SUB_CATEGORIES).insertOne(subCategoryInfo)
+      if(result.acknowledged)
+      return result
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  getAllSubCategories: async () => {
+    try {
+      const subCategory = await db.get().collection(collection.SUB_CATEGORIES).find({}).toArray()
+      return subCategory
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  deleteSubCategory: async (categoryId) =>{
+    try {
+     return await db.get().collection(collection.SUB_CATEGORIES).deleteOne({_id: objectId(categoryId)})
+    } catch (error) {
+      console.log(error)
+    }
   }
+
   // searchUsers:(name)=>{
   //     return new Promise((resolve,reject)=>{
   //         db.get().collection(collection.USER_COLLECTION).findOne({name:name}).then((data)=>{
@@ -623,3 +650,4 @@ module.exports = {
   //     })
   // }
 }
+export default adminHelpers

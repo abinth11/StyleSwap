@@ -1,10 +1,11 @@
-const db = require('../config/connection')
-const collection = require('../config/collections')
-const bcrypt = require('bcrypt')
-const { ObjectId } = require('mongodb')
-const Razorpay = require('razorpay')
+import db from '../config/connection.js'
+// import {db} from '../config/connection.js';
+import collection from '../config/collections.js'
+import bcrypt from 'bcrypt'
+import { ObjectId } from 'mongodb'
+import Razorpay from 'razorpay'
 let sotoredAmount
-module.exports = {
+ const userHelpers = {
   regisUserUser: async (userData) => {
     const { password, email, mobile } = userData
     userData.active = true
@@ -395,6 +396,7 @@ module.exports = {
             product_title: { $first: '$product.product_title' },
             product_price: { $first: '$product.product_price' },
             offerPrice: { $first: '$product.offerPrice' },
+            images: { $first: '$product.images' },
             quantity: { $sum: '$products.quantity' },
             subtotal: { $sum: { $multiply: ['$products.quantity', '$product.product_price'] } },
             offerSubtotal: { $sum: '$offerSubtotal' }
@@ -411,6 +413,7 @@ module.exports = {
                 offerPrice: '$offerPrice',
                 quantity: '$quantity',
                 subtotal: '$subtotal',
+                images: '$images',
                 offerSubtotal: '$offerSubtotal'
               }
             },
@@ -717,6 +720,7 @@ module.exports = {
           }
         }
       ]).toArray()
+      console.log(orders)
       return orders
     } catch (error) {
       console.log(error)
@@ -1109,6 +1113,7 @@ module.exports = {
             product_price: { $first: '$product.product_price' },
             offerPrice: { $first: '$product.offerPrice' },
             quantity: { $sum: '$products.quantity' },
+            images: { $first: '$product.images' },
             subtotal: { $sum: { $multiply: ['$products.quantity', '$product.product_price'] } },
             offerSubtotal: { $sum: '$offerSubtotal' }
           }
@@ -1124,6 +1129,7 @@ module.exports = {
                 offerPrice: '$offerPrice',
                 quantity: '$quantity',
                 subtotal: '$subtotal',
+                images: '$images',
                 offerSubtotal: '$offerSubtotal'
               }
             },
@@ -1182,3 +1188,4 @@ module.exports = {
     return result
   }
 }
+export default userHelpers

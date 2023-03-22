@@ -1,4 +1,4 @@
-module.exports = {
+const collection = {
   PRODUCT_COLLECTION: 'products',
   USER_COLLECTION: 'users',
   ADMIN_COLLECTION: 'admin',
@@ -8,5 +8,7 @@ module.exports = {
   ORDER_COLLECTION: 'orders',
   ORDER_SATUS: 'orderStatus',
   WALLET: 'wallet',
-  GUEST_USERS: 'guestusers'
+  GUEST_USERS: 'guestusers',
+  SUB_CATEGORIES: 'subcategories'
 }
+export default collection

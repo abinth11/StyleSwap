@@ -1,0 +1,167 @@
+{{>admin-head-html}}
+<div class="screen-overlay"></div>
+{{>admin-navbar}}
+<main class="main-wrap">
+    {{>admin-header}}
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Sub Categories </h2>
+                <p>Add, edit or delete a Sub category</p>
+            </div>
+            <div>
+                <input type="text" placeholder="Search Categories" class="form-control bg-white">
+            </div>
+        </div>
+        {{#if deletedCategory}}
+        <div>
+            <p class="alert alert-danger text-center">{{deletedCategory}}</p>
+        </div>
+        {{/if}}
+        {{#if addedCategory}}
+        <p class="alert alert-success text-center">{{addedCategory}}</p>
+        {{/if}}
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <form id="add-sub-category">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Name</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="category_name"
+                                    name="sub_name" required />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Parent</label>
+                                <select class="form-select" name="sub_parent" required>
+                                    <option value="Mens">Mens</option>
+                                    <option value="Womens">Womens</option>
+                                    <option value="Kids">Kids</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" class="form-control" name="sub_description"
+                                    required></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary" type="submit">Create </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="table-responsive">
+
+                            <table class="table table-hover" style="overflow: hidden;">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Parent</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each subCategories}}
+                                    <tr>
+                                        <td>{{inc @index}}</td>
+                                        <td id="sub-name"><b>{{sub_name}}</b></td>
+                                        <td>{{sub_parent}}</td>
+                                        <td>{{sub_description}}</td>
+                                        <td>{{active}}</td>
+                                        <td class="">
+                                            <div class="dropdown">
+                                                <a href="#" data-bs-toggle="dropdown"
+                                                    class="btn btn-light rounded btn-sm font-sm"> <i
+                                                        class="material-icons md-more_horiz"></i> </a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="#">View detail</a>
+                                                    <a class="dropdown-item" href="">Edit info</a>
+                                                    <button class="dropdown-item text-danger"  onclick="deleteSubcategory('{{_id}}')">Delete</button>
+                                                </div>
+                                            </div> <!-- dropdown //end -->
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+
+
+
+
+
+                        </div>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+    </section> <!-- content-main end// -->
+
+
+    {{>admin-footer}}
+
+    {{!-- Modal for success --}}
+<div class="modal fade" id="my-modal" tabindex="-1" aria-labelledby="my-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="my-modal-label">Added sub category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+            </div>
+            <div class="modal-body">
+                Modal content goes here.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-block" data-bs-dismiss="modal" onclick="reload()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <script>
+        const reload = () => {
+            location.reload()
+        }
+        const deleteSubcategory = (categoryId) => {
+            $.ajax({
+                url: `/admin/dashboard/add-product-category/delete-sub-category/${categoryId}`,
+                method:'get',
+                success:(response) =>{
+                    console.log(response)
+                    reload()   
+                },
+                error:()=>{
+                    console.log(error)
+                }
+            })
+        }
+
+
+        const category = document.getElementById('add-sub-category');
+        category.addEventListener('submit', (event) => {
+            event.preventDefault();
+            $.ajax({
+                url: '/admin/dashboard/add-product-sub-category',
+                data: $('#add-sub-category').serialize(),
+                method: 'POST',
+                success: (response) => {
+                    console.log(response)
+                    var myModal = new bootstrap.Modal(document.getElementById('my-modal'));
+                    myModal.show();
+                },
+                error: (error) => {
+                    console.log(error);
+                }
+            });
+        });
+    </script>
+    <style>
+        .my-swal-container {
+            width: 300px;
+            font-size: 14px;
+        }
+    </style>
