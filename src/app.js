@@ -111,6 +111,19 @@ handlebars.registerHelper('JSONstringify', (obj) => {
   return JSON.stringify(obj);
 });
 
+handlebars.registerHelper('formatCurrency', function (value) {
+  // Check if value is a number
+  if (isNaN(value)) {
+    return '';
+  }
+
+  // Format the value into a currency string with INR symbol
+  const formatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+  });
+  return formatter.format(value);
+});
 
 // cron library to run the offer query every day
 schedule('0 0 * * *', () => {

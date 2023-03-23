@@ -41,15 +41,15 @@ const changeQuantity = (cartId, productId, userId, count) => {
       } else {
         document.getElementById(productId).innerHTML = quantity + count
         const total = response.total.total
-        document.getElementById('totalAmout').innerHTML = `$${total}`
+        document.getElementById('totalAmout').innerHTML = `₹${total}`
         console.log(response.total.total)
-
+         console.log(response.subtotal)
         const subtotalArr = response.subtotal
         for (let i = 0; i < subtotalArr.length; i++) {
           const subtotal = subtotalArr[i].subtotal
           const productId = subtotalArr[i]._id.toString()
 
-          document.getElementById(`${productId}-subtotal`).innerHTML = `$${subtotal}`
+          document.getElementById(`${productId}-subtotal`).innerHTML = `₹${subtotal}`
         }
       }
     },

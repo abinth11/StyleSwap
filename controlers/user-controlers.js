@@ -196,11 +196,14 @@ export const userControler = {
       const guestUser = req.session.guestUser?.id
       // console.log(user, guestUser)
       if (user) {
-        // console.log(user)
         const cartItems = await userHelpers.getcartProducts(req.session.user._id)
         const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
+        let saved = 0
+        if(totalAmout){
+          saved = totalAmout.total-totalAmout.offerTotal
+        }
         const cartId = cartItems?._id
-        res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId })
+        res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId, saved })
       } else if (guestUser) {
         // console.log(guestUser)
         console.log('guest user cart')
@@ -256,6 +259,7 @@ export const userControler = {
   proceedToCheckOutGet: async (req, res) => {
     try {
       const cartItems = await userHelpers.getcartProducts(req.session?.user._id)
+      console.log(cartItems)
       const address = await userHelpers.getAllAddresses(req.session.user._id)
       res.render('users/shop-checkout', { user: req.session.user, cartItems, address })
     } catch (error) {
@@ -325,7 +329,10 @@ export const userControler = {
   getUserOrders: async (req, res) => {
     try {
       const odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
+      const orderGroup = await userHelpers.getOrderedGroup(req.session.user._id)
+      console.log(orderGroup)
       const orders = adminHelpers.ISO_to_Normal_Date(odr)
+      // console.log(orders)
       res.render('users/shop-orders', { orders })
     } catch (error) {
       console.log(error)

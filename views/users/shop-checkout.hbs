@@ -251,19 +251,20 @@
                                     <tbody>
                                         {{#each cartItems.products}}
                                         <tr>
-                                            <td class="image product-thumbnail"><img src="/images/{{product_id}}.jpg"
-                                                    alt="#"></td>
+                                            <td class="image product-thumbnail"><img src="{{images.image1}}" alt="#">
+                                            </td>
                                             <td>
                                                 <h5><a href="shop-product-full.html">{{product_title}}</a>
                                                 </h5>
                                                 <span class="product-qty">x {{quantity}}</span>
                                             </td>
-                                            <td>${{subtotal}}</td>
+                                            <td>{{ formatCurrency offerSubtotal}}</td>
                                         </tr>
                                         {{/each}}
                                         <tr>
                                             <th>SubTotal</th>
-                                            <td class="product-subtotal" colspan="2">$280.00</td>
+                                            <td class="product-subtotal" colspan="2">{{formatCurrency
+                                                cartItems.offerTotal}}</td>
                                         </tr>
                                         <tr>
                                             <th>Shipping</th>
@@ -273,7 +274,8 @@
                                             <th>Total</th>
                                             {{#if cartItems}}
                                             <td colspan="2" class="product-subtotal"><span
-                                                    class="font-xl text-brand fw-900">${{cartItems.total}}</span>
+                                                    class="font-xl text-brand fw-900">{{ formatCurrency
+                                                    cartItems.offerTotal}}</span>
                                             </td>
                                             {{/if}}
                                         </tr>
@@ -418,7 +420,7 @@
                         </div>
                     </div>
                     {{!--display address --}}
-                    <form id="place-order" novalidate>
+                    <form id="place-order" novalidate onsubmit="return validatePlaceOrder()">
                         <div class="row pt-3">
                             {{!-- <input type="text" hidden name="userId" value="{{user.response._id}}"> --}}
                             <div class="payment_option">
@@ -430,8 +432,8 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="deliveryAddress"
-                                                    id="flexRadioDefault1" value="{{_id}}" required>
+                                                <input class="form-check-input address" type="radio" name="deliveryAddress"
+                                                    id="flexRadioDefault1" value="{{_id}}" required >
                                                 <label class="form-check-label" for="flexRadioDefault1">
                                                     <ul>
                                                         <li class="ms-3">Name: {{name}}</li>
@@ -530,6 +532,39 @@
         } else {
             x.style.display = "none";
         }
+    }
+
+    const validatePlaceOrder = () => {
+        const addressRadios = document.getElementsByName('deliveryAddress');
+        let addressSelected = false;
+        for (let i = 0; i < addressRadios.length; i++) {
+            if (addressRadios[i].checked) {
+                addressSelected = true;
+                break;
+            }
+        }
+        if (!addressSelected) {
+            // Use SweetAlert to show a popup alert
+            Swal.fire("Oops!", "Please select an address.", "error");
+            return false;
+        }
+
+        const paymentRadios = document.getElementsByName('payment_method');
+        let paymentSelected = false;
+        for (let i = 0; i < paymentRadios.length; i++) {
+            if (paymentRadios[i].checked) {
+                paymentSelected = true;
+                break;
+            }
+        }
+        if (!paymentSelected) {
+            // Use SweetAlert to show a popup alert
+            Swal.fire("Oops!", "Please select a payment method.", "error");
+            return false;
+        }
+
+        // Validation passed, allow form submission
+        return true;
     }
 </script>
 <script>

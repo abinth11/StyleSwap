@@ -333,10 +333,15 @@ let sotoredAmount
         },
         {
           $project: {
-            _id: '$product._id',
-            name: '$product.product_title',
-            subtotal: {
-              $multiply: ['$products.quantity', '$product.product_price']
+          _id: '$product._id',
+          name: '$product.product_title',
+          subtotal: {
+              $multiply: [
+                '$products.quantity',
+                {
+                  $ifNull: ['$product.offerPrice', '$product.product_price']
+                }
+              ]
             }
           }
         },
@@ -349,7 +354,8 @@ let sotoredAmount
             }
           }
         }
-      ]).toArray()
+      ]).toArray();
+      
       return subtotal
     } catch (error) {
       console.log(error)
@@ -1186,6 +1192,14 @@ let sotoredAmount
     await db.get().collection(collection.GUEST_USERS).deleteOne({ guestId })
     console.log(result)
     return result
+  },
+  getOrderedGroup: async (userId) => {
+    try {
+      const orders = await db.get().collection(collection.ORDER_COLLECTION).fin({userId:ObjectId(userId)})
+      return orders
+    } catch (errors) {
+      console.log(errors)
+    }
   }
 }
 export default userHelpers
