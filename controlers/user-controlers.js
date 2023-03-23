@@ -1,371 +1,576 @@
-const userHelpers = require('../helpers/user-helpers')
-const adminHelpers = require('../helpers/admin-helpers')
-const twilio = require('../middlewares/twilio')
-const { validationResult } = require('express-validator')
-let err
-module.exports = {
+import userHelpers from '../helpers/user-helpers.js'
+import adminHelpers from '../helpers/admin-helpers.js'
+import twilio  from 'twilio'
+import { v4 as uuidv4 } from 'uuid';
+import { validationResult } from 'express-validator'
+export const userControler = {
   userHome: async (req, res) => {
-    let cartCount
-    if (req.session.user) {
-      cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
-      console.log(cartCount)
-    }
-    userHelpers.viewProduct().then((products) => {
+    try {
+      let cartCount
+      if (req.session.user) {
+        cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
+      }
+      console.log(req.session)
+      const products = await userHelpers.viewProduct()
       res.render('index', { user: req.session.user, products, cartCount })
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
   userSignUpGet: (req, res) => {
-    if (req.session.user) {
-      res.redirect('/')
-    } else {
-      res.render('users/signup', { signUpErr: req.session.signUpErr, errors: req.session.err })
-      req.session.signUpErr = null
-      req.session.err = null
+    try {
+      if (req.session.user) {
+        res.redirect('/')
+      } else {
+        res.render('users/signup', { signUpErr: req.session.signUpErr, errors: req.session.err })
+        req.session.signUpErr = null
+        req.session.err = null
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
     }
   },
-  usersignUpPost: (req, res) => {
-    const errors = validationResult(req)
-    req.session.err = errors.errors
-    const { email, mobile } = req.body
-    if (req.session.err.length === 0) {
-      userHelpers.regisUserUser(req.body).then((response) => {
+  usersignUpPost: async (req, res) => {
+    try {
+      const errors = validationResult(req)
+      req.session.err = errors.errors
+      const { email, mobile } = req.body
+      if (req.session.err.length === 0) {
+        const response = await userHelpers.regisUserUser(req.body)
         if (response.email === email) {
           req.session.signUpErr = `${response.email} already exists please login`
           res.json({ status: false })
-          // res.redirect('/userSignUp')
         } else if (response.mobile === mobile) {
           req.session.signUpErr = `${response.mobile} already exists please login`
           res.json({ status: false })
-          // res.redirect('/userSignUp')
         } else if (response.status) {
           req.session.loggedIn = true
           req.session.user = response.userData
+          const user = req.session.user
+          userHelpers.createWallet(req.body, user)
           res.json({ status: true })
-          // res.redirect('/');
         }
-      })
-    } else {
-      // res.redirect('/userSignUp');
-      res.json({ status: false })
+      } else {
+        res.json({ status: false })
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
     }
   },
   userLoginGet: (req, res) => {
-    if (req.session.user) {
-      res.redirect('/')
-    } else {
-      res.render('users/login', { loginErr: req.session.loginError })
-      req.session.loginError = null
+    try {
+      let from
+      req.query.from ? from = req.query.from : from = 'home'
+      console.log(from)
+      if (req.session.user) {
+        res.redirect('/')
+      } else {
+        res.render('users/login', { loginErr: req.session.loginError, from })
+        req.session.loginError = null
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
     }
   },
   otpValidateGet: (req, res) => {
-    if (req.session.vid) {
-      res.render('users/otp-enter', { otpError: req.session.otpErr, mobile: req.session.mobile })
-      req.session.otpErr = null
-    } else {
-      res.redirect('/')
+    try {
+      if (req.session.vid) {
+        res.render('users/otp-enter', { otpError: req.session.otpErr, mobile: req.session.mobile })
+        req.session.otpErr = null
+      } else {
+        res.redirect('/')
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
     }
   },
-  otpValidatePost: (req, res) => {
-    twilio.verifyOtp(req.session.mobile, req.body.otp).then((response) => {
-      console.log(response)
-      if (response.valid) {
+  otpValidatePost: async (req, res) => {
+    try {
+      const { mobile, body: { otp } } = req.session
+      const { valid } = await twilio.verifyOtp(mobile, otp)
+      if (valid) {
         res.redirect('/')
       } else {
-        req.session.otpErr = 'Invalid otp..'
-        res.redirect('/otpValidate')
+        const otpErr = 'Invalid otp..'
+        res.redirect('/otpValidate', { otpError: otpErr, mobile })
       }
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
   loginWithOtpGet: (req, res) => {
-    res.render('users/otp-login')
+    try {
+      res.render('users/otp-login')
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
-  loginWithOtpPost: (req, res) => {
-    const { mobile } = req.body
-    req.session.mobile = mobile
-    console.log('called post method')
-    userHelpers.loginWthOTP(req.body).then((response) => {
-      console.log(response)
+  loginWithOtpPost: async (req, res) => {
+    try {
+      const { mobile } = req.body
+      req.session.mobile = mobile
+      const response = await userHelpers.loginWthOTP(req.body)
       if (response.status) {
-        twilio.generateOpt(mobile).then((verify) => {
-          req.session.vid = verify
-          req.session.user = response.user
-          res.redirect('/otpValidate')
-        })
+        const verify = await twilio.generateOpt(mobile)
+        req.session.vid = verify
+        req.session.user = response.user
+        res.redirect('/otpValidate')
       } else if (response.block) {
-        req.session.loginError = 'Your accout is blocked by admin '
+        req.session.loginError = 'Your account is blocked by admin'
         res.redirect('/userLogin')
       } else {
         req.session.loginError = 'Invalid phone number or password..'
         res.redirect('/userLogin')
       }
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
   dashboard: (req, res) => {
-    res.render('users/dashboard', { user: req.session.user })
+    try {
+      res.render('users/dashboard', { user: req.session.user })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
-  userLoginPost: (req, res) => {
-    console.log(req.body)
-    const errors = validationResult(req)
-    console.log(errors)
-    err = errors.errors
-    req.session.mobile = req.body.mobile
-    if (err.length === 0) {
-      userHelpers.loginUser(req.body).then((response) => {
+  userLoginPost: async (req, res) => {
+    try {
+      const { from } = req.body
+      const errors = validationResult(req)
+      const successResponse = {
+        from,
+        status: true
+      }
+      const err = errors.errors
+      req.session.mobile = req.body.mobile
+      const guestId = req.session.guestUser?.id
+      if (err.length === 0) {
+        const response = await userHelpers.loginUser(req.body)
         if (response.block) {
-          req.session.loginError = 'Your accout is blocked by admin '
+          req.session.loginError = 'Your account is blocked by admin'
           res.json({ status: false })
-          // res.redirect('/userLogin');
         } else if (response.status) {
           req.session.user = response.user
-          res.json({ status: true })
-          // res.redirect('/')
+          const userId = req.session.user._id
+          if (from === 'cart') {
+            console.log(userId, guestId)
+            await userHelpers.mergeGuestCartIntoUserCart(userId, guestId)
+            req.session.guestUser = null
+            res.json(successResponse)
+          } else {
+            res.json(successResponse)
+          }
         } else {
-          req.session.loginError = 'Invalid phone number or password..'
+          req.session.loginError = 'Invalid phone number or password'
           res.json({ status: false })
-          // res.redirect('/userLogin');
         }
-      })
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
     }
   },
-  shopProductRight: (req, res) => {
-    const productId = req.params.id
-    console.log(productId)
-    userHelpers.viewCurrentProduct(productId).then((product) => {
+  shopProductRight: async (req, res) => {
+    try {
+      const { id } = req.params
+      const product = await userHelpers.viewCurrentProduct(id)
+      console.log(product)
       res.render('users/shop-product-right', { user: req.session.user, product })
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
   userCartGet: async (req, res) => {
-    // let cartItems = await userHelpers.getcartProducts(req.session?.user._id)
-    const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
-    const cartItems = await userHelpers.getcartProducts(req.session.user._id)
-    // console.log(cartItems);
-    const cartId = cartItems?._id
-    res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId })
+    try {
+      const user = req.session.user?._id
+      const guestUser = req.session.guestUser?.id
+      // console.log(user, guestUser)
+      if (user) {
+        const cartItems = await userHelpers.getcartProducts(req.session.user._id)
+        const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
+        let saved = 0
+        if(totalAmout){
+          saved = totalAmout.total-totalAmout.offerTotal
+        }
+        const cartId = cartItems?._id
+        res.render('users/shop-cart', { cartItems, user: req.session.user, totalAmout, cartId, saved })
+      } else if (guestUser) {
+        // console.log(guestUser)
+        console.log('guest user cart')
+        const cartItems = await userHelpers.getGuestUserCartProducts(req.session.guestUser.id)
+        console.log(cartItems)
+        res.render('users/shop-cart', { cartItems, guestUser })
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
-  addToCartGet: (req, res) => {
-    const productId = req.params.id
-    const userId = req.session?.user._id
-    userHelpers.addToCart(productId, userId).then((response) => {
+  addToCartGet: async (req, res) => {
+    try {
+      const guestUser = {}
+      guestUser.id = uuidv4()
+      if (!req.session.guestUser) {
+        req.session.guestUser = guestUser
+      }
+      const { id: productId } = req.params
+      const userId = req.session.user?._id
+      const guestUserId = req.session.guestUser.id
+      userId && await userHelpers.addToCart(productId, userId, guestUserId)
+      guestUserId && await userHelpers.createGuestUser(guestUserId, productId)
       res.json({ status: true })
-      // res.redirect('/');
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
-  changeCartProductQuantity: (req, res) => {
-    userHelpers.changeCartQuantity(req.body).then(async (response) => {
-      response.total = await userHelpers.findTotalAmout(req.body.userId)
-      const subtotal = await userHelpers.findSubTotal(req.body.userId)
+  changeCartProductQuantity: async (req, res) => {
+    try {
+      const { userId } = req.body
+      const response = await userHelpers.changeCartQuantity(req.body)
+      response.total = await userHelpers.findTotalAmout(userId)
+      const subtotal = await userHelpers.findSubTotal(userId)
       response.subtotal = subtotal
-      console.log(subtotal)
       res.json(response)
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
-  removeProducts: (req, res) => {
-    userHelpers.removeCartProducts(req.body).then((response) => {
+  removeProducts: async (req, res) => {
+    try {
+      const response = await userHelpers.removeCartProducts(req.body)
       res.json(response)
-    })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
   proceedToCheckOutGet: async (req, res) => {
-    const cartItems = await userHelpers.getcartProducts(req.session?.user._id)
-    // const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
-    const address = await userHelpers.getAllAddresses(req.session.user._id)
-    res.render('users/shop-checkout', { user: req.session.user, cartItems, address })
+    try {
+      const cartItems = await userHelpers.getcartProducts(req.session?.user._id)
+      console.log(cartItems)
+      const address = await userHelpers.getAllAddresses(req.session.user._id)
+      res.render('users/shop-checkout', { user: req.session.user, cartItems, address })
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
   },
   proceedToCheckOutPost: async (req, res) => {
-    const products = await userHelpers.getAllProductsUserCart(req.body.userId)
-    let pro
-    products ? pro = products.products : pro = []
-    let totalPrice = 0
-    if (pro.length) {
-      totalPrice = await userHelpers.findTotalAmout(req.body.userId)
-    }
-    userHelpers.placeOrders(req.body, products, totalPrice).then((response) => {
-      // console.log(response)
+    try {
+      const { userId } = req.body
+      const products = await userHelpers.getAllProductsUserCart(userId)
+      let totalPrice = {}
+      if (products[0]?.products.length) {
+        totalPrice = await userHelpers.findTotalAmout(userId)
+      }
+      const response = await userHelpers.placeOrders(req.body, products, totalPrice)
       const insertedOrderId = response.insertedId
-      // userHelpers.createStatusCollection(insertedOrderId)
-      if (req.body.payment_method === 'cod') {
+      const total = totalPrice?.offerTotal
+      const { payment_method: paymentMethod } = req.body
+      if (paymentMethod === 'cod') {
         res.json({ statusCod: true })
-      } else if (req.body.payment_method === 'razorpay') {
-        const total = totalPrice?.total
-        console.log(total)
-        userHelpers.getRazorpay(insertedOrderId, total).then((response) => {
-          // console.log(response)
-          res.json(response)
-        })
-        console.log('razorpay selected')
+      } else if (paymentMethod === 'razorpay') {
+        const razorpayResponse = await userHelpers.getRazorpay(insertedOrderId, total)
+        res.json(razorpayResponse)
+      } else if (paymentMethod === 'paypal') {
+        const paypalResponse = await userHelpers.getPaypal(insertedOrderId, total)
+        console.log(paypalResponse)
+        res.json(paypalResponse)
+      } else if (paymentMethod === 'wallet') {
+        const walletDetails = await userHelpers.getWalletData(req.session.user?._id)
+        walletDetails.wallet = true
+        walletDetails.total = total
+        req.session.orderId = insertedOrderId
+        res.json(walletDetails)
       } else {
         res.json({ status: false })
       }
-
-      // console.log(response)
-    })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
-  verifyRazorpayPayment: (req, res) => {
-    console.log(req.body)
-    userHelpers.verifyRazorpayPayments(req.body).then((response) => {
-      console.log(response)
-      userHelpers.changePaymentStatus(req.body['order[reciept]']).then(() => {
-        console.log('Payment is success')
-        res.json({ status: true })
+  orderPlacedLanding: (req, res) => {
+    try {
+      res.render('users/order-placed-landing')
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
+  },
+  verifyRazorpayPayment: async (req, res) => {
+    try {
+      userHelpers.verifyRazorpayPayments(req.body).then(() => {
+        userHelpers.changePaymentStatus(req.body['payment[receipt]']).then(() => {
+          console.log('Payment is success')
+          res.json({ status: true })
+        })
+      }).catch((err) => {
+        console.log(err)
+        res.json({ status: false, errorMsg: err })
       })
-    }).catch((err) => {
-      console.log(err)
-      res.json({ status: false, errorMsg: 'Payment failed' })
-    })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   getUserOrders: async (req, res) => {
-    const odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
-    const orders = adminHelpers.ISO_to_Normal_Date(odr)
-    // console.log(orders)
-    res.render('users/shop-orders', { orders })
+    try {
+      const odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
+      const orderGroup = await userHelpers.getOrderedGroup(req.session.user._id)
+      console.log(orderGroup)
+      const orders = adminHelpers.ISO_to_Normal_Date(odr)
+      // console.log(orders)
+      res.render('users/shop-orders', { orders })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
-  cancellOrders: (req, res) => {
-    const orderId = req.body.orderId
-    userHelpers.cancellUserOrder(orderId).then((response) => {
-      console.log(response)
-      res.redirect('/view-orders')
-    })
+  cancellOrders: async (req, res) => {
+    try {
+      const { orderId, reason } = req.body
+      userHelpers.cancellUserOrder(orderId, reason).then(() => {
+        res.redirect('/view-orders')
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   editUserProfile: async (req, res) => {
-    const id = req.session?.user._id
-    const userDetails = await userHelpers.getLoginedUser(id)
-    const address = await userHelpers.getUserAddress(id)
-    console.log(address)
-    res.render('users/edit-profile', { userDetails, user: req.session.user, address })
+    try {
+      const id = req.session?.user._id
+      const userDetails = await userHelpers.getLoginedUser(id)
+      const address = await userHelpers.getUserAddress(id)
+      res.render('users/edit-profile', { userDetails, user: req.session.user, address })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   editUserProfilePost: (req, res) => {
-    const userId = req.params.id
-    userHelpers.editProfile(userId, req.body).then((response) => {
-      res.redirect('/')
-    })
+    try {
+      const { userId } = req.params
+      userHelpers.editProfile(userId, req.body).then(() => {
+        res.redirect('/')
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
-  // addAddressGet: (req, res) => {
-  //     let userId = req.session?.user._id;
-  //     let updateMsg=req.session.updatedAddr
-  //     console.log(updateMsg)
-  //     userHelpers.getUserAddress(userId).then((address) => {
-  //         console.log(address)
-  //         res.render('users/add-address', { address,updateMsg });
-  //         req.session.updateMsg=null;
-  //     })
-  // },
   addAddressPost: (req, res) => {
-    const userId = req.session.user?._id
-    const addressFromCheckOut = req.body.fromCheckOut
-    req.body.userId = userId
-    console.log(req.body)
-    userHelpers.addNewAddress(req.body).then((response) => {
-      console.log(response)
-      if (addressFromCheckOut) {
-        res.json({ addressFromCheckOut: true })
-        // res.redirect('/proceed-to-checkout')
-      } else {
-        res.json({ addressFromProfile: true })
-        // res.redirect('/profile-address')
-      }
-    })
+    try {
+      const userId = req.session.user?._id
+      const { addressFromCheckOut } = req.body
+      req.body.userId = userId
+      userHelpers.addNewAddress(req.body).then(() => {
+        const jsonResponse = addressFromCheckOut
+          ? { addressFromCheckOut: true }
+          : { addressFromProfile: true }
+        res.json(jsonResponse)
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ error: true, message: 'Error occurred while adding address' })
+    }
   },
   editAddressGet: async (req, res) => {
-    // console.log(req.query)
-    const from = req.query.from
-    const currentAddress = await userHelpers.getCurrentAddress(req.query.id)
-    res.render('users/user-profile/edit-address', { currentAddress, from })
+    try {
+      const { from } = req.query
+      const currentAddress = await userHelpers.getCurrentAddress(req.query.id)
+      res.render('users/user-profile/edit-address', { currentAddress, from })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   editAddressPost: (req, res) => {
-    console.log(req.query)
-    const from = req.query.from
-    userHelpers.editAddress(req.query.addressId, req.body).then(() => {
-      req.session.updatedAddr = 'Successfully updated address'
-      if (from === 'profile') {
-        res.redirect('/profile-address')
-      } else {
-        res.redirect('/proceed-to-checkout')
-      }
-    })
+    try {
+      const { from } = req.query
+      userHelpers.editAddress(req.query.addressId, req.body).then(() => {
+        req.session.updatedAddr = 'Successfully updated address'
+        from === 'profile' ? res.redirect('/profile-address') : res.redirect('/proceed-to-checkout')
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   deleteAddress: (req, res) => {
-    console.log(req.body)
-    const addressId = req.body.addressId; const from = req.body.from
-    userHelpers.addressDelete(addressId).then((response) => {
-      console.log(response)
-      if (from === 'profile') {
-        res.redirect('/profile-address')
-      } else {
-        res.redirect('/proceed-to-checkout')
-      }
-    })
+    const { addressId, from } = req.body
+    try {
+      userHelpers.addressDelete(addressId).then(() => {
+        from === 'profile' ? res.redirect('/profile-address') : res.redirect('/proceed-to-checkout')
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   userProfileDash: (req, res) => {
-    res.render('users/user-profile/user-dashboard', { user: req.session.user })
+    try {
+      res.render('users/user-profile/user-dashboard', { user: req.session.user })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   userProfileOrders: async (req, res) => {
-    const odr = await userHelpers.getOrdersProfile(req.session.user._id)
-    const orders = adminHelpers.ISO_to_Normal_Date(odr)
-    console.log(odr)
-    res.render('users/user-profile/user-orders', { orders })
+    try {
+      const odr = await userHelpers.getOrdersProfile(req.session.user._id)
+      const orders = adminHelpers.ISO_to_Normal_Date(odr)
+      res.render('users/user-profile/user-orders', { orders })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   userProfileTrackOrders: (req, res) => {
-    res.render('users/user-profile/user-track-orders')
+    try {
+      res.render('users/user-profile/user-track-orders')
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   userProfileAddress: async (req, res) => {
-    const address = await userHelpers.getUserAddress(req.session.user._id)
-    const updateMsg = req.session.updatedAddr
-    console.log(updateMsg)
-    res.render('users/user-profile/user-address', { address, updateMsg })
-    req.session.updatedAddr = null
+    try {
+      const address = await userHelpers.getUserAddress(req.session.user._id)
+      const updateMsg = req.session.updatedAddr
+      res.render('users/user-profile/user-address', { address, updateMsg })
+      req.session.updatedAddr = null
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   userAccountDetails: async (req, res) => {
-    const userDetails = await userHelpers.getUserDetails(req.session.user._id)
-    // let profile_update_status= req.session.profile_update_status
-    res.render('users/user-profile/user-account', { userDetails })
-    // req.session.profile_update_status=null;
+    try {
+      const userDetails = await userHelpers.getUserDetails(req.session.user._id)
+      // let profile_update_status= req.session.profile_update_status
+      res.render('users/user-profile/user-account', { userDetails })
+      // req.session.profile_update_status=null;
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   updateProfile: (req, res) => {
-    // let sessionUserId=req.session.user._id;
-    // console.log(req.body)
-    userHelpers.updateUserDetails(req.body).then((response) => {
-      console.log(response)
-      res.redirect('/profile-account-detail')
-    })
-    // console.log(response)
+    try {
+      // let sessionUserId=req.session.user._id;
+      userHelpers.updateUserDetails(req.body).then(() => {
+        res.redirect('/profile-account-detail')
+      })
     // req.session.profile_update_status=response;
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   changePassword: (req, res) => {
-    const password_change_stat = req.session.password_change_stat
-    const updatePasswd_err = req.session.updatePasswd_err
-    const user = req.session.user._id
-    res.render('users/user-profile/user-change-password', { user, password_change_stat, updatePasswd_err })
-    req.session.password_change_stat = null
-    req.session.updatePasswd_err = null
+    try {
+      const passwordChangeStat = req.session.password_change_stat
+      const updatePasswdErr = req.session.updatePasswd_err
+      const user = req.session.user._id
+      res.render('users/user-profile/user-change-password', { user, passwordChangeStat, updatePasswdErr })
+      req.session.password_change_stat = null
+      req.session.updatePasswd_err = null
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
-  changePasswordPost: (req, res) => {
-    const errors = validationResult(req)
-    console.log(errors)
-    req.session.updatePasswd_err = errors.errors
-    if (req.session.updatePasswd_err.length === 0) {
-      userHelpers.changeUserPassword(req.params.id, req.body).then((response) => {
-        // console.log(response)
+  changePasswordPost: async (req, res) => {
+    try {
+      const errors = validationResult(req)
+      req.session.updatePasswd_err = errors.errors
+      if (req.session.updatePasswd_err.length === 0) {
+        const response = await userHelpers.changeUserPassword(req.params.id, req.body)
         req.session.password_change_stat = response
         res.redirect('/profile-change-password')
-      })
-    } else {
-      res.redirect('/profile-change-password')
+      } else {
+        res.redirect('/profile-change-password')
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
     }
   },
   trackOrders: async (req, res) => {
-    // console.log(req.params.id)
-    const orderStatus = await userHelpers.getOrderStatus(req.params.id)
-    const statusDates = await userHelpers.getStatusDates(req.params.id)
-    // const address = await userHelpers.getAddressforTrackingPage(req.params.id)
-    console.log(statusDates)
-    res.render('users/track-order', { orderStatus, statusDates })
+    try {
+      const order = await userHelpers.getOrderStatus(req.params.id)
+      const statusDates = await userHelpers.getStatusDates(req.params.id)
+      res.render('users/track-order', { order, statusDates })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   },
   viewMoreProducts: async (req, res) => {
-    const orderedProductsWithSameId = await userHelpers.getProductsWithSameId(req.params.id)
-    console.log(orderedProductsWithSameId)
-    res.render('users/view-more-orders', { orderedProductsWithSameId })
+    try {
+      const orderedProductsWithSameId = await userHelpers.getProductsWithSameId(req.params.id)
+      res.render('users/view-more-orders', { orderedProductsWithSameId })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
+  },
+  returnProducts: (req, res) => {
+    try {
+      userHelpers.returnProduct(req.body)
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
+  },
+  getWallet: async (req, res) => {
+    try {
+      const walletData = await userHelpers.getWalletData(req.session.user._id)
+      walletData.transactions = walletData.transactions.reverse()
+      console.log(walletData)
+      res.render('users/wallet', { walletData })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
+  },
+  walletPayment: async (req, res) => {
+    try {
+      console.log(req.body)
+      const insertedOrderId = req.session.orderId
+      const userId = req.session.user._id
+      const { total } = req.body
+      console.log(total)
+      console.log(userId)
+      const response = await userHelpers.getUserWallet(insertedOrderId, parseInt(total), userId)
+      console.log(response)
+      res.json(response)
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ status: false, errorMsg: 'Something went wrong' })
+    }
   },
   userLogout: (req, res) => {
-    req.session.user = null
-    res.redirect('/')
+    try {
+      req.session.user = null
+      res.redirect('/')
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
+    }
   }
 }

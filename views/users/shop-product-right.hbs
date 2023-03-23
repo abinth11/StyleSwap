@@ -12,10 +12,10 @@
                                 <!-- MAIN SLIDES -->
                                 <div class="product-image-slider">
                                     <figure class="border-radius-10">
-                                        <img src="/images/{{product._id}}.jpg" alt="product image" >
+                                        <img src="{{product.images.image1}}" alt="product image" >
                                     </figure>
                                     <figure class="border-radius-10">
-                                        <img src="/imgs/shop/product-16-1.jpg" alt="product image">
+                                        <img src="{{product.images.image2}}" alt="product image">
                                     </figure>
                                     <figure class="border-radius-10">
                                         <img src="/imgs/shop/product-16-3.jpg" alt="product image">
@@ -313,10 +313,10 @@
                                         <!-- MAIN SLIDES -->
                                         <div class="product-image-slider" style="height: 470px;" >
                                             <figure class="border-radius-10" >
-                                                <img src="/images/{{product._id}}.jpg" alt="product image" style="object-fit: fill;height: 100%;">
+                                                <img src="{{product.images.image1}}" alt="product image" style="object-fit: fill;height: 100%;">
                                             </figure>
                                             <figure class="border-radius-10">
-                                                <img src="/imgs/shop/product-16-1.jpg" alt="product image">
+                                                <img src="{{product.images.image2}}" alt="product image">
                                             </figure>
                                             <figure class="border-radius-10">
                                                 <img src="/imgs/shop/product-16-3.jpg" alt="product image">
@@ -982,3 +982,17 @@
         
     </main>
   {{>foot-user}}
+  <script>
+    const buyNow(productId) => {
+        $.ajax({
+            url:"/buy-now",
+            dataType:{
+                productId:productId
+            },
+            method:'get'
+            success: (res) =>{
+                console.log('product buyed successfully')
+            }
+        })
+    }
+  </script>

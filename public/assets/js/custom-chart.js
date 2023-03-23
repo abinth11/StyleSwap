@@ -1,12 +1,12 @@
 (function ($) {
-    "use strict";
+"use strict";
 
-    /*Sale statistics Chart*/
-    if ($('#myChart').length) {
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'line',
+  /* Sale statistics Chart */
+  if ($('#myChart').length) {
+    const ctx = document.getElementById('myChart').getContext('2d')
+    const chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
             
             // The data for our dataset
             data: {
@@ -17,7 +17,7 @@
                         fill: true,
                         backgroundColor: 'rgba(44, 120, 220, 0.2)',
                         borderColor: 'rgba(44, 120, 220)',
-                        data: [18, 17, 4, 3, 2, 20, 25, 31, 25, 22, 20, 9]
+                        data: [30, 17, 4, 3, 2, 20, 25, 31, 25, 22, 20, 9]
                     },
                     {
                         label: 'Visitors',
@@ -33,7 +33,7 @@
                         fill: true,
                         backgroundColor: 'rgba(380, 200, 230, 0.2)',
                         borderColor: 'rgb(380, 200, 230)',
-                        data: [30, 10, 27, 19, 33, 15, 19, 20, 24, 15, 37, 6]
+                        data: [50, 10, 27, 19, 33, 15, 19, 20, 24, 15, 37, 6]
                     }
 
                 ]

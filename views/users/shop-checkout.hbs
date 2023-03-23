@@ -1,5 +1,45 @@
 ﻿{{>head-user}}
 {{>user-header}}
+{{!-- Modal for order successfully placed --}}
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-success">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fas fa-check-circle fa-4x text-white mb-3"></i>
+                <h5 class="modal-title text-white mb-3" id="successModalLabel">Order Placed Successfully</h5>
+                <p class="text-white mb-3">Thank you for your order! Your order has been placed successfully.</p>
+                <button type="button" class="btn btn-light px-4 py-2" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{!-- for order failure --}}
+<div class="modal fade" id="failureModal" tabindex="-1" aria-labelledby="failureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fas fa-exclamation-circle fa-4x text-danger mb-3"></i>
+                <h5 class="modal-title mb-3" id="failureModalLabel">Order Failed</h5>
+                <p class="mb-3">Sorry, your order could not be placed. Please try again later or contact customer
+                    support.</p>
+                <button type="button" class="btn btn-primary px-4 py-2" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
 <div class="mobile-header-active mobile-header-wrapper-style">
     <div class="mobile-header-wrapper-inner">
         <div class="mobile-header-top">
@@ -211,19 +251,20 @@
                                     <tbody>
                                         {{#each cartItems.products}}
                                         <tr>
-                                            <td class="image product-thumbnail"><img src="/images/{{product_id}}.jpg"
-                                                    alt="#"></td>
+                                            <td class="image product-thumbnail"><img src="{{images.image1}}" alt="#">
+                                            </td>
                                             <td>
                                                 <h5><a href="shop-product-full.html">{{product_title}}</a>
                                                 </h5>
                                                 <span class="product-qty">x {{quantity}}</span>
                                             </td>
-                                            <td>${{subtotal}}</td>
+                                            <td>{{ formatCurrency offerSubtotal}}</td>
                                         </tr>
                                         {{/each}}
                                         <tr>
                                             <th>SubTotal</th>
-                                            <td class="product-subtotal" colspan="2">$280.00</td>
+                                            <td class="product-subtotal" colspan="2">{{formatCurrency
+                                                cartItems.offerTotal}}</td>
                                         </tr>
                                         <tr>
                                             <th>Shipping</th>
@@ -233,7 +274,8 @@
                                             <th>Total</th>
                                             {{#if cartItems}}
                                             <td colspan="2" class="product-subtotal"><span
-                                                    class="font-xl text-brand fw-900">${{cartItems.total}}</span>
+                                                    class="font-xl text-brand fw-900">{{ formatCurrency
+                                                    cartItems.offerTotal}}</span>
                                             </td>
                                             {{/if}}
                                         </tr>
@@ -378,7 +420,7 @@
                         </div>
                     </div>
                     {{!--display address --}}
-                    <form id="place-order" novalidate>
+                    <form id="place-order" novalidate onsubmit="return validatePlaceOrder()">
                         <div class="row pt-3">
                             {{!-- <input type="text" hidden name="userId" value="{{user.response._id}}"> --}}
                             <div class="payment_option">
@@ -390,8 +432,8 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="deliveryAddress"
-                                                    id="flexRadioDefault1" value="{{_id}}" required>
+                                                <input class="form-check-input address" type="radio" name="deliveryAddress"
+                                                    id="flexRadioDefault1" value="{{_id}}" required >
                                                 <label class="form-check-label" for="flexRadioDefault1">
                                                     <ul>
                                                         <li class="ms-3">Name: {{name}}</li>
@@ -437,11 +479,10 @@
                                         <div class="payment_option">
                                             <div class="custome-radio">
                                                 <input class="form-check-input" type="radio" name="payment_method"
-                                                    id="exampleRadios3" value="direct_bank">
+                                                    id="exampleRadios3" value="paypal">
                                                 <label class="form-check-label" for="exampleRadios3"
                                                     data-bs-toggle="collapse" data-target="#bankTranfer"
-                                                    aria-controls="bankTranfer">Direct Bank
-                                                    Transfer</label>
+                                                    aria-controls="bankTranfer">Paypal</label>
                                             </div>
                                             <div class="custome-radio">
                                                 <input class="form-check-input" value="cod" type="radio"
@@ -459,9 +500,19 @@
                                                 <div class="form-group collapse in" id="paypal">
                                                 </div>
                                             </div>
+                                            <div class="custome-radio">
+                                                <input class="form-check-input" type="radio" name="payment_method"
+                                                    id="exampleRadios2" value="wallet">
+                                                <label class="form-check-label" for="exampleRadios2"
+                                                    data-bs-toggle="collapse" data-target="#wallet"
+                                                    aria-controls="wallet">Wallet</label>
+                                                <div class="form-group collapse in" id="paypal">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-fill-out btn-block mt-30" id="rzp-button1">Place Order</button>
+                                    <button class="btn btn-fill-out btn-block mt-30" id="rzp-button1">Place
+                                        Order</button>
                                 </div>
                             </div>
                         </div>
@@ -482,8 +533,46 @@
             x.style.display = "none";
         }
     }
+
+    const validatePlaceOrder = () => {
+        const addressRadios = document.getElementsByName('deliveryAddress');
+        let addressSelected = false;
+        for (let i = 0; i < addressRadios.length; i++) {
+            if (addressRadios[i].checked) {
+                addressSelected = true;
+                break;
+            }
+        }
+        if (!addressSelected) {
+            // Use SweetAlert to show a popup alert
+            Swal.fire("Oops!", "Please select an address.", "error");
+            return false;
+        }
+
+        const paymentRadios = document.getElementsByName('payment_method');
+        let paymentSelected = false;
+        for (let i = 0; i < paymentRadios.length; i++) {
+            if (paymentRadios[i].checked) {
+                paymentSelected = true;
+                break;
+            }
+        }
+        if (!paymentSelected) {
+            // Use SweetAlert to show a popup alert
+            Swal.fire("Oops!", "Please select a payment method.", "error");
+            return false;
+        }
+
+        // Validation passed, allow form submission
+        return true;
+    }
 </script>
 <script>
+    const currencyFormatter = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR'
+    });
+
     $("#place-order").submit((e) => {
         e.preventDefault()
         $.ajax({
@@ -493,10 +582,95 @@
             success: (response) => {
                 console.log(response)
                 if (response.statusCod) {
-                    location.href = '/view-orders'
+                    $('#successModal').modal('show')
+                    setTimeout(function () {
+                        location.href = '/order-placed-landing';
+                    }, 3000);
                 } else if (response.id) {
                     getRazorpay(response);
-                    {{!-- location.href = '/view-orders' --}}
+                } else if (response.paypal) {
+                    location.href = response.reUrl
+                } else if (response.wallet) {
+                    const walletBalance = currencyFormatter.format(response.balance)
+                    const walletId = response._id
+                    const total = response.total
+                    Swal.fire({
+                        title: 'Your Wallet Information',
+                        html:
+                            '<p><strong>Wallet ID:</strong>' + walletId + '</p>' +
+                            '<p><strong>Balance:</strong>' + walletBalance + '</p>',
+                        showCloseButton: false,
+                        showCancelButton: true,
+                        focusConfirm: false,
+                        confirmButtonText:
+                            '<i class="fa fa-inr"></i> Pay',
+                        confirmButtonAriaLabel: 'Pay',
+                        cancelButtonText:
+                            '<i class="fa fa-thumbs-down"></i> Cancel',
+                        cancelButtonAriaLabel: 'Cancel',
+                        customClass: {
+                            container: 'my-swal'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Make AJAX call to pay with wallet
+                            $.ajax({
+                                type: "POST",
+                                url: "/wallet-payment",
+                                data: { confirmed: true, total },
+                                success: function (response) {
+                                    console.log(response)
+                                    // Handle payment success
+                                    if (response.paid) {
+                                        const amountPaid = currencyFormatter.format(response.amountPaid);
+                                        const newBalance = currencyFormatter.format(response.updatedBalance);
+                                        Swal.fire({
+                                            title: 'Payment Successful!',
+                                            html:
+                                                '<p><strong>Amount Paid:</strong>' + amountPaid + '</p>' +
+                                                '<p><strong>New Balance:</strong> ' + newBalance + '</p>',
+                                            icon: 'success',
+                                            showConfirmButton: true,
+                                            confirmButtonText: 'Close',
+                                            customClass: {
+                                                container: 'my-swal'
+                                            }
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                setTimeout(function () {
+                                                    location.href = '/order-placed-landing';
+                                                }, 1000);
+                                            }
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Insufficient Balance!',
+                                            text: 'Your account balance is not enough to complete this transaction.',
+                                            icon: 'error',
+                                            showConfirmButton: true,
+                                            confirmButtonText: 'OK',
+                                            customClass: {
+                                                container: 'my-swal'
+                                            }
+                                        });
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    // Handle payment error
+                                    Swal.fire({
+                                        title: 'Payment Error!',
+                                        text: 'An error occurred while processing your payment. Please try again later.',
+                                        icon: 'error',
+                                        showConfirmButton: true,
+                                        confirmButtonText: 'Close',
+                                        customClass: {
+                                            container: 'my-swal'
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
                 }
             }
         })
@@ -512,11 +686,6 @@
             "image": "https://example.com/your_logo",
             "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
             "handler": function (response) {
-                
-                {{!-- alert(response.razorpay_payment_id);
-                alert(response.razorpay_order_id);
-                alert(response.razorpay_signature) --}}
-
                 verifyPayment(order, response);
             },
             "prefill": {
@@ -549,13 +718,25 @@
     }
     const verifyPayment = (payment, order) => {
         $.ajax({
-            type:"post",
+            type: "post",
             url: '/verify-payment',
             data: {
                 payment,
                 order
+            },
+            success: (response) => {
+                if (response.status) {
+                    $('#successModal').modal('show')
+                    setTimeout(function () {
+                        location.href = '/order-placed-landing';
+                    }, 3000);
+                } else {
+                    $('#failureModal').modal('show');
+                    setTimeout(() => {
+                        location.href = '/proceed-to-checkout'
+                    }, 3000)
+                }
             }
-
         })
     }
     const deleteAddress = (addressId) => {

@@ -236,83 +236,83 @@ const debounce = (fn, delay = 500) => {
   }
 }
 
-form.addEventListener('input', debounce(function (e) {
-  switch (e.target.id) {
-    case 'product_title':
-      checkTitle()
-      break
-    case 'product_sku':
-      checkSku()
-      break
-    case 'product_color':
-      checkColor()
-      break
-    case 'product_size':
-      checkSize()
-      break
-    case 'product_brand':
-      checkBrand()
-      break
-    case 'description':
-      checkDescription()
-      break
-    case 'product_price':
-      checkPrice()
-      break
-    case 'product_warranty':
-      checkWarranty()
-      break
-    case 'product_return':
-      checkReturn()
-      break
-    case 'product_quantity':
-      checkQuantity()
-      break
-    case 'category':
-      checkCategory()
-      break
-    // case 'product-cat-1':
-    // case 'product-cat-2':
-    // case 'product-cat-3':
-    // case 'product-cat-4':
-    // case 'product-cat-5':
-    // case 'product-cat-6':
-    //   checkDelivery()
-    //   break
-  }
-}))
+// form.addEventListener('input', debounce(function (e) {
+//   switch (e.target.id) {
+//     case 'product_title':
+//       checkTitle()
+//       break
+//     case 'product_sku':
+//       checkSku()
+//       break
+//     case 'product_color':
+//       checkColor()
+//       break
+//     case 'product_size':
+//       checkSize()
+//       break
+//     case 'product_brand':
+//       checkBrand()
+//       break
+//     case 'description':
+//       checkDescription()
+//       break
+//     case 'product_price':
+//       checkPrice()
+//       break
+//     case 'product_warranty':
+//       checkWarranty()
+//       break
+//     case 'product_return':
+//       checkReturn()
+//       break
+//     case 'product_quantity':
+//       checkQuantity()
+//       break
+//     case 'category':
+//       checkCategory()
+//       break
+//     // case 'product-cat-1':
+//     // case 'product-cat-2':
+//     // case 'product-cat-3':
+//     // case 'product-cat-4':
+//     // case 'product-cat-5':
+//     // case 'product-cat-6':
+//     //   checkDelivery()
+//     //   break
+//   }
+// }))
 
-form.addEventListener('submit', function (e) {
-  // prevent the form from submitting
-  e.preventDefault()
+// form.addEventListener('submit', function (e) {
+//   // prevent the form from submitting
+//   e.preventDefault()
 
-  // validate fields
-  const isTitleValid = checkTitle()
-  const isSkuValid = checkSku()
-  const isColorValid = checkColor()
-  const isSizeValid = checkSize()
-  const isBrandValid = checkBrand()
-  const isDescriptionValid = checkDescription()
-  const isPriceValid = checkPrice()
-  const isWarrantyValid = checkWarranty()
-  const isReturnValid = checkReturn()
-  const isQuantityValid = checkQuantity()
-  const isCategoryValid = checkCategory()
+//   // validate fields
+//   const isTitleValid = checkTitle()
+//   const isSkuValid = checkSku()
+//   const isColorValid = checkColor()
+//   const isSizeValid = checkSize()
+//   const isBrandValid = checkBrand()
+//   const isDescriptionValid = checkDescription()
+//   const isPriceValid = checkPrice()
+//   const isWarrantyValid = checkWarranty()
+//   const isReturnValid = checkReturn()
+//   const isQuantityValid = checkQuantity()
+//   const isCategoryValid = checkCategory()
 
-  const isFormValid = isTitleValid && isSkuValid &&
-    isColorValid && isSizeValid && isBrandValid && isDescriptionValid &&
-    isPriceValid && isWarrantyValid && isReturnValid && isQuantityValid &&
-    isCategoryValid
+//   const isFormValid = isTitleValid && isSkuValid &&
+//     isColorValid && isSizeValid && isBrandValid && isDescriptionValid &&
+//     isPriceValid && isWarrantyValid && isReturnValid && isQuantityValid &&
+//     isCategoryValid
 
-  // submit to the server if the form is valid
-  if (isFormValid) {
-    console.log('form is valid')
-    $.ajax({
-      type: 'POST',
-      url: '/admin/addProduct3',
-      data: $('#add-product-3').serialize(),
-      success: (response) => {
-      }
-    })
-  }
-})
+//   // submit to the server if the form is valid
+//   if (isFormValid) {
+//     console.log('form is valid')
+//     $.ajax({
+//       type: 'POST',
+//       url: '/admin/addProduct3',
+//       data: $('#add-product-3').serialize(),
+//       success: (response) => {
+//       }
+//     })
+//   }
+// })

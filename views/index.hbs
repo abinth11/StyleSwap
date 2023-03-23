@@ -25,6 +25,41 @@
         </div>
     </div> --}}
 
+
+
+
+    {{!-- Modal for add to cart --}}
+
+      <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                    <p class="">Added to cart</p>
+                    <div class="row justify-content-center " style="margin-top: 1.5em;">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-success btn-sm btn-sm-custom">
+                                <i class="fas fa-shopping-cart " style="margin-bottom: 3px;"></i>
+                            </button>
+
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-success btn-sm btn-sm-custom">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+
     <!-- Quick view -->
     <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -164,7 +199,7 @@
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
                 <div class="mobile-header-logo">
-                    <a href="index.html"><img src="/imgs/theme/logo.svg" alt="logo"></a>
+                    <a href="/"><img src="/imgs/theme/logo.svg" alt="logo"></a>
                 </div>
                 <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
                     <button class="close-style search-close">
@@ -204,7 +239,7 @@
 
                     <nav>
                         <ul class="mobile-menu">
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="index.html">Home</a>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/">Home</a>
                                 <ul class="dropdown">
                                     <li><a href="index.html">Home 1</a></li>
                                     <li><a href="index-2.html">Home 2</a></li>
@@ -462,8 +497,8 @@
                                     <div class="product-img-action-wrap">
                                         <div class="product-img product-img-zoom">
                                             <a href="/shop-product-right/{{_id}}">
-                                                <img class="default-img" src="/images/{{_id}}.jpg" alt="">
-                                                <img class="hover-img" src="/imgs/shop/product-1-2.jpg" alt="">
+                                                <img class="default-img" src="{{images.image1}}" alt="">
+                                                <img class="hover-img" src="{{images.image2}}" alt="">
                                             </a>
                                         </div>
                                         <div class="product-action-1">
@@ -492,18 +527,22 @@
                                             </span>
                                         </div>
                                         <div class="product-price">
-                                            <span>${{product_price}} </span>
-                                            <span class="old-price">$245.8</span>
+                                            {{#if offerPrice}}
+                                            <span>${{offerPrice}} </span>
+                                            {{else}}
+                                            <span>${{product_price}}</span>
+                                            {{/if}}
+                                            <span class="old-price">${{product_price}}</span>
                                         </div>
                                         <div class="product-action-1 show">
-                                            <button aria-label=" Cart" class="action-btn hover-up" onclick="addToCart('{{_id}}')"><i class="fi-rs-shopping-bag-add"></i></button>
+<button id="myModalButton" aria-label=" Cart" class="action-btn hover-up" onclick="addToCart('{{_id}}'); hideModalButton()" data-bs-toggle="modal" data-bs-target="#myModal"><i class="fi-rs-shopping-bag-add"></i></button>
                                             {{!-- <a aria-label="Cart" class="action-btn hover-up" href="/add-to-cart/{{_id}}"><i class="fi-rs-shopping-bag-add"></i></a> --}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             {{/each}}
-                         
+
                           
                         <!--End product-grid-4-->
                     </div>

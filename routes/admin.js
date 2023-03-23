@@ -1,102 +1,131 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const adminControler = require('../controlers/admin-controlers')
-const adminValidate = require('../validation/adminValidation')
-const { upload } = require('../middlewares/multer')
-const sessionCheck = require('../middlewares/session-checks')
-/* GET users listing. */
-router.get('/', adminControler.adminLoginGet)
+import adminControler from '../controlers/admin-controlers.js'
+import adminValidate from '../validation/adminValidation.js'
+import upload from '../middlewares/multer.js'
+import sessionCheck from '../middlewares/session-checks.js'
+ 
+//? ROUTES FOR HANDLING ADMIN LOGIN
+//  *router is handling both get and post request by route chaining 
+router.route('/')
+    .get(adminControler.adminLoginGet)
+    .post(adminValidate.adminLoginValidate, adminControler.adminLoginPost)  
 
-// Admin Login post method
-router.post('/adminLogin', adminValidate.adminLoginValidate, adminControler.adminLoginPost)
-
-// Admin dashboard
+//? ADMIN DASHBOARD
 router.get('/dashboard', sessionCheck.isAdminExist, adminControler.adminDashboard)
 
-// Admin add product get and post methods
-router.route('/addProduct1')
-  .get(sessionCheck.isAdminExist, adminControler.addProducts1Get)
-  .post(upload.single('product_image'), adminControler.addProducts1Post)
-
-router.get('/addProduct1', sessionCheck.isAdminExist, adminControler.addProducts1Get)
-
-// const upload = multer({ dest: 'uploads/' });
-
-router.post('/add-product-1', upload.single('image'), (req, res) => {
-  console.log(req.body)
-  console.log(req.file)
-  console.log('llllllllllllllllll')
-})
-
-router.route('/addProduct2')
-  .get(sessionCheck.isAdminExist, adminControler.addProducts2Get)
-
-// For adding products like clothes and shoes
-router.route('/addProduct3')
+//? ROUTES FOR HANDLING PRODUCTS
+//* upload.array() method is handling the images upload by multer library
+// For adding products 
+router.route('/dashboard/view-products-in-list/add-products')
   .get(sessionCheck.isAdminExist, adminControler.addProducts3Get)
-  .post(adminValidate.addProductValidate, adminControler.addProducts3Post)
+  .post(upload.array('product_image', 10), adminValidate.addProductValidate, adminControler.addProducts3Post)
 
-router.route('/addProduct4')
-  .get(sessionCheck.isAdminExist, adminControler.addProducts4Get)
+// For viewing products
+router.get('/dashboard/view-products-in-list', sessionCheck.isAdminExist, adminControler.viewProductList)
 
-// view products in list view
-router.get('/viewPoductsList', sessionCheck.isAdminExist, adminControler.viewProductList)
-
-// edit products in list veiw
-router.route('/editProductsList/:id')
+//  Edit products
+// * @param id is the parameter for the url (it is a product id)
+router.route('/dashboard/view-product-list/edit-products-list/:id')
   .get(sessionCheck.isAdminExist, adminControler.editProductsListGet)
   .post(adminValidate.addProductValidate, adminControler.editProductsListPut)
 
 // disable product in list view
-router.post('/diableAndEnableProduct', adminControler.disableAndEnableProduct)
+router.post('/dashboard/view-product-list/diable-and-enable-products', adminControler.disableAndEnableProduct)
 
-// view products in grid
-router.get('/viewProductsGrid', sessionCheck.isAdminExist, adminControler.viewProductsGrid)
+// Add offers for individual products
+router.route('/dashboard/view-product-list/add-offers-for-products')
+  .get(adminControler.addOffersProducts)
+  .post(adminControler.addOffersProductsPost)
 
-// view products grid 2
-router.get('/viewProductsGrid2', sessionCheck.isAdminExist, adminControler.viewProductsGrid2)
+// Grid view for the product
+router.get('/dashboard/view-products-in-grid', sessionCheck.isAdminExist, adminControler.viewProductsGrid)
 
-// view Users
-router.get('/viewUsers', sessionCheck.isAdminExist, adminControler.viewUsers)
-
-// Block users
-router.post('/bockAndUnblockUsers', adminControler.blockAndUnblockUsers)
-
-// Blocked users
-router.get('/blockedUsers', sessionCheck.isAdminExist, adminControler.getBlockedUsers)
-
-// Category management add categories
-router.route('/addProductCategory')
+//? ROUTED FOR HANDLING CATEGORIES AND SUB CATEGORIES
+// Category management - Add categories
+router.route('/dashboard/add-product-category')
   .get(sessionCheck.isAdminExist, adminControler.addCategoryGet)
   .post(adminControler.addCategoryPost)
 
-// Category management edit categories
-router.route('/editProdutCategory/:id')
+// Category management - Edit categories
+//* @param id is the parameter for this url (it is a category id)
+router.route('/dashboard/add-product-category/edit-product-category/:id')
   .get(sessionCheck.isAdminExist, adminControler.editCategoryGet)
   .post(adminControler.editCategoryPut)
 
-// Delete category
-router.get('/deleteProductCategory/:id', adminControler.deleteProductCategory)
+// Category management - Delete category
+//* @params id is the parameter for this url (it is the category id)
+router.get('/dashboard/add-product-category/delete-product-category/:id', adminControler.deleteProductCategory)
 
+// Category management - Add subcategory
+router.route('/dashboard/add-product-sub-category')
+    .get(adminControler.addSubCategoryGet)
+    .post(adminControler.addSubCategoryPost)
+
+// Delete sub categories
+router.get('/dashboard/delete-sub-category',adminControler.deleteSubCategory)
+    
+// Edit subcategory
+router.post('/dashboard/add-product-category/edit-sub-category', adminControler.editSubCategory)
+
+// Delete subcategory
+//* @params id is the id for this url (it is the sub category id)
+router.get('/dashboard/add-product-category/delete-sub-category/:id',adminControler.deleteSubCategory)
+
+// Manage product variants
+router.get('/add-product-variants', adminControler.addProductsVariants)
+
+//? ROUTES FOR HANDLING ORDERS
 // view and manage orders
-router.get('/admin-view-orders', adminControler.viewAllOrders)
-
-// view orders more
-router.get('/view-order-details/:id', adminControler.viewOrderDetails)
+router.get('/dashboard/admin-view-orders', adminControler.viewAllOrders)
 
 // change status of ordered products
 router.post('/change-product-status', adminControler.changeProductStatus)
 
-router.post('/checkBoxtest', (req, res) => {
-  console.log(req.body)
-})
+// view orders more
+//* @params id is the parameter for this url (it is order id)
+router.get('/dashboard/admin-view-orders/view-order-details/:id', adminControler.viewOrderDetails)
 
-// Logout admin
+// order return
+router.get('/dashboard/order-return', sessionCheck.isAdminExist, adminControler.orderReturn)
+
+//change return status
+router.post('/change-return-status', adminControler.changeReturnStatus)
+
+//sett pcickup date
+router.post('/set-pick-up-date', adminControler.setPickUpDate)
+
+// amount refund
+router.post('/refund-amount', adminControler.refundAmount)
+
+//? ROUTES FOR HANDLING USERS
+// view Users
+router.get('/dashboard/view-users', sessionCheck.isAdminExist, adminControler.viewUsers)
+
+// Block users
+router.post('/dashboard/view-users/block-and-unblock-users', adminControler.blockAndUnblockUsers)
+
+// Blocked users
+router.get('/dashboard/blocked-users', sessionCheck.isAdminExist, adminControler.getBlockedUsers)
+
+//? ROUTES FOR HANDLING OFFRES
+// offer management
+router.route('/dashboard/add-offers-by-category')
+  .get(sessionCheck.isAdminExist, adminControler.addOffersGet)
+  .post(adminControler.addOffersPost)
+
+//for viewing existing offers
+router.route('/dashboard/view-offers')
+   .get(sessionCheck.isAdminExist, adminControler.viewOffers)
+
+router.post('/replace-offer', adminControler.replaceOfers)
+
+//? ROUTE FOR CREATING PDF AND EXCEL
+// create sales report
+router.post('/create-report', adminControler.makeReport)
+   
+//? ADMIN LOGOUT
+// Logout admin 
 router.get('/logoutAdmin', adminControler.logoutAdmin)
 
-// router.post('/uploadImages',multer.uploadImage.array('images',3),(req,res)=>{
-//     res.status(500).json(error);
-//     console.log("images uploaded")
-// })
-
-module.exports = router
+export default router

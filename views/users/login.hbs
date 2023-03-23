@@ -19,7 +19,7 @@
     <!-- Template CSS -->
     <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
     <link rel='stylesheet' href='/stylesheets/style.css' />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.min.css">
 </head>
 
 <body>
@@ -36,6 +36,7 @@
                         <div class="mb-3">
                             <input class="form-control" placeholder="Username or email" type="text" name="mobile"
                                 id="mobile">
+                            <input type="hidden" value="{{from}}" name="from">
                             <small class="text-danger error-msg ms-1 pt-2"></small>
                         </div> <!-- form-group// -->
                         <div class="mb-3">
@@ -99,6 +100,7 @@
     <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="assets/js/main.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.min.js"></script>
 </body>
 
 
@@ -106,6 +108,8 @@
 
 </html>
 <script>
+
+
     const usernameEl = document.querySelector('#mobile');
     const passwordEl = document.querySelector('#password');
 
@@ -181,37 +185,41 @@
         error.textContent = '';
     }
 
-
-    form.addEventListener('submit', function (e) {
+    $('#login-form').submit(function (e) {
         // prevent the form from submitting
         e.preventDefault();
 
         // validate fields
-        let isUsernameValid = checkUsername(),
-            isPasswordValid = checkPassword()
-        let isFormValid = isUsernameValid &&
-            isPasswordValid
+        let isUsernameValid = checkUsername();
+        let isPasswordValid = checkPassword();
+        let isFormValid = isUsernameValid && isPasswordValid;
+
         // submit to the server if the form is valid
         if (isFormValid) {
-            console.log("form is valid")
-            $("#login-form").submit((e) => {
-                e.preventDefault()
-                $.ajax({
-                    type: "POST",
-                    url: '/userLogin',
-                    data: $('#login-form').serialize(),
-                    success: (response) => {
-                        if(response.status){
-                            location.href='/'
-                        }else{
-                            location.href='/userLogin'
-                        }
-                    }
-                })
-            })
+            console.log("form is valid");
 
+            $.ajax({
+                type: "POST",
+                url: '/userLogin',
+                data: $('#login-form').serialize(),
+                success: (response) => {
+                    console.log(response)
+                    if (response.from === 'cart') {
+                        localStorage.setItem('display_sweet_alert', 'true');
+                        location.href = '/userCart'
+                    } else if (response.from === 'home') {
+                        location.href = '/'
+                    }
+                    else {
+                        location.href = '/userLogin';
+                    }
+                }
+            });
         }
     });
+
+
+
 
 
     const debounce = (fn, delay = 500) => {
@@ -238,4 +246,5 @@
                 break;
         }
     }));
+
 </script>

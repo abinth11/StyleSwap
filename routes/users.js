@@ -1,9 +1,8 @@
-const express = require('express')
+import express from 'express';
 const router = express.Router()
-const userControler = require('../controlers/user-controlers')
-const userValidation = require('../validation/userValidation')
-const sessionChecker = require('../middlewares/session-checks')
-const userHelpers = require('../helpers/user-helpers')
+import { userControler } from '../controlers/user-controlers.js'
+import  userValidation  from '../validation/userValidation.js'
+import  sessionChecker  from '../middlewares/session-checks.js'
 
 /* GET home page. */
 router.get('/', userControler.userHome)
@@ -32,10 +31,10 @@ router.route('/otpValidate')
   .post(userControler.otpValidatePost)
 
 // Cart for user
-router.get('/userCart', sessionChecker.isUserExist, userControler.userCartGet)
+router.get('/userCart', sessionChecker.isUserOrGuestExist, userControler.userCartGet)
 
 // add to the cart
-router.get('/add-to-cart/:id', sessionChecker.isUserExist, userControler.addToCartGet)
+router.get('/add-to-cart/:id', userControler.addToCartGet)
 
 // change product quantity in the cart
 router.post('/change-quantity', userControler.changeCartProductQuantity)
@@ -47,6 +46,11 @@ router.put('/remove-cart-product', userControler.removeProducts)
 router.route('/proceed-to-checkout')
   .get(sessionChecker.isUserExist, userControler.proceedToCheckOutGet)
   .post(userControler.proceedToCheckOutPost)
+
+// order placed landing page
+router.get('/order-placed-landing', sessionChecker.isUserExist, userControler.orderPlacedLanding)
+// buy now for each products
+router.get('/buyNow', userControler.proceedToCheckOutGet)
 
 // for verifying the payment
 router.post('/verify-payment', userControler.verifyRazorpayPayment)
@@ -89,7 +93,14 @@ router.post('/delete-address', userControler.deleteAddress)
 // track order
 router.get('/track-order/:id', userControler.trackOrders)
 
+// return order
+router.post('/return-products', userControler.returnProducts)
+
+// wallet management
+router.get('/open-wallet', sessionChecker.isUserExist, userControler.getWallet)
+router.post('/wallet-payment', userControler.walletPayment)
+
 // User logout
 router.get('/logoutUser', userControler.userLogout)
 
-module.exports = router
+export default router

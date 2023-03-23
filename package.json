@@ -2,30 +2,47 @@
   "name": "ecommercewebsite",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "lint": "eslint ./"
+    "start": "nodemon ./bin/www.js",
+    "lint": "eslint ./",
+    "build": "babel src -d dist"
+  },
+  "bin": {
+    "www": "bin/www.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "cloudinary": "^1.35.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^16.0.3",
+    "exceljs": "^4.3.0",
     "express": "^4.18.2",
-    "express-fileupload": "^1.4.0",
     "express-handlebars": "^6.0.6",
     "express-session": "^1.17.3",
     "express-validator": "^6.14.2",
+    "handlebars": "^4.7.7",
     "hbs": "^4.2.0",
     "http-errors": "~1.6.3",
-    "mongodb": "^4.13.0",
+    "moment": "^2.29.4",
+    "mongodb": "^4.14.0",
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.1",
     "nocache": "^3.0.4",
+    "node-cron": "^3.0.2",
+    "paypal-rest-sdk": "^1.8.1",
+    "pdfkit": "^0.13.0",
+    "pdfmake": "^0.2.7",
     "razorpay": "^2.8.6",
-    "twilio": "^3.84.0"
+    "twilio": "^3.84.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.3",
+    "@babel/node": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
     "eslint": "^8.35.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.27.5",

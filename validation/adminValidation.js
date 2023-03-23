@@ -1,5 +1,5 @@
-const { check } = require('express-validator')
-module.exports = {
+import { check } from 'express-validator'
+const adminValidate = {
   adminLoginValidate: [
     check('email')
       .notEmpty()
@@ -12,13 +12,13 @@ module.exports = {
     check('product_title')
       .notEmpty()
       .withMessage('Product name cannot be empty')
-      .matches(/^[A-Za-z0-9]/)
-      .withMessage('Invalid product name')
+      // .matches(/^[A-Za-z0-9]/)
+      // .withMessage('Invalid product name')
       .trim(),
     check('product_brand')
       .notEmpty()
-      .withMessage('Product brand cannot be empty')
-      .matches(/^[A-Za-z0-9]/)
+      // .withMessage('Product brand cannot be empty')
+      // .matches(/^[A-Za-z0-9]/)
       .withMessage('Invalid brand name')
       .trim(),
     check('product_price')
@@ -30,14 +30,14 @@ module.exports = {
     check('product_description')
       .notEmpty()
       .withMessage('Product description cannot be empty')
-      .matches(/^[A-Za-z0-9]/)
-      .withMessage('Invalid description for the product')
+      // .matches(/^[A-Za-z0-9]/)
+      // .withMessage('Invalid description for the product')
       .trim(),
     check('product_color')
       .notEmpty()
       .withMessage('Product color cannot be empty')
-      .matches(/^[A-Za-z0-9]/)
-      .withMessage('Please enter a valida color')
+      // .matches(/^[A-Za-z0-9]/)
+      // .withMessage('Please enter a valida color')
       .trim()
     //  check('product_image')
     // .notEmpty()
@@ -79,3 +79,4 @@ module.exports = {
   ]
 
 }
+export default adminValidate

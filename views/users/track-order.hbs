@@ -1,48 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
+{{>head-user}}
+{{>user-header}}
+<link rel="stylesheet"
+	href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+<section>
 
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet"
-		href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-	<title>Document</title>
-	<link rel="stylesheet" href="/css/main.css">
-	<section>
-		<div class="container" style="height: 80vh;">
-			<div class="row pt-50 d-flex align-items-center justify-content-center" style="">
-				<div class="status-box ps-5" style="">
+	<div class="container" style="height: 80vh;">
+		{{#if order.pickupDate}}
+		<div class="row">
+			<h4 class="text-center text-success mt-4">Your return request has been approved by the admin please ready
+				the item for return </h4>
+			<p class="text-center mt-2">Expected pickup date: {{order.pickupDate}}</p>
+		</div>
+		{{/if}}
+		{{#if (eq order.returnStatus 'declined')}}
+		<div class="row">
+			<h4 class="text-center text-danger mt-4">Your return request has been declined by the admin please contact us. </h4>
+			<p class="text-center mt-2">Reason:........</p>
+		</div>
+		{{/if}}
+		<div class="row d-flex align-items-center justify-content-center" style="">
+			<div class="status-box " style="">
 
-					<ul class="list-unstyled" id="status-list">
-						<li class="status_line" style="font-size: 22px;" data-status="placed"><span>Order Placed</span>
-							{{statusDates.placed}}</li>
-						<li class="status_line status-li" data-status="confirmed"><span>Order Confirmed</span>
-							{{statusDates.confirmed}}</li>
-						<li class="status_line status-li" data-status="shipped"><span>Shipped</span>
-							{{statusDates.shipped}}
-						</li>
-						<li class="status_line status-li " data-status="delivery"><span>Out for delivery
-								{{statusDates.delivery}}</span></li>
-						<li class="status_line status-li" data-status="completed"><span>Completed</span>
-							{{statusDates.completed}}</li>
-						<input type="hidden" value="{{orderStatus}}">
-					</ul>
+				<ul class="list-unstyled" id="status-list">
+					<li class="status_line" style="font-size: 22px;" data-status="placed"><span>Order Placed</span>
+						{{statusDates.placed}}</li>
+					<li class="status_line status-li" data-status="confirmed"><span>Order Confirmed</span>
+						{{statusDates.confirmed}}</li>
+					<li class="status_line status-li" data-status="shipped"><span>Shipped</span>
+						{{statusDates.shipped}}
+					</li>
+					<li class="status_line status-li " data-status="delivery"><span>Out for delivery
+							{{statusDates.delivery}}</span></li>
+					<li class="status_line status-li" data-status="completed"><span>Completed</span>
+						{{statusDates.completed}}</li>
+					<input type="hidden" value="{{order.status}}">
+				</ul>
+			</div>
+		</div>
+		<div class="pt-10 mt-25 d-flex" style="margin-left: 14em; border-radius: 4px;">
+			{{#unless order.returnStatus}}
+			{{#if statusDates.completed}}
+			<button id="returnBtn" class="btn-cancel" onclick="setReturnData('{{order._id}}')"
+				class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#returnModal">Return</button>
+			{{/if}}
+			{{else}}
+			<!-- Render nothing if there is a Return status -->
+			{{/unless}}
+
+			{{#unless order.returnStatus}}
+			<button class="btn-cancel me-1">Cancel</button>
+			{{/unless}}
+
+
+			<button class="btn-help ms-1">Need Help</button>
+		</div>
+	</div>
+
+	{{!-- Modal for returning the product --}}
+	<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content bg-danger">
+				<div class="modal-header border-0">
+					<button type="button" class="btn-close text-white" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-center p-4">
+					<i class="fas fa-exclamation-circle fa-4x text-white mb-3"></i>
+					<h5 class="modal-title text-white mb-3" id="returnModalLabel">Return Order</h5>
+					<form id="returnForm">
+						<div class="mb-3">
+							<label for="reason" class="form-label text-white">Reason for return:</label>
+							<select class="form-select" id="reason" name="reason">
+								<option value="" selected disabled>Select a reason</option>
+								<option value="defective item">Defective item</option>
+								<option value="wrong item">Wrong item received</option>
+								<option value="damaged item">Item arrived damaged</option>
+								<option value="others">Other</option>
+							</select>
+						</div>
+						<div class="mb-3" id="otherReasonContainer" style="display:none;">
+							<label for="otherReason" class="form-label text-white">Other reason:</label>
+							<textarea class="form-control" id="otherReason" name="otherReason"></textarea>
+						</div>
+						<button type="button" class="btn btn-sm btn-link text-white"
+							data-bs-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-sm btn-light px-3 py-2 me-2"
+							onclick="returnOrderModal()">Submit</button>
+						<input type="hidden" id="orderId" value="">
+					</form>
 				</div>
 			</div>
-<div class="pt-10 mt-25 d-flex" style="margin-left: -3.4em; border-radius: 4px;">
-  <button class="btn-cancel me-1" >Return</button>
-  <button class="btn-help ms-1">Need Help</button>
-</div>
-
-
 		</div>
+	</div>
 
-	</section>
-	</body>
-
-</html>
+</section>
+{{>foot-user}}
 <script>
+
+	function setReturnData(orderId) {
+		document.getElementById('orderId').value = orderId
+	}
+
+	const returnOrderModal = () => {
+		const orderId = document.getElementById('orderId').value
+		const reason = document.getElementById('reason').value
+		returnProducts(orderId, reason)
+	}
+
+	const returnProducts = (orderId, reason) => {
+		$.ajax({
+			url: '/return-products',
+			data: {
+				orderId,
+				reason
+			},
+			method: 'post',
+			success: () => {
+				location.href = '/return-prducts'
+			}
+
+		})
+	}
+
 	const statusLines = document.querySelectorAll("#status-list .status_line");
 
 	function updateStatusColors(currentStatusIndex) {

@@ -17,26 +17,22 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <form action="/admin/editProdutCategory/{{category._id}}" method="post">
+                            <form action="/admin/dashboard/add-product-category/edit-product-category/{{category._id}}" method="post">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name" value="{{category.product_name}}"/>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="product_slug" class="form-label">Slug</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_slug" name="product_slug" value="{{category.product_slug}}"/>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name" value="{{category.category_name}}"/>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Parent</label>
                                     <select class="form-select" name="product_parent" >
-                                        <option value="">{{category.product_parent}}</option>
+                                        <option value="">{{category.category_parent}}</option>
                                         <option>Clothes</option>
                                         <option>T-Shirts</option>
                                     </select>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <textarea placeholder="Type here" class="form-control" name="product_description">{{category.product_description}}</textarea>
+                                    <textarea placeholder="Type here" class="form-control" name="product_description">{{category.category_description}}</textarea>
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-primary">Update category</button>

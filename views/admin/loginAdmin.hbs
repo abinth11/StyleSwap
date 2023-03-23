@@ -165,7 +165,7 @@
                 console.log('form is valid')
                 $.ajax({
                     type: 'POST',
-                    url: '/admin/adminLogin',
+                    url: '/admin/',
                     data: $('#signIn').serialize(),
                     success: (response) => {
                         console.log(response)

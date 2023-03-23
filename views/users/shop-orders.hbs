@@ -1,5 +1,44 @@
 ﻿{{>head-user}}
 {{>user-header}}
+
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-danger">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fas fa-exclamation-circle fa-4x text-white mb-3"></i>
+                <h5 class="modal-title text-white mb-3" id="cancelModalLabel">Cancel Order</h5>
+                <form id="cancelForm">
+                    <div class="mb-3">
+                        <label for="reason" class="form-label text-white">Reason for cancellation:</label>
+                        <select class="form-select" id="reason" name="reason">
+                            <option value="" selected disabled>Select a reason</option>
+                            <option value="not available">Item not available</option>
+                            <option value="wrong item">Wrong item ordered</option>
+                            <option value="delayed delivery">Delivery delayed</option>
+                            <option value="others">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="otherReasonContainer" style="display:none;">
+                        <label for="otherReason" class="form-label text-white">Other reason:</label>
+                        <textarea class="form-control" id="otherReason" name="otherReason"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-link text-white" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-sm btn-light px-3 py-2 me-2"
+                        onclick="cancellOrderModal()">Submit</button>
+                    <input type="hidden" id="orderId" value="">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
 <div class="mobile-header-active mobile-header-wrapper-style">
     <div class="mobile-header-wrapper-inner">
         <div class="mobile-header-top">
@@ -202,7 +241,7 @@
                             <tbody>
                                 {{#each orders}}
                                 <tr>
-                                    <td class="image product-thumbnail"><img src="/images/{{product._id}}.jpg" alt="#">
+                                    <td class="image product-thumbnail"><img src="{{product.images.image1}}" alt="#">
                                     </td>
                                     <td class="product-des product-name">
                                         <h5 class="product-name"><a
@@ -212,37 +251,44 @@
                                     </td>
                                     <td class="price" data-title="Price"><span>${{product.product_price}}</span>
                                     </td>
-                                     {{#if (eq status "placed")}}
-                                <td><span class="badge rounded-pill alert-success">Placed</span></td>
-                                {{else if (eq status "pending")}}
-                                <td><span class="badge rounded-pill alert-warning">Pending</span></td>
-                                {{else if (eq status "cancelled")}}
-                                <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
-                                {{else if (eq status "confirmed")}}
-                                <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
-                                {{else if (eq status "shipped")}}
-                                <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
-                                {{else if (eq status "delivery")}}
-                                <td><span class="badge rounded-pill alert-info">Delivery</span></td>
-                                {{else if (eq status "completed")}}
-                                <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
-                                {{/if}}
+                                    {{#if (eq status "placed")}}
+                                    <td><span class="badge rounded-pill alert-success">Placed</span></td>
+                                    {{else if (eq status "pending")}}
+                                    <td><span class="badge rounded-pill alert-warning">Pending</span></td>
+                                    {{else if (eq status "cancelled")}}
+                                    <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
+                                    {{else if (eq status "confirmed")}}
+                                    <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
+                                    {{else if (eq status "shipped")}}
+                                    <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
+                                    {{else if (eq status "delivery")}}
+                                    <td><span class="badge rounded-pill alert-info">Delivery</span></td>
+                                    {{else if (eq status "completed")}}
+                                    <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
+                                    {{/if}}
 
                                     <td>
                                         <div>
-                                            {{#or (eq status "placed") (eq status "pending")}}
-
-                                            <button style="background-color: red;border:none"
-                                                onclick="cancellOrder('{{_id}}')" class="btn btn-danger btn-sm">Cancell
-                                            </button>
-                                            <a href="/track-order/{{_id}}" class="btn btn-danger btn-sm">Track
-                                            </a>
-                                            {{else}}
+                                            {{#or (eq status "cancelled") (eq status "pending")}}
                                             <button style="background-color:#FFCA2C;border: none;"
                                                 class="btn btn-sm text-dark">Contact
                                             </button>
+                                            {{!-- <a href="/track-order/{{_id}}" class="btn btn-danger btn-sm">Track
+                                                --}}
+                                            </a>
+                                            {{else}}
+                                            {{#if (eq status "completed")}}
+                                            <button id="cancelBtn" style="background-color: red;border:none"
+                                                onclick="setOrderCancellData('{{_id}}')" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#cancelModal">Return</button>
+                                                {{else}}
+                                            <button id="cancelBtn" style="background-color: red;border:none"
+                                                onclick="setOrderCancellData('{{_id}}')" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                                            {{/if}}
                                             <a href="/track-order/{{_id}}" class="btn btn-danger btn-sm">Track
                                             </a>
+
                                             {{/or}}
 
                                         </div>
@@ -258,20 +304,7 @@
             </div>
         </div>
     </section>
-</main>
-{{>foot-user}}
-<script>
-    const cancellOrder = (orderId) => {
-        $.ajax({
-            url: "/cancell-order",
-            data: {
-                orderId: orderId,
-            },
-            method: 'post',
-            success: (res) => {
-                location.reload();
-            }
-        })
-    }
 
-</script>
+</main>
+
+{{>foot-user}}

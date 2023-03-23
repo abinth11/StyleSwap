@@ -1,0 +1,79 @@
+{{>admin-head-html}}
+<div class="screen-overlay"></div>
+{{>admin-navbar}}
+<main class="main-wrap">
+    {{>admin-header}}
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Offers..</h2>
+                <p>Add, offers by products</p>
+            </div>
+        </div>
+        {{#if deletedCategory}}
+        <div>
+            <p class="alert alert-danger text-center">{{deletedCategory}}</p>
+        </div>
+        {{/if}}
+        {{#if addedCategory}}
+        <p class="alert alert-success text-center">{{addedCategory}}</p>
+        {{/if}}
+        <div class="card bg-light">
+            <div class="card-body " >
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+
+                                    <form action="/admin/dashboard/view-product-list/add-offers-for-products/{{productId}}" method="post">
+                                        <h5 class="text-center mt-2">Add offers to products</h5>
+                                        <div class="mb-4 mt-3">
+                                            <label class="form-label">Product Id</label>
+                                             <input type="text" class="form-control" value="{{prodInfo.id}}" name="productId">
+                                             <input type="hidden" value="{{prodInfo.price}}" name="product_price">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Offer percentage</label>
+                                            <input type="number" placeholder="Enter percentage" class="form-control"
+                                                name="offer_percentage" min="0" max="90" required oninput="checkPercentage(this)">
+                                            <small class="error-msg text-danger"></small>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Start Date</label>
+                                            <input type="date" id="start-date" class="form-control" name="start_date">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">End date</label>
+                                            <input type="date" class="form-control" id="end-date" name="end_date"
+                                                required>
+                                        </div>
+                                        <hr>
+                                        <div class="d-grid">
+                                            <button class="btn btn-primary">Add offer</button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div> <!-- card end// -->
+                        </div>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+    </section> <!-- content-main end// -->
+    {{>admin-footer}}
+    <script>
+        // Get today's date as a string in the format YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+
+        // Set the minimum date for both inputs to today
+        document.getElementById("start-date").setAttribute("min", today);
+        document.getElementById("end-date").setAttribute("min", today);
+
+        function checkPercentage(input) {
+            if (input.value > 90) {
+                input.value = 90;
+            }
+        }
+    </script>

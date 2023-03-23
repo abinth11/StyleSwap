@@ -1,5 +1,5 @@
-const { check, validationResult } = require('express-validator')
-module.exports = {
+import { check } from 'express-validator'
+ const userValidation = {
   userSignUpValidate: [
     check('name')
       .notEmpty()
@@ -65,3 +65,4 @@ module.exports = {
       .trim()
   ]
 }
+export default userValidation

@@ -1,0 +1,220 @@
+{{>admin-head-html}}
+<div class="screen-overlay"></div>
+{{>admin-navbar}}
+<main class="main-wrap">
+    {{>admin-header}}
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Offers..</h2>
+                <p>Add, offers by category</p>
+            </div>
+        </div>
+        {{#if deletedCategory}}
+        <div>
+            <p class="alert alert-danger text-center">{{deletedCategory}}</p>
+        </div>
+        {{/if}}
+        {{#if addedCategory}}
+        <p class="alert alert-success text-center">{{addedCategory}}</p>
+        {{/if}}
+        <div class="card bg-light">
+            <div class="card-body ">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+
+                                    <form id="add-offer">
+                                        <h5 class="text-center mt-2">Add offers to categories</h5>
+                                        <div class="mb-4 mt-3">
+                                            <label class="form-label">Category</label>
+                                            <select class="form-select" name="category" id="category">
+                                                <option disabled selected>Select</option>
+                                                <option value="Mens">Mens</option>
+                                                <option value="Womens">Womens</option>
+                                                <option value="Kids">Kids</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Offer percentage</label>
+                                            <input type="number" placeholder="Enter percentage" class="form-control"
+                                                name="offer_percentage" min="0" max="90" required
+                                                oninput="checkPercentage(this)">
+                                            <small class="error-msg text-danger"></small>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Start Date</label>
+                                            <input type="date" id="start-date" class="form-control" name="start_date">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">End date</label>
+                                            <input type="date" class="form-control" id="end-date" name="end_date"
+                                                required>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Limit to specific products</label>
+                                            <select class="form-select" name="product_limitations">
+                                                <option value="">None</option>
+                                                <option value="Mens">Mens</option>
+                                                <option value="Womens">Womens</option>
+                                                <option value="Kids">Kids</option>
+                                            </select>
+                                        </div>
+                                        <hr>
+                                        <div class="d-grid">
+                                            <button class="btn btn-primary" type="submit">Add offer</button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div> <!-- card end// -->
+                        </div>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+    </section> <!-- content-main end// -->
+
+    {{!-- Success Modal for adding offer --}}
+    <div class="modal fade" id="offerAddedModal" tabindex="-1" aria-labelledby="offerAddedModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-check-circle text-success mb-3" style="font-size: 4rem;"></i>
+                    <p class="fs-5 mb-3">Congratulations! You have successfully added the following offer</p>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">Offer details</h6>
+                            <p class="card-text" id="offer-details"></p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        onclick="updateOfferDetails()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{!-- Modal for the replace offer warning --}}
+
+    <div class="modal fade" id="offerExistsModal" tabindex="-1" aria-labelledby="offerExistsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title text-white" id="offerExistsModalLabel">Warning</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 4rem;"></i>
+                    <p class="text-lg" style="font-size: 16px;">An offer of <strong id="exist-price"></strong>% is
+                        already exists in the
+                        <strong id="category-name-exists"></strong> Category
+                    </p>
+                    <ul>
+                        <li>From <strong id="exist-start"></strong> To <strong id="exist-end"></strong></li>
+                    </ul>
+                    <p class="text-xl" style="font-size: 16px;">Do you want to replace it with the new offer?</p>
+                    <ul>
+                        <li>Offer details</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="ReplaceOffer()"  data-bs-dismiss="modal">Replace Offer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    {{>admin-footer}}
+    <script>
+        $('#add-offer').submit(function (event) {
+            event.preventDefault(); // prevent the form from submitting normally
+            $.ajax({
+                type: 'POST',
+                url: '/admin/dashboard/add-offers-by-category',
+                data: $('#add-offer').serialize(),
+                success: function (response) {
+                    console.log(response);
+                    if (response.length) {
+                        const categoryNameInput = document.getElementById('category-name-exists');
+                        const categoryPriceInput = document.getElementById('exist-price')
+                        const categoryEndDate = document.getElementById('exist-end');
+                        const categoryStartDate = document.getElementById('exist-start')
+                        categoryNameInput.textContent = response[0].product_category;
+                        categoryPriceInput.textContent = response[0].offerPercentage
+                        categoryEndDate.textContent = response[0].offerEndDate
+                        categoryStartDate.textContent = response[0].offerStartDate
+                        $('#offerExistsModal').modal('show');
+                    } else {
+                        $('#offerAddedModal').modal('show');
+                        location.reload()
+                    }
+                }
+            });
+        });
+        const ReplaceOffer = () => {
+            const data = $('#add-offer').serialize()
+            console.log(data)
+            $.ajax({
+                type: 'POST',
+                url: '/admin/replace-offer',
+                data: $('#add-offer').serialize(),
+                success:(response)=>{
+                    if(response){
+                        console.log(response)
+                    }
+                }
+
+            })
+        }
+
+        // Get today's date as a string in the format YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+
+        // Set the minimum date for both inputs to today
+        document.getElementById("start-date").setAttribute("min", today);
+        document.getElementById("end-date").setAttribute("min", today);
+
+        function checkPercentage(input) {
+            if (input.value > 90) {
+                input.value = 90;
+            }
+        }
+
+        const categorySelect = document.querySelector('select[name="category"]');
+        const percentageInput = document.querySelector('input[name="offer_percentage"]');
+        const startDateInput = document.querySelector('input[name="start_date"]');
+        const endDateInput = document.querySelector('input[name="end_date"]');
+        const offerDetails = document.querySelector('#offer-details');
+
+        categorySelect.addEventListener('change', updateOfferDetails);
+        percentageInput.addEventListener('input', updateOfferDetails);
+        startDateInput.addEventListener('input', updateOfferDetails);
+        endDateInput.addEventListener('input', updateOfferDetails);
+
+        function updateOfferDetails() {
+            const category = categorySelect.value;
+            const percentage = percentageInput.value;
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+
+            const offerString = `Offer details: ${percentage}% off for ${category} from ${startDate} to ${endDate}.`;
+
+            offerDetails.textContent = offerString;
+        }
+
+    </script>

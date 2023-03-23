@@ -10,7 +10,7 @@
         <nav>
             <ul class="menu-aside">
                 <li class="menu-item active">
-                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
+                    <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
@@ -19,10 +19,22 @@
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/viewPoductsList">Product List</a>
-                        <a href="/admin/viewProductsGrid">Product grid</a>
-                        <a href="/admin/viewProductsGrid2">Product grid 2</a>
-                        <a href="/admin/addProductCategory">Categories</a>
+                        <a href="/admin/dashboard/view-products-in-list">Product List</a>
+                        <a href="/admin/dashboard/view-products-in-list/add-products">Add Products</a>
+                        <a href="/admin/dashboard/view-products-in-grid">Product grid</a>
+                        {{!-- <a href="/admin/dashboard/add-product-category">Categories</a> --}}
+                        {{!-- <a href="/admin/add-product-variants">Variants</a> --}}
+
+                    </div>
+                </li>
+                 <li class="menu-item has-submenu">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-add_box"></i>
+                        <span class="text">Category </span>
+                    </a>
+                    <div class="submenu">
+                        <a href="/admin/dashboard/add-product-category">Categories</a>
+                        <a href="/admin/dashboard/add-product-sub-category">Sub Categories</a>
+                        <a href="/admin/add-product-variants">Variants</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -30,9 +42,9 @@
                         <span class="text">Orders</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/admin-view-orders">Order list 1</a>
-                        <a href="page-orders-2.html">Order list 2</a>
-                        <a href="page-orders-detail.html">Order detail</a>
+                        <a href="/admin/dashboard/admin-view-orders">Order list 1</a>
+                        <a href="/admin/dashboard/order-return">Order return</a>
+                        <a href="#">Order detail</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -46,24 +58,24 @@
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-add_box"></i>
-                        <span class="text">Add product</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="/admin/addProduct1">Add product 1</a>
-                        <a href="/admin/addProduct2">Add product 2</a>
-                        <a href="/admin/addProduct3">Add product 3</a>
-                        <a href="/admin/addProduct4">Add product 4</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
                         <span class="text">Users</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/viewUsers">View Users</a>
-                        <a href="/admin/blockedUsers">Blocked Users</a>
+                        <a href="/admin/dashboard/view-users">View Users</a>
+                        <a href="/admin/dashboard/blocked-users">Blocked Users</a>
                         <a href="page-error-404.html">Error 404</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="#">
+                      <i class="ms-1 fas fa-gift fa-lg" style="color: #ADB5BD;"></i>
+                        <span class="text ms-3">Offers</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="/admin/dashboard/add-offers-by-category">Add offer by category</a>
+                        <a href="/admin/dashboard/view-product-list/add-offers-for-products">Add offer by products</a>
+                        <a href="/admin/dashboard/view-offers">View offer</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">

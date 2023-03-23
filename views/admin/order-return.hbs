@@ -1,0 +1,290 @@
+{{>admin-head-html}}
+<div class="screen-overlay"></div>
+{{>admin-navbar}}
+<main class="main-wrap">
+    {{>admin-header}}
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Return Request </h2>
+                <p>You can handle the return request here.</p>
+            </div>
+            <div>
+                {{!-- <input type="text" onchange="filterTableRows()" placeholder="Search..." class="form-control"
+                    id="searchInput"> --}}
+            </div>
+        </div>
+        <div class="card mb-4">
+            <header class="card-header">
+                <div class="row gx-3">
+                    <div class="col-lg-4 col-md-6 me-auto">
+                        <input type="text" oninput="filterTableRows()" placeholder="Search..." class="form-control"
+                            id="searchInput">
+                    </div>
+                    <div class="col-lg-2 col-6 col-md-3">
+                        <select class="form-select" id="statusSelect" onchange="filterTableByStatus()">
+                            <option disabled selected>Status</option>
+                            <option value="all">Show all</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="declined">Declined</option>
+                            <option value="pending">Pending</option>
+                        </select>
+
+
+                    </div>
+                    <div class="col-lg-2 col-6 col-md-3">
+                        <select class="form-select">
+                            <option>Show 20</option>
+                            <option>Show 30</option>
+                            <option>Show 40</option>
+                        </select>
+                    </div>
+                </div>
+            </header> <!-- card-header end// -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="userTable">
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Mobile</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
+                                <th scope="col"> More </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each returnOrders}}
+                            <tr>
+                                <td>0901</td>
+                                <td><b>{{name}}</b></td>
+                                <td>{{mobile}}</td>
+                                <td>${{totalPrice}}</td>
+                                <td>{{date}}</td>
+                                {{#if (eq returnStatus "accepted")}}
+                                <td><span class="badge rounded-pill alert-success">Accepted</span></td>
+                                {{else if (eq returnStatus "pending")}}
+                                <td><span class="badge rounded-pill alert-warning">Pending</span></td>
+                                {{else if (eq returnStatus "declined")}}
+                                <td><span class="badge rounded-pill alert-danger">Declined</span></td>
+                                 {{else if (eq returnStatus "completed")}}
+                                <td><span class="badge rounded-pill alert-primary">Completed</span></td>
+                                {{/if}}
+                                <td class="">
+                                    <div class="status-buttons">
+                                        <button class="btn btn-outline-success btn-sm btn-success" title="Accept"
+                                            onclick="changeReturnStatus('{{_id}}','{{status}}','accepted')">A</button>
+                                        <button class="btn btn-outline-warning btn-sm" title="Decline"
+                                            onclick="changeReturnStatus('{{_id}}','{{status}}','declined')">D</button>
+                                                                      <button class="btn btn-outline-warning btn-sm" title="Completed"
+                                            onclick="changeReturnStatus('{{_id}}','{{status}}','completed')">C</button>
+                                    </div>
+                                </td>
+                                <td class="">
+                                    <a href="/admin/dashboard/admin-view-orders/view-order-details/{{_id}}"
+                                        class="btn btn-md rounded font-sm">Details</a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div> <!-- table-responsive //end -->
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+        <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item active"><a class="page-link" href="#" data-page="1">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#" data-page="2">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#" data-page="3">3</a></li>
+                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#" data-page="16">16</a></li>
+                    <li class="page-item"><a class="page-link" href="#" id="nextPage"><i
+                                class="material-icons md-chevron_right"></i></a></li>
+                </ul>
+            </nav>
+
+        </div>
+
+    </section> <!-- content-main end// -->
+    {{>admin-footer}}
+    <script>
+        const changeOrderStatus = (orderId, currStatus, newStatus) => {
+            console.log(orderId, currStatus, newStatus)
+            $.ajax({
+                url: "/admin/change-product-status",
+                data: {
+                    orderId: orderId,
+                    currentStatus: currStatus,
+                    newStatus: newStatus
+                },
+                method: 'post',
+                success: (res) => {
+                    location.reload();
+                }
+            })
+        }
+        const changeReturnStatus = (orderId, currStatus, newStatus) => {
+            $.ajax({
+                url: '/admin/change-return-status',
+                data:{
+                    orderId,
+                    currStatus,
+                    newStatus
+                },
+                method:'post',
+                success: (res) => {
+                    location.reload();
+                }
+            })
+        }
+        const viewMoreOrders = (orderId) => {
+            console.log(orderId);
+            $.ajax({
+                url: "/admin/view-order-details",
+                data: {
+                    orderId: orderId
+                },
+                method: 'get',
+                success: () => {
+
+                }
+            })
+        }
+
+        function filterTableRows() {
+            var searchInput = document.getElementById("searchInput");
+            var filter = searchInput.value.toUpperCase();
+            var table = document.getElementById("userTable");
+            var rows = table.getElementsByTagName("tr");
+            var numRows = rows.length;
+            var headerRow = rows[0];
+            var dataRows = [];
+
+            for (var i = 1; i < numRows; i++) {
+                dataRows.push(rows[i]);
+            }
+
+            var matchingRows = [];
+
+            for (var i = 0; i < dataRows.length; i++) {
+                var nameCell = dataRows[i].getElementsByTagName("td")[1];
+                if (nameCell) {
+                    var name = nameCell.textContent || nameCell.innerText;
+                    if (name.toUpperCase().indexOf(filter) > -1) {
+                        matchingRows.push(dataRows[i]);
+                    }
+                }
+            }
+
+            headerRow.style.display = (matchingRows.length > 0) ? "" : "none";
+
+            for (var i = 0; i < dataRows.length; i++) {
+                dataRows[i].style.display = "none";
+            }
+
+            var noMatchesRow = table.querySelector("tr:last-of-type");
+            if (noMatchesRow && noMatchesRow.cells[0].innerHTML === "No matches found.") {
+                table.deleteRow(-1);
+            }
+
+            if (matchingRows.length === 0) {
+                noMatchesRow = table.insertRow(-1);
+                var noMatchesCell = noMatchesRow.insertCell(0);
+                noMatchesCell.colSpan = numRows;
+                noMatchesCell.innerHTML = "No matches found.";
+            } else {
+                for (var i = 0; i < matchingRows.length; i++) {
+                    matchingRows[i].style.display = "";
+                }
+            }
+        }
+
+        function filterTableByStatus() {
+            var selectBox = document.getElementById("statusSelect");
+            var status = selectBox.options[selectBox.selectedIndex].value;
+            var rows = document.querySelectorAll("#userTable tbody tr");
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var rowStatus = row.querySelector("td:nth-child(6)").textContent.trim().toLowerCase();
+                if (status === "all" || rowStatus === status.toLowerCase()) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+        }
+
+
+
+        // Get the pagination links and next button
+        var paginationLinks = document.querySelectorAll(".page-link");
+        var nextPageButton = document.getElementById("nextPage");
+
+        // Hide all but the first 5 rows initially
+        var rows = document.querySelectorAll("#userTable tbody tr");
+        for (var i = 5; i < rows.length; i++) {
+            rows[i].style.display = "none";
+        }
+
+        // Add event listeners to the pagination links
+        for (var i = 0; i < paginationLinks.length; i++) {
+            paginationLinks[i].addEventListener("click", function (event) {
+                event.preventDefault();
+
+                // Get the selected page number
+                var page = parseInt(event.target.getAttribute("data-page"));
+
+                // Highlight the active page
+                var activePage = document.querySelector(".page-item.active");
+                if (activePage) {
+                    activePage.classList.remove("active");
+                }
+                event.target.parentNode.classList.add("active");
+
+                // Show the rows for the selected page and hide the others
+                var rows = document.querySelectorAll("#userTable tbody tr");
+                for (var j = 0; j < rows.length; j++) {
+                    if (j >= (page - 1) * 5 && j < page * 5) {
+                        rows[j].style.display = "";
+                    } else {
+                        rows[j].style.display = "none";
+                    }
+                }
+            });
+        }
+
+        // Add event listener to the next button
+        nextPageButton.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            // Get the current active page
+            var activePage = document.querySelector(".page-item.active");
+            var currentPage = parseInt(activePage.querySelector(".page-link").getAttribute("data-page"));
+
+            // Get the next page number
+            var nextPage = currentPage + 1;
+            if (nextPage > 16) {
+                nextPage = 16;
+            }
+
+            // Highlight the next page
+            activePage.classList.remove("active");
+            var nextPageLink = document.querySelector(".page-link[data-page='" + nextPage + "']");
+            nextPageLink.parentNode.classList.add("active");
+
+            // Show the rows for the next page and hide the others
+            var rows = document.querySelectorAll("#userTable tbody tr");
+            for (var i = 0; i < rows.length; i++) {
+                if (i >= (nextPage - 1) * 5 && i < nextPage * 5) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        });
+
+    </script>

@@ -1,0 +1,116 @@
+{{>admin-head-html}}
+<div class="screen-overlay"></div>
+{{>admin-navbar}}
+<main class="main-wrap">
+    {{>admin-header}}
+    <section class="content-main">
+        
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Variants Management </h2>
+                <p>Add, edit or delete a variants</p>
+            </div>
+            <div>
+                <input type="text" placeholder="Search Categories" class="form-control bg-white">
+            </div>
+        </div>
+        {{#if deletedCategory}}
+        <div>
+            <p class="alert alert-danger text-center">{{deletedCategory}}</p>
+        </div>
+        {{/if}}
+        {{#if addedCategory}}
+        <p class="alert alert-success text-center">{{addedCategory}}</p>
+        {{/if}}
+        <div class="row pb-4 mt-5">
+        </div>
+        <div class="card">
+            <div class="card-body">
+                
+                <div class="row">
+                         <div class="col-md-3">
+                        <form action="/admin" method="post">
+                            <div class="mb-4">
+                               <div class="d-grid">
+                                <button class="btn btn-primary">Add Color</button>
+                            </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="d-grid">
+                                <button class="btn btn-primary">Add Size </button>
+                            </div>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary">Add Material</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6 pl-130">
+                        <form action="/admin" method="post">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Name</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="category_name"
+                                    name="category_name" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" class="form-control"
+                                    name="category_description"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary">Add Size</button>
+                            </div>
+                        </form>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-center align-items-center jus">
+                    <div class="col-md-10 text-center">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="overflow: hidden;">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Sizes</th>
+                                        <th>Colors</th>
+                                        <th>Materials</th>
+                                        <th >Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each category}}
+                                    <tr>
+                                        <td>{{inc @index}}</td>
+                                        <td><b>{{category_name}}</b></td>
+                                        <td>{{category_description}}</td>
+                                        <td>{{category_slug}}</td>
+                                        <td>1</td>
+                                        <td class="text-end">
+                                            <div class="dropdown">
+                                                <a href="#" data-bs-toggle="dropdown"
+                                                    class="btn btn-light rounded btn-sm font-sm"> <i
+                                                        class="material-icons md-more_horiz"></i> </a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="#">View detail</a>
+                                                    <a class="dropdown-item"
+                                                        href="/admin/editProdutCategory/{{_id}}">Edit info</a>
+                                                    <a class="dropdown-item text-danger"
+                                                        href="/admin/deleteProductCategory/{{_id}}">Delete</a>
+                                                </div>
+                                            </div> <!-- dropdown //end -->
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+    </section> <!-- content-main end// -->
+    {{>admin-footer}}
