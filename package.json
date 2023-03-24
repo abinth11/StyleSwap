@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon ./bin/www.js",
-    "lint": "eslint ./",
+    "lint": "eslint .",
     "build": "babel src -d dist"
   },
   "bin": {
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "algoliasearch": "^4.16.0",
+    "babel-eslint": "^10.1.0",
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.35.0",
     "cookie-parser": "~1.4.4",
@@ -42,12 +43,14 @@
   "devDependencies": {
     "@babel/cli": "^7.21.0",
     "@babel/core": "^7.21.3",
+    "@babel/eslint-parser": "^7.21.3",
     "@babel/node": "^7.20.7",
     "@babel/preset-env": "^7.20.2",
-    "eslint": "^8.35.0",
+    "eslint": "^8.36.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1"
   }
 }

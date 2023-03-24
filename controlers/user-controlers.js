@@ -1,12 +1,12 @@
 import userHelpers from '../helpers/user-helpers.js'
-import adminHelpers from '../helpers/admin-helpers.js'
-import twilio  from 'twilio'
-import { v4 as uuidv4 } from 'uuid';
+import twilio from 'twilio'
+import { v4 as uuidv4 } from 'uuid'
 import { validationResult } from 'express-validator'
+import adminHelpers from '../helpers/admin-helpers.js'
 export const userControler = {
   userHome: async (req, res) => {
     try {
-      let cartCount
+      let cartCount 
       userHelpers.resetCouponCount()
       if (req.session.user) {
         cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
@@ -585,27 +585,62 @@ export const userControler = {
     }
   },
   applyCouponCode: async (req, res) => {
-    try {
+    try { 
       // console.log(req.body)
       const { couponCode, amount } = req.body
       req.session.couponCode = couponCode
       const response = await userHelpers.redeemCoupon(couponCode, amount)
       res.json(response)
       // console.log(response)
+    } catch (error) { 
+      console.log(error)    
+    }
+  },
+  mensCategory: async (req, res)=>{
+    try {
+      const products = await userHelpers.getMensProducts()
+      console.log(products)
+      const numberofProducts = products.length
+      res.render('users/shop-men', { products, numberofProducts})
     } catch (error) {
       console.log(error)
+      res.status(500).json({message:'internal server error'})
     }
+  },
+  womensCategory : async (req, res) => {
+    try {
+      const products = await userHelpers.getWomensProducts()
+      console.log(products)
+      const numberofProducts = products.length
+      res.render('users/shop-womens',{products, numberofProducts})
+    } catch (error ) {
+      console.log(error)
+      res.status(500).json({message:'internal server error'})
+    }
+
+  },
+  kidsCategory : async (req, res) => {
+    try {
+      const products = await userHelpers.getKidsProducts()
+      const numberofProducts = products.length
+      res.render('users/shop-womens',{products, numberofProducts})
+
+    } catch (error ) {
+      console.log(error)
+      res.status(500).json({message:'internal server error'})
+    }
+
   },
   searchProducts:async (req, res) => {
     try {
-      const query = req.query.q; // get the search query from the request query string
+      const query = req.query.q // get the search query from the request query string
       console.log(query)
       const results = userHelpers.searchWithAlgolia(query)
       // const results = await index.search({ query }); // perform the search on the Algolia index
-      res.json(results.hits); // return the search results as JSON
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Error searching for data');
+      res.json(results.hits) // return the search results as JSON
+    } catch (error) { 
+      console.error(error)
+      res.status(500).send('Error searching for data')
     }
 
   },

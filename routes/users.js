@@ -1,8 +1,8 @@
-import express from 'express';
+import express from 'express'
 const router = express.Router()
 import { userControler } from '../controlers/user-controlers.js'
-import  userValidation  from '../validation/userValidation.js'
-import  sessionChecker  from '../middlewares/session-checks.js'
+import userValidation from '../validation/userValidation.js'
+import sessionChecker from '../middlewares/session-checks.js'
 
 /* GET home page. */
 router.get('/', userControler.userHome)
@@ -108,6 +108,12 @@ router.post('/apply-coupon-code',sessionChecker.isUserExist, userControler.apply
 
 //for the serch feature
 router.get('/search-products', userControler.searchProducts)
+
+//purchase based on category
+router.get('/mens-category', userControler.mensCategory)
+router.get('/womens-category', userControler.womensCategory)
+router.get('/kids-category', userControler.kidsCategory)
+
 
 // User logout
 router.get('/logoutUser', userControler.userLogout)

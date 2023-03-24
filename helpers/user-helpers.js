@@ -1,90 +1,90 @@
-import db from "../config/connection.js";
+import db from "../config/connection.js"
 // import {db} from '../config/connection.js';
-import collection from "../config/collections.js";
-import bcrypt from "bcrypt";
-import { ObjectId } from "mongodb";
-import Razorpay from "razorpay";
-import crypto from "crypto";
-import algoliasearch from "algoliasearch";
-let sotoredAmount;
+import collection from "../config/collections.js"
+import bcrypt from "bcrypt"
+import { ObjectId } from "mongodb"
+import Razorpay from "razorpay"
+import crypto from "crypto"
+import algoliasearch from "algoliasearch"
+let sotoredAmount
 const userHelpers = {
   regisUserUser: async (userData) => {
-    const { password, email, mobile } = userData;
-    userData.active = true;
+    const { password, email, mobile } = userData
+    userData.active = true
     try {
-      userData.password = await bcrypt.hash(password, 10);
+      userData.password = await bcrypt.hash(password, 10)
       const checkedEmail = await db
         .get()
         .collection(collection.USER_COLLECTION)
-        .findOne({ email });
+        .findOne({ email })
       const phoneNumber = await db
         .get()
         .collection(collection.USER_COLLECTION)
-        .findOne({ mobile });
+        .findOne({ mobile })
       if (checkedEmail) {
-        return checkedEmail;
+        return checkedEmail
       } else if (phoneNumber) {
-        return phoneNumber;
+        return phoneNumber
       } else {
         const result = await db
           .get()
           .collection(collection.USER_COLLECTION)
-          .insertOne(userData);
-        return { status: true, userData: result.insertedId };
+          .insertOne(userData)
+        return { status: true, userData: result.insertedId }
       }
     } catch (error) {
-      console.log(error);
-      return error;
+      console.log(error)
+      return error
     }
   },
   loginUser: async (userData) => {
-    const { password, mobile } = userData;
+    const { password, mobile } = userData
     try {
-      const response = {};
+      const response = {}
       const user = await db
         .get()
         .collection(collection.USER_COLLECTION)
-        .findOne({ mobile });
+        .findOne({ mobile })
       if (!user?.active) {
-        response.block = true;
-        return response;
+        response.block = true
+        return response
       }
       if (user) {
-        const status = await bcrypt.compare(password, user.password);
+        const status = await bcrypt.compare(password, user.password)
         if (status) {
-          response.user = user;
-          response.status = true;
-          return response;
+          response.user = user
+          response.status = true
+          return response
         } else {
-          return { incorrectPassword: "Wrong password" };
+          return { incorrectPassword: "Wrong password" }
         }
       } else {
-        return { loginError: false };
+        return { loginError: false }
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   },
   loginWthOTP: async (userData) => {
     try {
-      const { mobile } = userData;
+      const { mobile } = userData
       const user = await db
         .get()
         .collection(collection.USER_COLLECTION)
-        .findOne({ mobile });
+        .findOne({ mobile })
       if (!user.active) {
-        return { block: true };
+        return { block: true }
       }
       if (user) {
         const response = {
           user,
           status: true,
-        };
-        return response;
+        }
+        return response
       }
-      return { loginError: false };
+      return { loginError: false }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   },
   viewProduct: async () => {
@@ -93,11 +93,11 @@ const userHelpers = {
         .get()
         .collection(collection.PRODUCT_COLLECTION)
         .find()
-        .toArray();
-      return products;
+        .toArray()
+      return products
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to fetch products");
+      console.log(error)
+      throw new Error("Failed to fetch products")
     }
   },
   viewCurrentProduct: async (productId) => {
@@ -106,11 +106,11 @@ const userHelpers = {
         .get()
         .collection(collection.PRODUCT_COLLECTION)
         .find({ _id: ObjectId(productId) })
-        .toArray();
-      return product[0];
+        .toArray()
+      return product[0]
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to fetch current product");
+      console.log(error)
+      throw new Error("Failed to fetch current product")
     }
   },
   getLoginedUser: async (userId) => {
@@ -118,15 +118,15 @@ const userHelpers = {
       const user = await db
         .get()
         .collection(collection.USER_COLLECTION)
-        .findOne({ _id: ObjectId(userId) });
-      return user;
+        .findOne({ _id: ObjectId(userId) })
+      return user
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to fetch logined user");
+      console.log(error)
+      throw new Error("Failed to fetch logined user")
     }
   },
   editProfile: async (userId, userData) => {
-    const { name, mobile, email } = userData;
+    const { name, mobile, email } = userData
     try {
       const response = await db
         .get()
@@ -140,11 +140,11 @@ const userHelpers = {
               email,
             },
           }
-        );
-      return response;
+        )
+      return response
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to edit profile");
+      console.log(error)
+      throw new Error("Failed to edit profile")
     }
   },
   addNewAddress: async (address) => {
@@ -152,11 +152,11 @@ const userHelpers = {
       const data = db
         .get()
         .collection(collection.ADDRESS_COLLECTION)
-        .insertOne(address);
-      return data;
+        .insertOne(address)
+      return data
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to add address");
+      console.log(error)
+      throw new Error("Failed to add address")
     }
   },
   getUserAddress: async (userId) => {
@@ -165,11 +165,11 @@ const userHelpers = {
         .get()
         .collection(collection.ADDRESS_COLLECTION)
         .find({ userId })
-        .toArray();
-      return addresses;
+        .toArray()
+      return addresses
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to fetch address");
+      console.log(error)
+      throw new Error("Failed to fetch address")
     }
   },
   getCurrentAddress: async (addressId) => {
@@ -177,22 +177,22 @@ const userHelpers = {
       const address = await db
         .get()
         .collection(collection.ADDRESS_COLLECTION)
-        .findOne({ _id: ObjectId(addressId) });
-      return address;
+        .findOne({ _id: ObjectId(addressId) })
+      return address
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to fetch current address");
+      console.log(error)
+      throw new Error("Failed to fetch current address")
     }
   },
   addressDelete: (addressId) => {
     try {
       db.get()
         .collection(collection.ADDRESS_COLLECTION)
-        .deleteOne({ _id: ObjectId(addressId) });
-      return;
+        .deleteOne({ _id: ObjectId(addressId) })
+      return
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to delete address");
+      console.log(error)
+      throw new Error("Failed to delete address")
     }
   },
   editAddress: async (addressId, addressInfo) => {
@@ -207,7 +207,7 @@ const userHelpers = {
         state,
         landmark,
         alternatePhone,
-      } = addressInfo;
+      } = addressInfo
       const response = await db
         .get()
         .collection(collection.ADDRESS_COLLECTION)
@@ -226,27 +226,27 @@ const userHelpers = {
               alternatePhone,
             },
           }
-        );
-      return response;
+        )
+      return response
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to edit address.");
+      console.log(error)
+      throw new Error("Failed to edit address.")
     }
   },
   addToCart: async (productId, userId) => {
     const product = {
       item: ObjectId(productId),
       quantity: 1,
-    };
+    }
     try {
       const userCart = await db
         .get()
         .collection(collection.CART_COLLECTION)
-        .findOne({ userId: ObjectId(userId) });
+        .findOne({ userId: ObjectId(userId) })
       if (userCart) {
         const isProductExist = userCart?.products.findIndex((product) => {
-          return product.item === productId;
-        });
+          return product.item === productId
+        })
         if (isProductExist !== -1) {
           await db
             .get()
@@ -259,7 +259,7 @@ const userHelpers = {
               {
                 $inc: { "products.$.quantity": 1 },
               }
-            );
+            )
         } else {
           const response = await db
             .get()
@@ -271,22 +271,22 @@ const userHelpers = {
                   products: product,
                 },
               }
-            );
-          return response;
+            )
+          return response
         }
       } else {
-        console.log("new cart created");
+        console.log("new cart created")
         const cart = {
           userId: ObjectId(userId),
           products: [product],
-        };
-        await db.get().collection(collection.CART_COLLECTION).insertOne(cart);
-        console.log("added product into the cart");
+        }
+        await db.get().collection(collection.CART_COLLECTION).insertOne(cart)
+        console.log("added product into the cart")
       }
-      return true;
+      return true
     } catch (error) {
-      console.log(error);
-      return false;
+      console.log(error)
+      return false
     }
   },
   getCartProductsCount: async (userId) => {
@@ -294,17 +294,17 @@ const userHelpers = {
       const userCart = await db
         .get()
         .collection(collection.CART_COLLECTION)
-        .findOne({ userId: ObjectId(userId) });
-      const count = userCart?.products.length;
-      return count;
+        .findOne({ userId: ObjectId(userId) })
+      const count = userCart?.products.length
+      return count
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to edit address.");
+      console.log(error)
+      throw new Error("Failed to edit address.")
     }
   },
   changeCartQuantity: async ({ cartId, productId, count, quantity }) => {
-    count = parseInt(count);
-    quantity = parseInt(quantity);
+    count = parseInt(count)
+    quantity = parseInt(quantity)
     if (count === -1 && quantity === 1) {
       await db
         .get()
@@ -314,8 +314,8 @@ const userHelpers = {
           {
             $pull: { products: { item: ObjectId(productId) } },
           }
-        );
-      return { removed: true };
+        )
+      return { removed: true }
     } else {
       await db
         .get()
@@ -325,8 +325,8 @@ const userHelpers = {
           {
             $inc: { "products.$.quantity": count },
           }
-        );
-      return { status: true };
+        )
+      return { status: true }
     }
   },
   removeCartProducts: async ({ cartId, productId }) => {
@@ -337,11 +337,11 @@ const userHelpers = {
         .updateOne(
           { _id: ObjectId(cartId) },
           { $pull: { products: { item: ObjectId(productId) } } }
-        );
-      return { removed: true };
+        )
+      return { removed: true }
     } catch (error) {
-      console.log(error);
-      return { removed: false };
+      console.log(error)
+      return { removed: false }
     }
   },
   findTotalAmout: async (userId) => {
@@ -404,11 +404,11 @@ const userHelpers = {
             },
           },
         ])
-        .toArray();
-      return totalAmout[0];
+        .toArray()
+      return totalAmout[0]
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to find total amount.");
+      console.log(error)
+      throw new Error("Failed to find total amount.")
     }
   },
   findSubTotal: async (userId) => {
@@ -460,12 +460,12 @@ const userHelpers = {
             },
           },
         ])
-        .toArray();
+        .toArray()
 
-      return subtotal;
+      return subtotal
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to find sub total amount.");
+      console.log(error)
+      throw new Error("Failed to find sub total amount.")
     }
   },
   getcartProducts: async (userId) => {
@@ -553,11 +553,11 @@ const userHelpers = {
             },
           },
         ])
-        .toArray();
-      return cartItems[0];
+        .toArray()
+      return cartItems[0]
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to get cart products.");
+      console.log(error)
+      throw new Error("Failed to get cart products.")
     }
   },
   getAllProductsUserCart: async (userId) => {
@@ -605,11 +605,11 @@ const userHelpers = {
             },
           },
         ])
-        .toArray();
-      return cart;
+        .toArray()
+      return cart
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to get user cart.");
+      console.log(error)
+      throw new Error("Failed to get user cart.")
     }
   },
   placeOrders: async (orderInfo, products, totalPrice, couponCode) => {
@@ -620,9 +620,9 @@ const userHelpers = {
         name,
         mobile,
         deliveryAddress,
-      } = orderInfo;
-      const { total, offerTotal, discountPrice } = totalPrice;
-      const paymentStatus = paymentMethod === "cod" ? "done" : "pending";
+      } = orderInfo
+      const { total, offerTotal, discountPrice } = totalPrice
+      const paymentStatus = paymentMethod === "cod" ? "done" : "pending"
       const order = {
         userId: ObjectId(userId),
         name,
@@ -640,11 +640,11 @@ const userHelpers = {
           mobile_no: mobile,
         },
         products: products[0]?.products,
-      };
+      }
       const resp = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
-        .insertOne(order);
+        .insertOne(order)
       await db
         .get()
         .collection(collection.COUPONS)
@@ -655,34 +655,34 @@ const userHelpers = {
               used: true,
             },
           }
-        );
+        )
       await db
         .get()
         .collection(collection.CART_COLLECTION)
-        .deleteOne({ userId: ObjectId(orderInfo.userId) });
-      return resp;
+        .deleteOne({ userId: ObjectId(orderInfo.userId) })
+      return resp
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to place the order");
+      console.log(error)
+      throw new Error("Failed to place the order")
     }
   },
   createStatusCollection: (orderId) => {
     try {
       return new Promise((resolve, reject) => {
-        const key = "placed";
-        const now = new Date();
-        const { toDateString: dateString } = now; // destructuring here
-        const status = { [key]: dateString, orderId };
+        const key = "placed"
+        const now = new Date()
+        const { toDateString: dateString } = now // destructuring here
+        const status = { [key]: dateString, orderId }
         db.get()
           .collection(collection.ORDER_SATUS)
           .insertOne(status)
           .then((response) => {
-            resolve(response);
-          });
-      });
+            resolve(response)
+          })
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to update the order status");
+      console.log(error)
+      throw new Error("Failed to update the order status")
     }
   },
   getRazorpay: (orderId, totalAmout) => {
@@ -691,64 +691,64 @@ const userHelpers = {
         const razorpay = new Razorpay({
           key_id: "rzp_test_ltAM3hZSUBfLfx",
           key_secret: "gvv1U5AQUyqTxHzkwWIt8M7x",
-        });
+        })
         const options = {
           amount: totalAmout * 100, // amount in paise
           currency: "INR",
           receipt: "" + orderId,
           payment_capture: 1,
-        };
+        }
         razorpay.orders.create(options, function (err, order) {
           if (err) {
-            console.log(err);
+            console.log(err)
           } else {
-            console.log(order);
-            resolve(order);
+            console.log(order)
+            resolve(order)
           }
-        });
-      });
+        })
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to get razorpay");
+      console.log(error)
+      throw new Error("Failed to get razorpay")
     }
   },
   verifyRazorpayPayments: (paymentInfo) => {
     try {
       return new Promise((resolve, reject) => {
-        const crypto = require("crypto");
-        let hmac = crypto.createHmac("sha256", "gvv1U5AQUyqTxHzkwWIt8M7x");
+        const crypto = require("crypto") 
+        let hmac = crypto.createHmac("sha256", "gvv1U5AQUyqTxHzkwWIt8M7x")
         hmac.update(
           paymentInfo["order[razorpay_order_id]"] +
             "|" +
             paymentInfo["order[razorpay_payment_id]"]
-        );
-        hmac = hmac.digest("hex");
+        )
+        hmac = hmac.digest("hex")
         if (hmac === paymentInfo["order[razorpay_signature]"]) {
-          resolve({ status: true });
+          resolve({ status: true })
         } else {
-          reject(new Error("Payment failed"));
+          reject(new Error("Payment failed"))
         }
-      });
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to verify razorpay payments");
+      console.log(error)
+      throw new Error("Failed to verify razorpay payments")
     }
   },
   getPaypal: (orderId, totalAmout) => {
     try {
       if (!sotoredAmount) {
-        sotoredAmount = totalAmout;
+        sotoredAmount = totalAmout
       }
-      console.log(sotoredAmount);
+      console.log(sotoredAmount)
       return new Promise((resolve, reject) => {
-        const paypal = require("paypal-rest-sdk");
+        const paypal = require("paypal-rest-sdk")
         paypal.configure({
           mode: "sandbox", // sandbox or live
           client_id:
             "AZbtScy5kHVy2okDeiOijRVYzqnbrZxhWn_cz9tzKWyxpHmrwV-Qza41PSQ86MNy3azk8n4bDFCofo4t",
           client_secret:
             "EIK1cBzckhi8oSS5ZqyhjkYExGq5nbcwPQD-zB3u2QefLmoOu9Q4qVwBqItgOaJ4IHuhuKuybsaIlIKX",
-        });
+        })
         const createPaymentJson = {
           intent: "sale",
           payer: {
@@ -778,32 +778,32 @@ const userHelpers = {
               description: "This is the payment description.",
             },
           ],
-        };
+        }
         paypal.payment.create(createPaymentJson, function (error, payment) {
           if (error) {
-            console.log(error);
+            console.log(error)
           } else {
-            console.log(payment);
-            const paypalResponse = { paypal: true };
+            console.log(payment)
+            const paypalResponse = { paypal: true }
             for (let i = 0; i < payment.links.length; i++) {
               if (payment.links[i].rel === "approval_url") {
-                const redirectUrl = payment.links[i].href;
-                paypalResponse.reUrl = redirectUrl;
-                resolve(paypalResponse);
+                const redirectUrl = payment.links[i].href
+                paypalResponse.reUrl = redirectUrl
+                resolve(paypalResponse)
               }
             }
           }
-        });
-      });
+        })
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to get paypal");
+      console.log(error)
+      throw new Error("Failed to get paypal")
     }
   },
   verifyPaypal: () => {
     try {
       return new Promise((resolve, reject) => {
-        const paypal = require("paypal-rest-sdk");
+        const paypal = require("paypal-rest-sdk")
         const executePaymentJson = {
           payer_id: "Appended to redirect url",
           transactions: [
@@ -814,26 +814,26 @@ const userHelpers = {
               },
             },
           ],
-        };
-        const paymentId = "PAYMENT id created in previous step";
+        }
+        const paymentId = "PAYMENT id created in previous step"
         paypal.payment.execute(
           paymentId,
           executePaymentJson,
           function (error, payment) {
             if (error) {
-              console.log(error.response);
-              throw error;
+              console.log(error.response)
+              throw error
             } else {
-              console.log("Get Payment Response");
-              console.log(JSON.stringify(payment));
-              resolve(payment);
+              console.log("Get Payment Response")
+              console.log(JSON.stringify(payment))
+              resolve(payment)
             }
           }
-        );
-      });
+        )
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to verify paypal");
+      console.log(error)
+      throw new Error("Failed to verify paypal")
     }
   },
   changePaymentStatus: (orderId) => {
@@ -850,12 +850,12 @@ const userHelpers = {
             }
           )
           .then(() => {
-            resolve();
-          });
-      });
+            resolve()
+          })
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed while changing payment status");
+      console.log(error)
+      throw new Error("Failed while changing payment status")
     }
   },
   getCurrentUserOrders: async (userId) => {
@@ -900,12 +900,12 @@ const userHelpers = {
             },
           },
         ])
-        .toArray();
-      console.log(orders);
-      return orders;
+        .toArray()
+      console.log(orders)
+      return orders
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to fetch current user orders");
+      console.log(error)
+      throw new Error("Failed to fetch current user orders")
     }
   },
   getAllAddresses: async (userId) => {
@@ -914,11 +914,11 @@ const userHelpers = {
         .get()
         .collection(collection.ADDRESS_COLLECTION)
         .find({ userId })
-        .toArray();
-      return addresses;
+        .toArray()
+      return addresses
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to fetch all orders of the user");
+      console.log(error)
+      throw new Error("Failed to fetch all orders of the user")
     }
   },
   cancellUserOrder: (orderId, reason) => {
@@ -937,12 +937,12 @@ const userHelpers = {
             { upsert: true }
           )
           .then(() => {
-            resolve();
-          });
-      });
+            resolve()
+          })
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to cancel order");
+      console.log(error)
+      throw new Error("Failed to cancel order")
     }
   },
   getUserDetails: async (userId) => {
@@ -950,16 +950,16 @@ const userHelpers = {
       const userInfo = await db
         .get()
         .collection(collection.USER_COLLECTION)
-        .findOne({ _id: ObjectId(userId) });
-      return userInfo;
+        .findOne({ _id: ObjectId(userId) })
+      return userInfo
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to fetch user details");
+      console.log(error)
+      throw new Error("Failed to fetch user details")
     }
   },
   updateUserDetails: (userInfo) => {
     try {
-      const { userId, fname, email, mobile } = userInfo;
+      const { userId, fname, email, mobile } = userInfo
       return new Promise((resolve, reject) => {
         db.get()
           .collection(collection.USER_COLLECTION)
@@ -974,12 +974,12 @@ const userHelpers = {
             }
           )
           .then((response) => {
-            resolve(response);
-          });
-      });
+            resolve(response)
+          })
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to update user details");
+      console.log(error)
+      throw new Error("Failed to update user details")
     }
   },
   changeUserPassword: async (userId, { password, npassword, cpassword }) => {
@@ -987,20 +987,20 @@ const userHelpers = {
       const user = await db
         .get()
         .collection(collection.USER_COLLECTION)
-        .findOne({ _id: ObjectId(userId) });
-      const hashedNewPassword = await bcrypt.hash(npassword, 10);
+        .findOne({ _id: ObjectId(userId) })
+      const hashedNewPassword = await bcrypt.hash(npassword, 10)
       if (!user) {
-        return { passwordNotUpdated: true };
+        return { passwordNotUpdated: true }
       }
       const isCurrentPasswordValid = await bcrypt.compare(
         password,
         user.password
-      );
+      )
       if (!isCurrentPasswordValid) {
-        return { invalidCurrentPassword: true };
+        return { invalidCurrentPassword: true }
       }
       if (npassword !== cpassword) {
-        return { passwordMismatchnewAndConfirm: true };
+        return { passwordMismatchnewAndConfirm: true }
       }
       await db
         .get()
@@ -1010,11 +1010,11 @@ const userHelpers = {
           {
             $set: { password: hashedNewPassword },
           }
-        );
-      return { success: true };
+        )
+      return { success: true }
     } catch (error) {
-      console.error(error);
-      return { error: true };
+      console.error(error)
+      return { error: true }
     }
   },
   getOrderStatus: async (orderId) => {
@@ -1023,11 +1023,11 @@ const userHelpers = {
         .get()
         .collection(collection.ORDER_COLLECTION)
         .find({ _id: ObjectId(orderId) })
-        .toArray();
-      return orders[0];
+        .toArray()
+      return orders[0]
     } catch (error) {
-      console.log(error);
-      throw new Error(error);
+      console.log(error)
+      throw new Error(error)
     }
   },
   getStatusDates: async (orderId) => {
@@ -1035,11 +1035,11 @@ const userHelpers = {
       const dates = await db
         .get()
         .collection(collection.ORDER_SATUS)
-        .findOne({ orderId });
-      return dates;
+        .findOne({ orderId })
+      return dates
     } catch (error) {
-      console.log(error);
-      throw new Error(error);
+      console.log(error)
+      throw new Error(error)
     }
   },
   getAddressforTrackingPage: async (orderId) => {
@@ -1085,10 +1085,10 @@ const userHelpers = {
           //   }
           // }
         ])
-        .toArray();
+        .toArray()
     } catch (error) {
-      console.log(error);
-      throw new Error(error);
+      console.log(error)
+      throw new Error(error)
     }
   },
   getOrdersProfile: async (orderId) => {
@@ -1097,11 +1097,11 @@ const userHelpers = {
         .get()
         .collection(collection.ORDER_COLLECTION)
         .find({ userId: ObjectId(orderId) })
-        .toArray();
-      return orders;
+        .toArray()
+      return orders
     } catch (error) {
-      console.log(error);
-      throw new Error(error);
+      console.log(error)
+      throw new Error(error)
     }
   },
   getProductsWithSameId: async (orderId) => {
@@ -1140,11 +1140,11 @@ const userHelpers = {
             },
           },
         ])
-        .toArray();
-      return products;
+        .toArray()
+      return products
     } catch (error) {
-      console.log(error);
-      throw new Error(error);
+      console.log(error)
+      throw new Error(error)
     }
   },
   returnProduct: async (returnInfo) => {
@@ -1163,21 +1163,21 @@ const userHelpers = {
             { upsert: true }
           )
           .then((response) => {
-            resolve(response);
-          });
-      });
+            resolve(response)
+          })
+      })
     } catch (error) {
-      console.log(error);
-      throw new Error(error);
+      console.log(error)
+      throw new Error(error)
     }
   },
   createWallet: (userInfo, userId) => {
-    const now = new Date();
+    const now = new Date()
     const currentDateTime = now.toLocaleString("en-US", {
       dateStyle: "short",
       timeStyle: "short",
-    });
-    const { name, email, mobile, active } = userInfo;
+    })
+    const { name, email, mobile, active } = userInfo
     const wallet = {
       userid: userId._id,
       name,
@@ -1188,11 +1188,11 @@ const userHelpers = {
       transactions: [],
       createdAt: currentDateTime,
       updatedAt: currentDateTime,
-    };
+    }
     try {
-      db.get().collection(collection.WALLET).insertOne(wallet);
+      db.get().collection(collection.WALLET).insertOne(wallet)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   },
   getWalletData: async (userId) => {
@@ -1200,34 +1200,34 @@ const userHelpers = {
       const wallet = await db
         .get()
         .collection(collection.WALLET)
-        .findOne({ userid: ObjectId(userId) });
-      return wallet;
+        .findOne({ userid: ObjectId(userId) })
+      return wallet
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   },
   getUserWallet: async (orderId, total, userId) => {
     try {
-      const { WALLET, ORDER_COLLECTION } = collection;
-      const walletCollection = await db.get().collection(WALLET);
-      const ordersCollection = await db.get().collection(ORDER_COLLECTION);
+      const { WALLET, ORDER_COLLECTION } = collection
+      const walletCollection = await db.get().collection(WALLET)
+      const ordersCollection = await db.get().collection(ORDER_COLLECTION)
       const { balance } = await walletCollection.findOne(
         { userid: ObjectId(userId) },
         { balance: 1 }
-      );
-      const currentDate = new Date();
-      const optionsDate = { month: "long", day: "numeric", year: "numeric" };
-      const optionsTime = { hour: "numeric", minute: "2-digit" };
-      const dateString = currentDate.toLocaleDateString(undefined, optionsDate);
-      const timeString = currentDate.toLocaleTimeString(undefined, optionsTime);
-      const dateTimeString = `${dateString} at ${timeString}`;
+      )
+      const currentDate = new Date()
+      const optionsDate = { month: "long", day: "numeric", year: "numeric" }
+      const optionsTime = { hour: "numeric", minute: "2-digit" }
+      const dateString = currentDate.toLocaleDateString(undefined, optionsDate)
+      const timeString = currentDate.toLocaleTimeString(undefined, optionsTime)
+      const dateTimeString = `${dateString} at ${timeString}`
       if (balance && balance >= total) {
         const paymentStatusUpdated = await ordersCollection.updateOne(
           { _id: ObjectId(orderId) },
           { $set: { paymentStatus: "done" } }
-        );
+        )
         if (paymentStatusUpdated.modifiedCount === 1) {
-          const updatedBalance = balance - total;
+          const updatedBalance = balance - total
           await walletCollection.updateOne(
             { userid: ObjectId(userId) },
             {
@@ -1244,8 +1244,8 @@ const userHelpers = {
                 updatedAt: dateTimeString,
               },
             }
-          );
-          return { updatedBalance, paid: true, amountPaid: total };
+          )
+          return { updatedBalance, paid: true, amountPaid: total }
         }
       }
       walletCollection.updateOne(
@@ -1263,36 +1263,36 @@ const userHelpers = {
             updatedAt: dateTimeString,
           },
         }
-      );
-      return { paid: false };
+      )
+      return { paid: false }
     } catch (error) {
-      console.log(error);
-      throw new Error("Error getting user wallet.");
+      console.log(error)
+      throw new Error("Error getting user wallet.")
     }
   },
   createGuestUser: async (guestId, productId) => {
-    const currentDate = new Date();
-    const optionsDate = { month: "long", day: "numeric", year: "numeric" };
-    const optionsTime = { hour: "numeric", minute: "2-digit" };
-    const dateString = currentDate.toLocaleDateString(undefined, optionsDate);
-    const timeString = currentDate.toLocaleTimeString(undefined, optionsTime);
-    const dateTimeString = `${dateString} at ${timeString}`;
+    const currentDate = new Date()
+    const optionsDate = { month: "long", day: "numeric", year: "numeric" }
+    const optionsTime = { hour: "numeric", minute: "2-digit" }
+    const dateString = currentDate.toLocaleDateString(undefined, optionsDate)
+    const timeString = currentDate.toLocaleTimeString(undefined, optionsTime)
+    const dateTimeString = `${dateString} at ${timeString}`
     const product = {
       item: ObjectId(productId),
       quantity: 1,
-    };
+    }
     try {
-      console.log(guestId, productId);
+      console.log(guestId, productId)
       const guestCart = await db
         .get()
         .collection(collection.GUEST_USERS)
-        .findOne({ guestId });
-      console.log(guestCart?.products);
+        .findOne({ guestId })
+      console.log(guestCart?.products)
       if (guestCart) {
         const isProductExist = guestCart.products.findIndex((product) => {
-          return product.item.equals(ObjectId(productId));
-        });
-        console.log(isProductExist);
+          return product.item.equals(ObjectId(productId))
+        })
+        console.log(isProductExist)
         if (isProductExist !== -1) {
           await db
             .get()
@@ -1305,8 +1305,8 @@ const userHelpers = {
               }
             )
             .then((response) => {
-              console.log(response);
-            });
+              console.log(response)
+            })
         } else {
           await db
             .get()
@@ -1319,25 +1319,25 @@ const userHelpers = {
                 },
                 $set: { updatedAt: dateTimeString },
               }
-            );
+            )
         }
       } else {
-        console.log("new guest cart created");
+        console.log("new guest cart created")
         const guestDocument = {
           guestId,
           products: [product],
           createdAt: dateTimeString,
           updatedAt: dateTimeString,
-        };
+        }
         await db
           .get()
           .collection(collection.GUEST_USERS)
-          .insertOne(guestDocument);
+          .insertOne(guestDocument)
       }
-      return true;
+      return true
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to create guest user");
+      console.log(error)
+      throw new Error("Failed to create guest user")
     }
   },
   getGuestUserCartProducts: async (guestId) => {
@@ -1425,21 +1425,21 @@ const userHelpers = {
             },
           },
         ])
-        .toArray();
-      return cartItems[0];
+        .toArray()
+      return cartItems[0]
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to get cart products of guest user.");
+      console.log(error)
+      throw new Error("Failed to get cart products of guest user.")
     }
   },
   mergeGuestCartIntoUserCart: async (userId, guestId) => {
-    console.log(userId, guestId);
-    console.log("from guest merge");
+    console.log(userId, guestId)
+    console.log("from guest merge")
     const guestUser = await db
       .get()
       .collection(collection.GUEST_USERS)
-      .findOne({ guestId });
-    console.log(guestUser);
+      .findOne({ guestId })
+    console.log(guestUser)
     const result = await db
       .get()
       .collection(collection.CART_COLLECTION)
@@ -1460,7 +1460,7 @@ const userHelpers = {
             },
           ],
         }
-      );
+      )
     if (!result.value) {
       await db
         .get()
@@ -1475,11 +1475,11 @@ const userHelpers = {
             },
           },
           { upsert: true }
-        );
+        )
     }
-    await db.get().collection(collection.GUEST_USERS).deleteOne({ guestId });
-    console.log(result);
-    return result;
+    await db.get().collection(collection.GUEST_USERS).deleteOne({ guestId })
+    console.log(result)
+    return result
   },
   createCouponForUsers: async (userId) => {
     //? get all available coupon templates from the database
@@ -1487,34 +1487,34 @@ const userHelpers = {
       .get()
       .collection(collection.COUPON_TEMPLATE)
       .find({})
-      .toArray();
+      .toArray()
     //* randomly select a coupon template from the list
-    const randomIndex = Math.floor(Math.random() * couponTemplates.length);
+    const randomIndex = Math.floor(Math.random() * couponTemplates.length)
 
-    const selectedCouponTemplate = couponTemplates[randomIndex];
-    console.log(selectedCouponTemplate);
-    const MIN_EXPIRY_DAYS = 15;
-    const MAX_EXPIRY_DAYS = 30;
+    const selectedCouponTemplate = couponTemplates[randomIndex]
+    console.log(selectedCouponTemplate)
+    const MIN_EXPIRY_DAYS = 15
+    const MAX_EXPIRY_DAYS = 30
 
     //? calculate the expiry date for the new coupon
     const expiryDays =
       Math.floor(Math.random() * (MAX_EXPIRY_DAYS - MIN_EXPIRY_DAYS + 1)) +
-      MIN_EXPIRY_DAYS;
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + expiryDays);
+      MIN_EXPIRY_DAYS
+    const expiryDate = new Date()
+    expiryDate.setDate(expiryDate.getDate() + expiryDays)
 
     //? creating a unique coupon code usin crypto algorithm
     function generateCouponCode(length) {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      const bytes = crypto.randomBytes(length);
-      const result = new Array(length);
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+      const bytes = crypto.randomBytes(length)
+      const result = new Array(length)
 
       for (let i = 0; i < length; i++) {
-        const byte = bytes[i];
-        result[i] = chars[byte % chars.length];
+        const byte = bytes[i]
+        result[i] = chars[byte % chars.length]
       }
 
-      return result.join("");
+      return result.join("")
     }
 
     //* create a new coupon based on the selected template's rules
@@ -1529,15 +1529,15 @@ const userHelpers = {
       image: selectedCouponTemplate.image,
       numberOfUses: 1,
       used: false,
-    };
-    console.log(newCoupon);
+    }
+    console.log(newCoupon)
     // todo inserting the creted coupon into the database
     const response = await db
       .get()
       .collection(collection.COUPONS)
-      .insertOne(newCoupon);
+      .insertOne(newCoupon)
     if (response.acknowledged) {
-      return newCoupon;
+      return newCoupon
     }
   },
   getUserCoupons: async (userId) => {
@@ -1546,48 +1546,48 @@ const userHelpers = {
         .get()
         .collection(collection.COUPONS)
         .find({ userId })
-        .toArray();
-      return coupon;
+        .toArray()
+      return coupon
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   },
   redeemCoupon: async (couponCode, amount) => {
     try {
-      const couponCollection = db.get().collection(collection.COUPONS);
-      const coupon = await couponCollection.findOne({ couponCode: couponCode });
-      const total = parseInt(amount);
-      console.log(total);
-      console.log(coupon);
+      const couponCollection = db.get().collection(collection.COUPONS)
+      const coupon = await couponCollection.findOne({ couponCode: couponCode })
+      const total = parseInt(amount)
+      console.log(total)
+      console.log(coupon)
       if (!coupon) {
-        return { valid: false, message: "Invalid coupon code" };
+        return { valid: false, message: "Invalid coupon code" }
       }
       if (coupon.used) {
-        return { valid: false, message: "Coupon code already used" };
+        return { valid: false, message: "Coupon code already used" }
       }
       if (coupon.expirationDate < new Date()) {
-        return { valid: false, message: "Coupon code expired" };
+        return { valid: false, message: "Coupon code expired" }
       }
       if (total < coupon.minimumPurchaseAmount) {
         return {
           valid: false,
           message: `Minimum purchase amount is ${coupon.minimumPurchaseAmount}`,
-        };
+        }
       }
       if (coupon.numberOfUses < 1) {
         return {
           valid: false,
           message: `You are already entered coupon code, try again after 24 hours`,
-        };
+        }
       }
       const min = 5,
-        max = coupon.discountPercentage;
+        max = coupon.discountPercentage
       const discountPercentage = Math.floor(
         Math.random() * (max - min + 1) + min
-      );
-      console.log(discountPercentage);
-      const discountAmount = Math.floor((amount / 100) * discountPercentage);
-      console.log(discountAmount);
+      )
+      console.log(discountPercentage)
+      const discountAmount = Math.floor((amount / 100) * discountPercentage)
+      console.log(discountAmount)
       if (coupon.numberOfUses >= 1) {
         await db
           .get()
@@ -1596,18 +1596,18 @@ const userHelpers = {
             { couponCode },
             { $inc: { numberOfUses: -1 }, $set: { lastApplied: new Date() } },
             { upsert: true }
-          );
+          )
       }
-      return { valid: true, coupon: coupon, discountAmount };
+      return { valid: true, coupon: coupon, discountAmount }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   },
   resetCouponCount: async () => {
     try {
-      const currentTime = new Date();
+      const currentTime = new Date()
       // const resetThreshold = new Date(currentTime - 24 * 60 * 60 * 1000); // 24 hours ago
-      const resetThreshold = new Date("2023-04-23T05:26:00.864Z");
+      const resetThreshold = new Date("2023-04-23T05:26:00.864Z")
       // console.log(resetThreshold);
 
       // Query the couponResetHistory collection for coupons that were last reset more than 24 hours ago
@@ -1615,13 +1615,13 @@ const userHelpers = {
         .get()
         .collection(collection.COUPONS)
         .find({ lastApplied: { $lt: resetThreshold }, used: false })
-        .toArray();
+        .toArray()
       // console.log(couponsToReset);
 
       // Get an array of coupon codes to update
       const couponCodesToReset = couponsToReset.map(
         (coupon) => coupon.couponCode
-      );
+      )
 
       // Update the numberOfUses field for the selected coupons
       await db
@@ -1630,7 +1630,7 @@ const userHelpers = {
         .updateMany(
           { couponCode: { $in: couponCodesToReset } },
           { $set: { numberOfUses: 1 } }
-        );
+        )
 
       // Update the couponResetHistory collection with the new reset time for the updated coupons
       // await db
@@ -1641,7 +1641,7 @@ const userHelpers = {
       //     { $set: { lastResetTime: currentTime } }
       //   );
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   },
   searchWithAlgolia: async (query) => {
@@ -1650,30 +1650,56 @@ const userHelpers = {
       const client = algoliasearch(
         "9LLP9RS9DX",
         "3e47e70258702fe4a47b7ae1cde43adc"
-      )
+      )  
      const objectsToIndex = await db.get().collection(collection.PRODUCT_COLLECTION).find({}).toArray() 
-     const index = client.initIndex("searchIndex");
+     const index = client.initIndex("searchIndex")
      index.addObjects(objectsToIndex, function (err, content) {
-      if (err) throw err;
-      console.log(content);
-    });
-    const results = await index.search({ query }); 
+      if (err) throw err
+      console.log(content)
+    })
+    const results = await index.search({ query }) 
     return results
     } catch (error) {
      console.log(error)
     }
   },
+  getMensProducts: async () => {
+    try {
+      const products = await db.get().collection(collection.PRODUCT_COLLECTION).find({product_category:'Mens'}).toArray()
+      return products
 
+    } catch (error) {
+      console.log(error)
+    }
+
+  },
+  getWomensProducts: async () => {
+    try {
+      const products = await db.get().collection(collection.PRODUCT_COLLECTION).find({product_category:'Womens'}).toArray()
+      return products
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  getKidsProducts: async () => {
+    try {
+      const products = await db.get().collection(collection.PRODUCT_COLLECTION).find({product_category:'Kids'}).toArray()
+      return products
+    } catch (error) {
+      console.log(error)
+    }
+  },
   getOrderedGroup: async (userId) => {
     try {
       const orders = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
-        .fin({ userId: ObjectId(userId) });
-      return orders;
+        .find({ userId: ObjectId(userId) })
+      return orders
     } catch (errors) {
-      console.log(errors);
+      console.log(errors)
     }
   },
-};
-export default userHelpers;
+}
+
+export default userHelpers 

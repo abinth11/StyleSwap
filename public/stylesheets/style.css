@@ -382,3 +382,12 @@ input[type=radio]{
   transition: background-color 0.3s ease;
 }
 
+.swal2-success .swal2-success-circular-line-left,
+.swal2-success .swal2-success-circular-line-right {
+  background-color: red;
+}
+
+.swal2-confirm {
+  background-color: red;
+  border-color: red;
+}

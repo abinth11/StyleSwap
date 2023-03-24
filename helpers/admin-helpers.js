@@ -408,16 +408,17 @@ import moment from 'moment'
                   '$product_price',
                   { $multiply: ['$product_price', offerInfo.offer_percentage / 100] }
                 ]
-              }
-            }
+              },
+              offerPercentage: parseFloat(offerInfo.offer_percentage)
+            }            
           },
           {
             $set: {
               offerPrice: '$offerPrice',
               offerEndDate: offerInfo.end_date,
-              offerStartDate: offerInfo.start_date
+              offerStartDate: offerInfo.start_date,
             }
-          }
+          },
         ]
       )
       return response
@@ -439,7 +440,8 @@ import moment from 'moment'
                   '$product_price',
                   { $multiply: ['$product_price', offerPercentage / 100] }
                 ]
-              }
+              },
+              offerPercentage: parseFloat(replaceInfo.offer_percentage)
             }
           },
           {

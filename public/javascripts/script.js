@@ -9,7 +9,17 @@ const addToCart = (productId) => {
     method: 'get',
     success: (response) => {
       if (response.status) {
-        let count = $('#cartCount').html()
+        Swal.fire({
+          icon: 'success',
+          title: 'Item added to cart!',
+          showConfirmButton: true,
+          confirmButtonColor: 'red',
+          confirmButtonText: 'OK',
+          customClass: {
+            icon: 'custom-icon-class'
+          }
+        })  
+       let count = $('#cartCount').html()
         count = parseInt(count) + 1
         $('#cartCount').html(count)
       }
@@ -82,12 +92,6 @@ const deleteCartProduct = (cartId, productId) => {
   })
 }
 
-// Add this function to your JavaScript file or script tag on the page
-function hideModalButton () {
-  setTimeout(function () {
-    $('#myModal').modal('hide')
-  }, 3000)
-}
 
 function setModalData (cartId, productId) {
   // Set the value of the input fields to the cartId and productId values
@@ -143,16 +147,16 @@ const cancellOrder = (orderId, reason) => {
 //   alert('Funds added successfully.')
 // })
 
-// get a reference to the search input field
-const searchInput = document.getElementById('search-input');
+// // get a reference to the search input field
+// const searchInput = document.getElementById('search-input')
 
-// listen for the user to submit the search form
-document.getElementById('search-form').addEventListener('submit', (event) => {
-  event.preventDefault(); // prevent the form from submitting normally
-  const searchQuery = searchInput.value.trim(); // get the user's search query
-  if (searchQuery.length > 0) {
-    // construct the search URL with the search query as a parameter
-    const searchUrl = `/search-products?q=${encodeURIComponent(searchQuery)}`;
-    window.location.href = searchUrl; // redirect the user to the search results page
-  }
-});
+// // listen for the user to submit the search form
+// document.getElementById('search-form').addEventListener('submit', (event) => {
+//   event.preventDefault() // prevent the form from submitting normally
+//   const searchQuery = searchInput.value.trim() // get the user's search query
+//   if (searchQuery.length > 0) {
+//     // construct the search URL with the search query as a parameter
+//     const searchUrl = `/search-products?q=${encodeURIComponent(searchQuery)}`
+//     window.location.href = searchUrl // redirect the user to the search results page
+//   }
+// })

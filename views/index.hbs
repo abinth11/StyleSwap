@@ -30,7 +30,7 @@
 
     {{!-- Modal for add to cart --}}
 
-      <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      {{!-- <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content border-0">
                 <div class="modal-header border-0">
@@ -55,7 +55,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
     
@@ -518,24 +518,24 @@
                                     </div>
                                     <div class="product-content-wrap">
                                         <div class="product-category">
-                                            <a href="shop-grid-right.html">Clothing</a>
+                                            <a href="shop-grid-right.html">{{product_category}}</a>
                                         </div>
                                         <h2><a href="shop-product-right.html">{{product_title}}</a></h2>
                                         <div class="rating-result" title="90%">
                                             <span>
-                                                <span>90%</span>
+                                                <span>{{offerPercentage}}%</span>
                                             </span>
                                         </div>
                                         <div class="product-price">
                                             {{#if offerPrice}}
-                                            <span>${{offerPrice}} </span>
+                                            <span>{{formatCurrency offerPrice}} </span>
                                             {{else}}
-                                            <span>${{product_price}}</span>
+                                            <span>{{formatCurrency product_price}}</span>
                                             {{/if}}
-                                            <span class="old-price">${{product_price}}</span>
+                                            <span class="old-price">{{formatCurrency product_price}}</span>
                                         </div>
                                         <div class="product-action-1 show">
-<button id="myModalButton" aria-label=" Cart" class="action-btn hover-up" onclick="addToCart('{{_id}}'); hideModalButton()" data-bs-toggle="modal" data-bs-target="#myModal"><i class="fi-rs-shopping-bag-add"></i></button>
+<button id="myModalButton" aria-label=" Cart" class="action-btn hover-up" onclick="addToCart('{{_id}}')" data-bs-toggle="modal" data-bs-target="#myModal"><i class="fi-rs-shopping-bag-add"></i></button>
                                             {{!-- <a aria-label="Cart" class="action-btn hover-up" href="/add-to-cart/{{_id}}"><i class="fi-rs-shopping-bag-add"></i></a> --}}
                                         </div>
                                     </div>
