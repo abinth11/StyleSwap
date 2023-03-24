@@ -120,6 +120,15 @@ router.route('/dashboard/view-offers')
 
 router.post('/replace-offer', adminControler.replaceOfers)
 
+//?ROUTES FOR COUPONS
+router.route('/dashboard/add-coupon')
+   .get(adminControler.addCouponTemplate)
+   .post(upload.single('coupon-image'),adminControler.addCouponTemplatePost)
+
+router.route('/dashboard/view-coupons')
+   .get(adminControler.viewCoupons)
+   
+
 //? ROUTE FOR CREATING PDF AND EXCEL
 // create sales report
 router.post('/create-report', adminControler.makeReport)

@@ -432,8 +432,9 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-check">
-                                                <input class="form-check-input address" type="radio" name="deliveryAddress"
-                                                    id="flexRadioDefault1" value="{{_id}}" required >
+                                                <input class="form-check-input address" type="radio"
+                                                    name="deliveryAddress" id="flexRadioDefault1" value="{{_id}}"
+                                                    required>
                                                 <label class="form-check-label" for="flexRadioDefault1">
                                                     <ul>
                                                         <li class="ms-3">Name: {{name}}</li>
@@ -480,6 +481,7 @@
                                             <div class="custome-radio">
                                                 <input class="form-check-input" type="radio" name="payment_method"
                                                     id="exampleRadios3" value="paypal">
+                                                <input type="hidden" value="" id="coupon-code-order" name="coupon-code">
                                                 <label class="form-check-label" for="exampleRadios3"
                                                     data-bs-toggle="collapse" data-target="#bankTranfer"
                                                     aria-controls="bankTranfer">Paypal</label>
@@ -582,9 +584,14 @@
             success: (response) => {
                 console.log(response)
                 if (response.statusCod) {
+                    const coupon = JSON.stringify(response.coupon)
+                    const couponDetailsParam = encodeURIComponent(coupon)
+
+                    const landingPageUrl = '/order-placed-landing?coupon=' + couponDetailsParam
+
                     $('#successModal').modal('show')
                     setTimeout(function () {
-                        location.href = '/order-placed-landing';
+                    location.href = landingPageUrl
                     }, 3000);
                 } else if (response.id) {
                     getRazorpay(response);

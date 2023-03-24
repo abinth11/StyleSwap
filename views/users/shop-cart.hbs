@@ -281,9 +281,10 @@
                                         </p>
                                     </td>
                                     {{#notNull offerPrice}}
-                                    <td class="price" data-title="Price"><span>{{formatCurrency  offerPrice}}</span></td>
+                                    <td class="price" data-title="Price"><span>{{formatCurrency offerPrice}}</span></td>
                                     {{else}}
-                                    <td class="price" data-title="Price"><span>{{formatCurrency product_price}}</span></td>
+                                    <td class="price" data-title="Price"><span>{{formatCurrency product_price}}</span>
+                                    </td>
                                     {{/notNull}}
                                     <td class="text-center" data-title="Stock">
                                         <div class="detail-qty border radius m-auto">
@@ -326,9 +327,9 @@
                         </table>
                         {{else}}
                         <div class="text-center p-100" style="height: 9em;">
-    <i class="far fa-frown" style="font-size: 4em; color: orange;"></i>
-    <h4 class="mt-3"> Your cart is empty please add some products into cart</h4>
-</div>
+                            <i class="far fa-frown" style="font-size: 4em; color: orange;"></i>
+                            <h4 class="mt-3"> Your cart is empty please add some products into cart</h4>
+                        </div>
                         {{/if}}
                     </div>
                     <div class="cart-action mt-3 text-end">
@@ -619,14 +620,14 @@
                                 <div class="total-amount">
                                     <div class="left">
                                         <div class="coupon">
-                                            <form action="#" target="_blank">
+                                            <form id="coupon-form">
                                                 <div class="form-row row justify-content-center">
                                                     <div class="form-group col-lg-6">
-                                                        <input class="font-medium" name="Coupon"
+                                                        <input class="font-medium" name="couponCode"
                                                             placeholder="Enter Your Coupon">
                                                     </div>
                                                     <div class="form-group col-lg-6">
-                                                        <button class="btn  btn-sm"><i
+                                                        <button class="btn  btn-sm" id="apply-btn"><i
                                                                 class="fi-rs-label mr-10"></i>Apply</button>
                                                     </div>
                                                 </div>
@@ -647,19 +648,22 @@
                                             <tr>
                                                 <td class="cart_total_label">Total Price</td>
                                                 <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand">{{formatCurrency cartItems.total}}</span>
+                                                        class="font-lg fw-900 text-brand">{{formatCurrency
+                                                        cartItems.total}}</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Price after discount</td>
                                                 <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand">{{formatCurrency cartItems.offerTotal}}</span>
+                                                        class="font-lg fw-900 text-brand">{{formatCurrency
+                                                        cartItems.offerTotal}}</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Saved</td>
                                                 <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand">{{formatCurrency saved }}</span></td>
+                                                        class="font-lg fw-900 text-brand">{{formatCurrency saved
+                                                        }}</span></td>
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Shipping</td>
@@ -669,9 +673,12 @@
                                             <tr>
                                                 <td class="cart_total_label">Total</td>
                                                 {{#if cartItems}}
-                                                <td class="cart_total_amount"><strong><span
-                                                            class="font-xl fw-900 text-brand"
-                                                            id="totalAmout">{{formatCurrency cartItems.offerTotal}}</span></strong>
+                                                <td class="cart_total_amount"><strong>
+                                                        <input type="hidden" name="" id="totalPrice"
+                                                            value="{{cartItems.offerTotal}}">
+                                                        <span class="font-xl fw-900 text-brand"
+                                                            id="totalAmout">{{formatCurrency
+                                                            cartItems.offerTotal}}</span></strong>
                                                 </td>
                                                 {{/if}}
                                             </tr>
@@ -680,7 +687,7 @@
                                 </div>
                                 {{#if guestUser}}
                                 <a class="btn " id="guest-checkout"> <i class="fi-rs-box-alt mr-10"></i> Proceed To
-                                    Check</a>
+                                    Checkout</a>
                                 {{else}}
                                 <a href="/proceed-to-checkout" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed
                                     To Checkout</a>
@@ -710,6 +717,53 @@
     $('#signup-btn').click(function () {
         window.location.href = '/userSignup';
     });
+
+$("#coupon-form").submit((e) => {
+  e.preventDefault();
+  const applyButton = document.getElementById('apply-btn');
+  let amount = document.getElementById('totalPrice').value;
+  const formData = $('#coupon-form').serializeArray();
+  formData.push({ name: "amount", value: amount });  // add the amount value to the serialized form data
+  console.log(formData);
+  $.ajax({
+    type: "POST",
+    url: '/apply-coupon-code',
+    data: formData,
+    success: (response) => {
+      if (response.valid) {
+        const { discountAmount } = response;
+        amount = parseInt(amount);
+        console.log(response);
+        const amountAfterDiscount = amount - discountAmount;
+        const discountedAmountSpan = document.getElementById("totalAmout");
+        discountedAmountSpan.textContent = amountAfterDiscount;
+        console.log(amountAfterDiscount);
+        // Display a success message using SweetAlert
+        Swal.fire({
+          imageUrl: "https://tenor.com/0DW3.gif",
+          title: "Coupon applied!",
+          text: `You have saved ₹${discountAmount} on your purchase. Your total amount is now ₹${amountAfterDiscount}.`,
+          buttons: false,
+          timer: 5000 // milliseconds
+        });
+        // Update the button text and disable it
+        applyButton.textContent = 'Applied';
+        applyButton.disabled = true;
+      } else {
+        // Display an error message using SweetAlert
+        Swal.fire({
+          icon: "error",
+          title: "Invalid coupon code",
+          text: `${response.message}`,
+          buttons: false,
+          timer: 3000 // milliseconds
+        });
+      }
+    }
+  });
+});
+
+
 </script>
 <style>
     .my-swal {

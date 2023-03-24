@@ -7,10 +7,11 @@ export const userControler = {
   userHome: async (req, res) => {
     try {
       let cartCount
+      userHelpers.resetCouponCount()
       if (req.session.user) {
         cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
       }
-      console.log(req.session)
+      // console.log(req.session)
       const products = await userHelpers.viewProduct()
       res.render('index', { user: req.session.user, products, cartCount })
     } catch (error) {
@@ -275,12 +276,21 @@ export const userControler = {
       if (products[0]?.products.length) {
         totalPrice = await userHelpers.findTotalAmout(userId)
       }
-      const response = await userHelpers.placeOrders(req.body, products, totalPrice)
+      let couponCode = null
+      if( req.session?.couponCode) {
+       couponCode = req.session.couponCode
+      }
+      const response = await userHelpers.placeOrders(req.body, products, totalPrice, couponCode)
       const insertedOrderId = response.insertedId
       const total = totalPrice?.offerTotal
       const { payment_method: paymentMethod } = req.body
       if (paymentMethod === 'cod') {
-        res.json({ statusCod: true })
+        const codResponse = {
+          statusCod:true,
+          coupon: await userHelpers.createCouponForUsers(userId)
+        }
+        console.log(codResponse)
+        res.json(codResponse)
       } else if (paymentMethod === 'razorpay') {
         const razorpayResponse = await userHelpers.getRazorpay(insertedOrderId, total)
         res.json(razorpayResponse)
@@ -563,6 +573,41 @@ export const userControler = {
       console.log(error)
       res.status(500).json({ status: false, errorMsg: 'Something went wrong' })
     }
+  },
+  viewCoupons:async (req, res) => {
+    try {
+      const myCoupons = await userHelpers.getUserCoupons(req.session.user._id)
+      console.log(req.session.user._id)
+      console.log(myCoupons)
+      res.render('users/view-coupons-user', { myCoupons })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  applyCouponCode: async (req, res) => {
+    try {
+      // console.log(req.body)
+      const { couponCode, amount } = req.body
+      req.session.couponCode = couponCode
+      const response = await userHelpers.redeemCoupon(couponCode, amount)
+      res.json(response)
+      // console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  searchProducts:async (req, res) => {
+    try {
+      const query = req.query.q; // get the search query from the request query string
+      console.log(query)
+      const results = userHelpers.searchWithAlgolia(query)
+      // const results = await index.search({ query }); // perform the search on the Algolia index
+      res.json(results.hits); // return the search results as JSON
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error searching for data');
+    }
+
   },
   userLogout: (req, res) => {
     try {

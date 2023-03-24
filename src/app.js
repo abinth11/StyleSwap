@@ -31,6 +31,7 @@ import CustomError from '../middlewares/errorHandler.js'
 import { schedule } from 'node-cron'
 import  adminHelpers  from '../helpers/admin-helpers.js'
 import { fileURLToPath } from 'url';
+import userHelpers from '../helpers/user-helpers.js';
 
 EventEmitter.defaultMaxListeners = 20;
 
@@ -128,6 +129,7 @@ handlebars.registerHelper('formatCurrency', function (value) {
 // cron library to run the offer query every day
 schedule('0 0 * * *', () => {
   adminHelpers.checkOfferExpiration()
+  // userHelpers.resetCouponCount()
 })
 
 // catch 404 and forward to error handler

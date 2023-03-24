@@ -4,6 +4,7 @@ import otherHelpers from '../helpers/otherHelpers.js'
 import generateReport from '../middlewares/salesReport.js'
 import fs from 'fs'
 import { v2 as cloudinary } from 'cloudinary'
+import { uploadImages, uploadSingle } from '../config/cloudinary.js'
 const adminControler = {
   adminLoginGet: (req, res) => {
     const { admin, loginError } = req.session
@@ -400,6 +401,40 @@ const adminControler = {
     } catch (error) {
       console.log(error)
       res.status(500).send('Internal server error')
+    }
+  },
+  addCouponTemplate: ( req, res) => {
+    try {
+      res.render('admin/add-coupon')
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  addCouponTemplatePost: (req, res) => {
+    try {
+      console.log(req.body)
+      console.log(req.file)
+      uploadSingle(req.file).then(async (urls) => {
+        console.log(urls)
+        adminHelpers.addCouponTemplate(req.body,urls).then((response)=> {
+          console.log(response)
+          res.redirect('/admin/dashboard/add-coupon')
+        })
+  })
+  .catch((error) => {
+    console.log(error)
+  })
+      console.log(req.body)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  viewCoupons: async (req, res) => {
+    try {
+      const coupons = await adminHelpers.getAllCoupons()
+      res.render('admin/view-coupon', { coupons })
+    } catch (error) {
+      console.log(error)
     }
   },
   logoutAdmin: (req, res) => {

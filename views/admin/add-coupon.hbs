@@ -1,0 +1,110 @@
+{{>admin-head-html}}
+    <div class="screen-overlay"></div>
+    {{>admin-navbar}}
+    <main class="main-wrap">
+        {{>admin-header}}
+        <section class="content-main">
+            <div class="row">
+                <div class="col-6">
+            <form action="/admin/dashboard/add-coupon" method="post" enctype="multipart/form-data">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Coupons</h2>
+                        <div>
+                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <button class="btn btn-md rounded font-sm hover-up">Publich</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h6>1. General info</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="form-label">Coupon title</label>
+                                        <input type="text" placeholder="Type here" class="form-control" name="title" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Description</label>
+                                        <textarea placeholder="Type here" class="form-control" rows="4" name="description" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Brand name</label>
+                                        <select class="form-select" name="brand" required>
+                                            <option> Adidas </option>
+                                            <option> Nike </option>
+                                            <option> Puma </option>
+                                        </select>
+                                    </div>
+                                </div> <!-- col.// -->
+                            </div> <!-- row.// -->
+                            <hr class="mb-4 mt-0">
+                            <div class="row">
+                                <div class="col-md-3 mt-2">
+                                    <h6>2. Percentage</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="">
+                                        <input type="text" placeholder="$00.0" class="form-control" name="percentage" required>
+                                    </div>
+                                </div> <!-- col.// -->
+                                <div class="col-md-3 mt-3">
+                                    <h6>3. Price Limit</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mt-3 mb-3">
+                                        <input type="text" placeholder="$00.0" class="form-control" name="price_limit" required>
+                                    </div>
+                                </div> <!-- col.// -->
+                            </div> <!-- row.// -->
+                            <hr class="mb-4 mt-0">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h6>4. Category</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                            <input class="form-check-input" checked="" name="mycategory" type="radio" value="mens">
+                                            <span class="form-check-label"> Mens </span>
+                                        </label>
+                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                            <input class="form-check-input" name="mycategory" type="radio" value="womens">
+                                            <span class="form-check-label"> Womens </span>
+                                        </label>  
+                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                            <input class="form-check-input" name="mycategory" type="radio" value="kids">
+                                            <span class="form-check-label"> Kids item </span>
+                                        </label>
+                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                            <input class="form-check-input" name="mycategory" value="all" type="radio">
+                                            <span class="form-check-label"> All </span>
+                                        </label>
+                                    </div>
+                                </div> <!-- col.// -->
+                            </div> <!-- row.// -->
+                            <hr class="mb-4 mt-0">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h6>5. Media</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="form-label">Images</label>
+                                        <input class="form-control" type="file" name="coupon-image" required>
+                                    </div>
+                                </div> <!-- col.// -->
+                            </div> <!-- .row end// -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section> <!-- content-main end// -->
+{{>admin-footer}}

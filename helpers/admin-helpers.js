@@ -1,6 +1,7 @@
 import db from '../config/connection.js'
 import collection from '../config/collections.js'
 import { ObjectId as objectId } from 'mongodb'
+import moment from 'moment'
   const adminHelpers = {
   adminLogin: async (adminInfo) => {
     try {
@@ -457,7 +458,6 @@ import { ObjectId as objectId } from 'mongodb'
   },
    checkOfferExpiration : () => {
     try {
-      const moment = require('moment')
       // Calculate the date when the offer ends
       const offerEndDate = moment().subtract(1, 'days').toDate()
       // Convert offerEndDate to a string in the format 'YYYY-MM-DD'
@@ -639,8 +639,33 @@ import { ObjectId as objectId } from 'mongodb'
     } catch (error) {
       console.log(error)
     }
+  },
+  addCouponTemplate: async (couponInfo, image) => {
+    const { title, description, brand, percentage, price_limit,mycategory} = couponInfo
+    const couponStruct = {
+      title,
+      description,
+      brand,
+      percentage:parseInt(percentage),
+      price_limit:parseInt(price_limit),
+      category:mycategory,
+      image
+    }
+    try {
+      return await db.get().collection(collection.COUPON_TEMPLATE).insertOne(couponStruct)
+    }
+    catch (error) {
+      console.log(error)
+    }
+  },
+  getAllCoupons: async () => {
+    try {
+      const coupons = await db.get().collection(collection.COUPON_TEMPLATE).find({}).toArray()
+      return coupons
+    } catch (error) {
+      console.log(error)
+    }
   }
-
   // searchUsers:(name)=>{
   //     return new Promise((resolve,reject)=>{
   //         db.get().collection(collection.USER_COLLECTION).findOne({name:name}).then((data)=>{

@@ -142,3 +142,17 @@ const cancellOrder = (orderId, reason) => {
 //   $('#amount').val('')
 //   alert('Funds added successfully.')
 // })
+
+// get a reference to the search input field
+const searchInput = document.getElementById('search-input');
+
+// listen for the user to submit the search form
+document.getElementById('search-form').addEventListener('submit', (event) => {
+  event.preventDefault(); // prevent the form from submitting normally
+  const searchQuery = searchInput.value.trim(); // get the user's search query
+  if (searchQuery.length > 0) {
+    // construct the search URL with the search query as a parameter
+    const searchUrl = `/search-products?q=${encodeURIComponent(searchQuery)}`;
+    window.location.href = searchUrl; // redirect the user to the search results page
+  }
+});

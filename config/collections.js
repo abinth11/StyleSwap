@@ -9,6 +9,8 @@ const collection = {
   ORDER_SATUS: 'orderStatus',
   WALLET: 'wallet',
   GUEST_USERS: 'guestusers',
-  SUB_CATEGORIES: 'subcategories'
+  SUB_CATEGORIES: 'subcategories',
+  COUPON_TEMPLATE: 'coupontemplate',
+  COUPONS:'coupons'
 }
 export default collection

@@ -20,7 +20,7 @@ router.route('/userLogin')
   .get(userControler.userLoginGet)
   .post(userValidation.userLoginValidate, userControler.userLoginPost)
 
-// //login with otp withoug passwords
+// login with otp withoug passwords 
 router.route('/loginWithOtp')
   .get(userControler.loginWithOtpGet)
   .post(userControler.loginWithOtpPost)
@@ -99,6 +99,15 @@ router.post('/return-products', userControler.returnProducts)
 // wallet management
 router.get('/open-wallet', sessionChecker.isUserExist, userControler.getWallet)
 router.post('/wallet-payment', userControler.walletPayment)
+
+//view coupons 
+router.get('/view-coupons',sessionChecker.isUserExist, userControler.viewCoupons)
+
+// apply coupon 
+router.post('/apply-coupon-code',sessionChecker.isUserExist, userControler.applyCouponCode)
+
+//for the serch feature
+router.get('/search-products', userControler.searchProducts)
 
 // User logout
 router.get('/logoutUser', userControler.userLogout)

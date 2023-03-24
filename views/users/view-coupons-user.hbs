@@ -1,0 +1,68 @@
+{{>head-user}}
+{{>user-header}}
+<section class="content-main">
+    <div class="container" style="padding-top: 5em;">
+        <div class="card mb-4">
+        <div class="card-body">
+            <div class="row gx-3">
+                {{#each myCoupons}}
+                <div class="col-xl-3 col-lg-4 col-md-5 col-7">
+                    <figure class="card border-1" >
+                        <div class="card-header bg-white text-center">
+                            <img height="50" src="{{image}}" class="img-fluid" alt="Logo" style="width: 100px;height:100px">
+                        </div>
+                        <figcaption class="card-body text-center">
+                            <h6 class="card-title m-0">Cardinal</h6>
+                            <p class="card-text">Get upto {{discountPercentage}}% off your entire purchase!</p>
+                            <div class="coupon-container">
+                                <div class="coupon-code">{{couponCode}}</div>
+                                <button class="btn btn-primary copy-btn"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+                {{/each}}
+                <div class="col-xl-3 col-lg-4 col-md-5 col-7">
+                    <figure class="card border-1" style="height: 20em;">
+                        <div class="card-header bg-white text-center">
+                            <img height="76" src="/assets/imgs/brands/brand-1.jpg" class="img-fluid" alt="Logo">
+                        </div>
+                        <figcaption class="card-body text-center">
+                            <h6 class="card-title m-0">Cardinal</h6>
+                            <p class="card-text">Get 20% off your entire purchase!</p>
+                            <div class="coupon-container">
+                                <div class="coupon-code">CODE123</div>
+                                <button class="btn btn-primary copy-btn"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div> <!-- row.// -->
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+    
+
+    </div>
+  
+    
+</section> <!-- content-main end// -->
+{{>foot-user}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+
+<script>
+    var clipboard = new ClipboardJS('.copy-btn', {
+        text: function () {
+            return document.querySelector('.coupon-code').textContent;
+        }
+    });
+
+    clipboard.on('success', function (e) {
+        alert('Coupon code copied to clipboard!');
+    });
+
+    clipboard.on('error', function (e) {
+        alert('Failed to copy coupon code!');
+    });
+
+
+</script>
