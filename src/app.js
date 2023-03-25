@@ -1,8 +1,8 @@
-import express from 'express';
-import EventEmitter from 'events';
-import  pkg from 'body-parser'
+import express from 'express'
+import EventEmitter from 'events'
+import pkg from 'body-parser'
 const { json, urlencoded } = pkg
-const serveStatic = express.static;
+const serveStatic = express.static
 import { join, dirname } from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
@@ -12,34 +12,34 @@ import { engine } from 'express-handlebars'
 // import handlebar from 'handlebars'
 // import handlebars from 'handlebars/lib/handlebars/runtime.js';
 // const { registerHelper } = handlebars
-import handlebars from 'handlebars';
+import handlebars from 'handlebars'
 
-handlebars.registerHelper('inc', function (value, options) {
-  return parseInt(value) + 1;
-});
+handlebars.registerHelper('inc', function (value) {
+  return parseInt(value) + 1 
+})
 
 // Register other helpers...
 import session from 'express-session'
 import nocache from 'nocache'
-import dotenv from 'dotenv';   
-dotenv.config();
+import dotenv from 'dotenv'   
+dotenv.config()
 import usersRouter from '../routes/users.js'
 import adminRouter from '../routes/admin.js'
 const app = express()
 import { MulterError } from 'multer'
 import CustomError from '../middlewares/errorHandler.js'
 import { schedule } from 'node-cron'
-import  adminHelpers  from '../helpers/admin-helpers.js'
-import { fileURLToPath } from 'url';
-import userHelpers from '../helpers/user-helpers.js';
+import adminHelpers from '../helpers/admin-helpers.js'
+import { fileURLToPath } from 'url'
+import userHelpers from '../helpers/user-helpers.js'
 
-EventEmitter.defaultMaxListeners = 20;
+EventEmitter.defaultMaxListeners = 20
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 // view engine setup
-app.set('views', join(__dirname, '../views'));
-app.set('view engine', 'hbs');
+app.set('views', join(__dirname, '../views'))
+app.set('view engine', 'hbs')
 
 app.engine(
   'hbs',
@@ -49,7 +49,7 @@ app.engine(
     layoutsDir: join(__dirname, '../views/', 'layout'),
     partialsDir: join(__dirname, '../views/', 'partials'),
   })
-);
+)
 
 
 app.use(logger('dev')) 
@@ -68,16 +68,19 @@ app.use(nocache())
 
 app.use('/', usersRouter)
 app.use('/admin', adminRouter)
-
+   
 connect()
   .then(() => {
     console.log('Successfully connected to the database')
+    userHelpers.createIndexForAlgolia()
   })
   .catch((err) => {
     console.log('Connection failed', err)
   })
 
-handlebars.registerHelper('inc', function (value, options) {
+
+
+handlebars.registerHelper('inc', function (value) {
   return parseInt(value) + 1
 })
 
@@ -109,22 +112,22 @@ handlebars.registerHelper('notNull', function (value, options) {
   }
 })
 handlebars.registerHelper('JSONstringify', (obj) => {
-  return JSON.stringify(obj);
-});
+  return JSON.stringify(obj)
+})
 
 handlebars.registerHelper('formatCurrency', function (value) {
   // Check if value is a number
   if (isNaN(value)) {
-    return '';
+    return ''
   }
 
   // Format the value into a currency string with INR symbol
   const formatter = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
-  });
-  return formatter.format(value);
-});
+  })
+  return formatter.format(value)
+})
 
 // cron library to run the offer query every day
 schedule('0 0 * * *', () => {
@@ -132,10 +135,11 @@ schedule('0 0 * * *', () => {
   // userHelpers.resetCouponCount()
 })
 
+ 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   res.render('users/page-404')
-  // next(createError(404));
+  // next(createError(404))
 })
 
 // error handler

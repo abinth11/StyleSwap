@@ -23,6 +23,17 @@ const addToCart = (productId) => {
         count = parseInt(count) + 1
         $('#cartCount').html(count)
       }
+    },
+    error: function(xhr, status, error) {
+      if (xhr.status === 500) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Internal server error: ' + xhr.responseJSON.Message
+        })
+       } else {
+        alert('Error: ' + error)
+      }
     }
   })
 }

@@ -4,6 +4,7 @@ import collection from "../config/collections.js"
 import bcrypt from "bcrypt"
 import { ObjectId } from "mongodb"
 import Razorpay from "razorpay"
+import paypal from "paypal-rest-sdk"
 import crypto from "crypto"
 import algoliasearch from "algoliasearch"
 let sotoredAmount
@@ -687,13 +688,15 @@ const userHelpers = {
   },
   getRazorpay: (orderId, totalAmout) => {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const razorpay = new Razorpay({
-          key_id: "rzp_test_ltAM3hZSUBfLfx",
-          key_secret: "gvv1U5AQUyqTxHzkwWIt8M7x",
+          // eslint-disable-next-line no-undef
+          key_id: process.env.RAZORPAY_KEY_ID,
+          // eslint-disable-next-line no-undef
+          key_secret: process.env.RAZORPAY_KEY_SECRET,
         })
         const options = {
-          amount: totalAmout * 100, // amount in paise
+          amount: totalAmout * 100,
           currency: "INR",
           receipt: "" + orderId,
           payment_capture: 1,
@@ -715,7 +718,7 @@ const userHelpers = {
   verifyRazorpayPayments: (paymentInfo) => {
     try {
       return new Promise((resolve, reject) => {
-        const crypto = require("crypto") 
+        const crypto = require("crypto")
         let hmac = crypto.createHmac("sha256", "gvv1U5AQUyqTxHzkwWIt8M7x")
         hmac.update(
           paymentInfo["order[razorpay_order_id]"] +
@@ -740,14 +743,13 @@ const userHelpers = {
         sotoredAmount = totalAmout
       }
       console.log(sotoredAmount)
-      return new Promise((resolve, reject) => {
-        const paypal = require("paypal-rest-sdk")
+      return new Promise((resolve) => {
         paypal.configure({
           mode: "sandbox", // sandbox or live
-          client_id:
-            "AZbtScy5kHVy2okDeiOijRVYzqnbrZxhWn_cz9tzKWyxpHmrwV-Qza41PSQ86MNy3azk8n4bDFCofo4t",
-          client_secret:
-            "EIK1cBzckhi8oSS5ZqyhjkYExGq5nbcwPQD-zB3u2QefLmoOu9Q4qVwBqItgOaJ4IHuhuKuybsaIlIKX",
+          // eslint-disable-next-line no-undef
+          client_id: process.env.PAYPAL_CLIENT_ID,
+          // eslint-disable-next-line no-undef
+          client_secret: process.env.PAYPAL_CLIENT_SECRET,
         })
         const createPaymentJson = {
           intent: "sale",
@@ -803,7 +805,6 @@ const userHelpers = {
   verifyPaypal: () => {
     try {
       return new Promise((resolve, reject) => {
-        const paypal = require("paypal-rest-sdk")
         const executePaymentJson = {
           payer_id: "Appended to redirect url",
           transactions: [
@@ -923,7 +924,7 @@ const userHelpers = {
   },
   cancellUserOrder: (orderId, reason) => {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         db.get()
           .collection(collection.ORDER_COLLECTION)
           .updateOne(
@@ -960,7 +961,7 @@ const userHelpers = {
   updateUserDetails: (userInfo) => {
     try {
       const { userId, fname, email, mobile } = userInfo
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         db.get()
           .collection(collection.USER_COLLECTION)
           .updateOne(
@@ -1149,7 +1150,7 @@ const userHelpers = {
   },
   returnProduct: async (returnInfo) => {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         db.get()
           .collection(collection.ORDER_COLLECTION)
           .updateOne(
@@ -1644,38 +1645,74 @@ const userHelpers = {
       console.log(error)
     }
   },
-  searchWithAlgolia: async (query) => {
-    //todo there is a but with index.add method fix that
+  createIndexForAlgolia: async () => {
     try {
-      const client = algoliasearch(
-        "9LLP9RS9DX",
-        "3e47e70258702fe4a47b7ae1cde43adc"
-      )  
-     const objectsToIndex = await db.get().collection(collection.PRODUCT_COLLECTION).find({}).toArray() 
-     const index = client.initIndex("searchIndex")
-     index.addObjects(objectsToIndex, function (err, content) {
-      if (err) throw err
-      console.log(content)
-    })
-    const results = await index.search({ query }) 
-    return results
+      // eslint-disable-next-line no-undef
+      const applicationId = process.env.ALGOLIA_APPLICATION_ID
+      // eslint-disable-next-line no-undef
+      const apikey = process.env.ALGOLIA_ADMIN_API_KEY
+      const client = algoliasearch(applicationId, apikey)
+      const index = client.initIndex("searchIndex")
+      await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .find({})
+        .toArray()
+        .then((objectsToIndex) => {
+          index.saveObjects(objectsToIndex, {
+            autoGenerateObjectIDIfNotExist: true,
+            objectID: (product) => product._id.toString(),
+          })
+        })
+        .catch((error) => {
+          console.log("Error indexing data:", error)
+        })
     } catch (error) {
-     console.log(error)
+      console.log(error)
+    }
+  },
+  searchWithAlgolia: async (query) => {
+    try {
+      // todo hits array is empty 
+      // eslint-disable-next-line no-undef
+      const applicationId = process.env.ALGOLIA_APPLICATION_ID
+      // eslint-disable-next-line no-undef
+      const apikey = process.env.ALGOLIA_ADMIN_API_KEY
+      const client = algoliasearch(applicationId, apikey)
+      const index = client.initIndex("searchIndex")
+      console.log(index)
+      const results = await index.search(
+        {
+          query: query,
+          hitsPerPage: 10,
+          page: 0,
+        }
+        
+      )
+      return results
+    } catch (error) {
+      console.log(error)
     }
   },
   getMensProducts: async () => {
     try {
-      const products = await db.get().collection(collection.PRODUCT_COLLECTION).find({product_category:'Mens'}).toArray()
+      const products = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .find({ product_category: "Mens" })
+        .toArray()
       return products
-
     } catch (error) {
       console.log(error)
     }
-
   },
   getWomensProducts: async () => {
     try {
-      const products = await db.get().collection(collection.PRODUCT_COLLECTION).find({product_category:'Womens'}).toArray()
+      const products = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .find({ product_category: "Womens" })
+        .toArray()
       return products
     } catch (error) {
       console.log(error)
@@ -1683,7 +1720,11 @@ const userHelpers = {
   },
   getKidsProducts: async () => {
     try {
-      const products = await db.get().collection(collection.PRODUCT_COLLECTION).find({product_category:'Kids'}).toArray()
+      const products = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .find({ product_category: "Kids" })
+        .toArray()
       return products
     } catch (error) {
       console.log(error)
@@ -1702,4 +1743,4 @@ const userHelpers = {
   },
 }
 
-export default userHelpers 
+export default userHelpers

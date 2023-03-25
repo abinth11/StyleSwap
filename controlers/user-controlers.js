@@ -232,7 +232,7 @@ export const userControler = {
       res.json({ status: true })
     } catch (error) {
       console.error(error)
-      res.status(500).send('Internal Server Error')
+      res.status(500).json({Message: 'Internal server error'})
     }
   },
   changeCartProductQuantity: async (req, res) => {
@@ -635,14 +635,14 @@ export const userControler = {
     try {
       const query = req.query.q // get the search query from the request query string
       console.log(query)
-      const results = userHelpers.searchWithAlgolia(query)
+      const results = await userHelpers.searchWithAlgolia(query) 
       // const results = await index.search({ query }); // perform the search on the Algolia index
+      console.log(results)
       res.json(results.hits) // return the search results as JSON
     } catch (error) { 
       console.error(error)
-      res.status(500).send('Error searching for data')
+      res.status(500).json('Error searching for data')
     }
-
   },
   userLogout: (req, res) => {
     try {
