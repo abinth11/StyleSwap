@@ -1,7 +1,8 @@
 {{>head-user}}
 {{>user-header}}
+{{!--
 <link rel="stylesheet"
-	href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+	href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css"> --}}
 <link rel="stylesheet" href="/css/main.css">
 <section>
 
@@ -15,8 +16,16 @@
 		{{/if}}
 		{{#if (eq order.returnStatus 'declined')}}
 		<div class="row">
-			<h4 class="text-center text-danger mt-4">Your return request has been declined by the admin please contact us. </h4>
+			<h4 class="text-center text-danger mt-4">Your return request has been declined by the admin please contact
+				us. </h4>
 			<p class="text-center mt-2">Reason:........</p>
+		</div>
+		{{/if}}
+		{{#if (eq order.returnStatus 'pending')}}
+		<div class="row">
+			<h4 class="text-center text-dark mt-4">Your return request has been submitted please wait for the
+				response..!</h4>
+			<p class="text-center mt-2">Expected pickup date will be updating soon</p>
 		</div>
 		{{/if}}
 		<div class="row d-flex align-items-center justify-content-center" style="">
@@ -39,23 +48,71 @@
 			</div>
 		</div>
 		<div class="pt-10 mt-25 d-flex" style="margin-left: 14em; border-radius: 4px;">
-			{{#unless order.returnStatus}}
-			{{#if statusDates.completed}}
+
+
+			{{#if (eq order.status 'completed')}}
+			{{#if order.returnStatus}}
+			<!-- If returnReason exists, show only the Help button -->
+			<button class="btn-help ms-1">Need Help</button>
+			{{else}}
+			<!-- If returnReason does not exist, show the Return and Help buttons -->
 			<button id="returnBtn" class="btn-cancel" onclick="setReturnData('{{order._id}}')"
 				class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#returnModal">Return</button>
+			<button class="btn-help ms-1">Need Help</button>
 			{{/if}}
 			{{else}}
-			<!-- Render nothing if there is a Return status -->
-			{{/unless}}
+			<!-- If status is not completed, show the Cancel and Help buttons -->
+			{{#notNull order.returnReason}}
+			{{#if order.reasonTocancell}}
+			<button class="btn-cancel me-1" onclick="setOrderCancellData('{{order._id}}')" id="cancelBtn"
+				data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+			{{else}}
 
-			{{#unless order.returnStatus}}
-			<button class="btn-cancel me-1">Cancel</button>
-			{{/unless}}
-
-
+			{{/if}}
+			{{/notNull}}
 			<button class="btn-help ms-1">Need Help</button>
+			{{/if}}
+
 		</div>
 	</div>
+
+
+	<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content bg-danger">
+				<div class="modal-header border-0">
+					<button type="button" class="btn-close text-white" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-center p-4">
+					<i class="fas fa-exclamation-circle fa-4x text-white mb-3"></i>
+					<h5 class="modal-title text-white mb-3" id="cancelModalLabel">Cancel Order</h5>
+					<form id="cancelForm">
+						<div class="mb-3">
+							<label for="reason" class="form-label text-white">Reason for cancellation:</label>
+							<select class="form-select" id="reason" name="reason">
+								<option value="" selected disabled>Select a reason</option>
+								<option value="not available">Item not available</option>
+								<option value="wrong item">Wrong item ordered</option>
+								<option value="delayed delivery">Delivery delayed</option>
+								<option value="others">Other</option>
+							</select>
+						</div>
+						<div class="mb-3" id="otherReasonContainer" style="display:none;">
+							<label for="otherReason" class="form-label text-white">Other reason:</label>
+							<textarea class="form-control" id="otherReason" name="otherReason"></textarea>
+						</div>
+						<button type="button" class="btn btn-sm btn-link text-white"
+							data-bs-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-sm btn-light px-3 py-2 me-2"
+							onclick="cancellOrderModal()">Submit</button>
+						<input type="hidden" id="orderId" value="">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 	{{!-- Modal for returning the product --}}
 	<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">

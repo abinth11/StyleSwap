@@ -338,20 +338,32 @@ export const userControler = {
   },
   getUserOrders: async (req, res) => {
     try {
-      const odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
+      // const odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
       const orderGroup = await userHelpers.getOrderedGroup(req.session.user._id)
       console.log(orderGroup)
-      const orders = adminHelpers.ISO_to_Normal_Date(odr)
-      // console.log(orders)
-      res.render('users/shop-orders', { orders })
+      console.log(orderGroup[0].products)
+      res.render('users/shop-orders', { orderGroup })
     } catch (error) {
       console.log(error)
       res.status(500).json({ message: 'Internal server error' })
     }
   },
+  viewOrderBundle: async (req, res) => {
+    try {
+      const orderId = req.params.id
+      const orderDetails = await userHelpers.getCurrentUserOrders(orderId)
+      console.log(orderDetails.products)
+      res.render('users/order-bundle', {orderDetails})
+      console.log(orderDetails)
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({message:'Internal server error'})
+    }
+  },
   cancellOrders: async (req, res) => {
     try {
       const { orderId, reason } = req.body
+      console.log(req.body)
       userHelpers.cancellUserOrder(orderId, reason).then(() => {
         res.redirect('/view-orders')
       })

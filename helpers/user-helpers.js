@@ -859,51 +859,85 @@ const userHelpers = {
       throw new Error("Failed while changing payment status")
     }
   },
-  getCurrentUserOrders: async (userId) => {
+  getCurrentUserOrders: async (orderId) => {
     try {
-      const orders = await db
-        .get()
-        .collection(collection.ORDER_COLLECTION)
-        .aggregate([
+      const order = await db.get().collection(collection.ORDER_COLLECTION).aggregate(
+        [
           {
-            $match: {
-              userId: ObjectId(userId),
-            },
+               $match: {
+                 _id: ObjectId(orderId)
+               }
+           },
+          {
+            $addFields: {
+              deliveryAddressId: { $toObjectId: "$deliveryAddressId" }
+            }
           },
           {
-            $unwind: "$products",
+            $lookup: {
+              from: collection.ADDRESS_COLLECTION,
+              localField: "deliveryAddressId",
+              foreignField: "_id",
+              as: "deliveryAddress"
+            }
           },
           {
+            $addFields: {
+              deliveryDetails: {
+                $mergeObjects: {
+                  $arrayElemAt: ["$deliveryAddress", 0]
+                }
+              }
+            }
+          },
+          { 
             $project: {
-              item: "$products.item",
-              quantity: "$products.quantity",
-              status: "$status",
-              date: "$date",
-              totalPrice: "$totalPrice",
-            },
+              deliveryAddress: 0
+            }
+          },
+          {
+            $unwind: "$products"
           },
           {
             $lookup: {
               from: collection.PRODUCT_COLLECTION,
-              localField: "item",
+              localField: "products.item",
               foreignField: "_id",
-              as: "product",
-            },
+              as: "products.item"
+            }
           },
           {
-            $project: {
-              item: 1,
-              quantity: 1,
-              status: 1,
-              date: 1,
-              totalPrice: 1,
-              product: { $arrayElemAt: ["$product", 0] },
-            },
+            $addFields: {
+              "products.item": {
+                $arrayElemAt: ["$products.item", 0]
+              }
+            }
           },
-        ])
-        .toArray()
-      console.log(orders)
-      return orders
+          {
+            $group: {
+              _id: "$_id",
+              userId: { $first: "$userId" },
+              name: { $first: "$name" },
+              mobile: { $first: "$mobile" },
+              deliveryAddressId: { $first: "$deliveryAddressId" },
+              paymentMethod: { $first: "$paymentMethod" },
+              totalPrice: { $first: "$totalPrice" },
+              offerTotal: { $first: "$offerTotal" },
+              priceAfterDiscount: { $first: "$priceAfterDiscount" },
+              paymentStatus: { $first: "$paymentStatus" },
+              status: { $first: "$status" },
+              date: { $first: "$date" },
+              deliveryDetails: { $first: "$deliveryDetails" },
+              reasonTocancell: {$first : "$reasonTocancell"},
+              returnReason: {$first: '$returnReason'},
+              returnStatus: {$first : '$returnStatus'},
+              refundStatus: {$first: '$refundStatus'},
+              products: { $push: "$products" }
+            }
+          }
+        ] 
+      ).toArray()
+      return order[0]
     } catch (error) {
       console.log(error)
       throw new Error("Failed to fetch current user orders")
@@ -1735,7 +1769,7 @@ const userHelpers = {
       const orders = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
-        .find({ userId: ObjectId(userId) })
+        .find({ userId: ObjectId(userId) }).toArray()
       return orders
     } catch (errors) {
       console.log(errors)

@@ -125,6 +125,7 @@ const setOrderCancellData = (orderId) => {
 const cancellOrderModal = () => {
   const orderId = document.getElementById('orderId').value
   const reason = document.getElementById('reason').value
+  console.log(orderId,reason)
   cancellOrder(orderId, reason)
 }
 

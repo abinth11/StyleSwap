@@ -55,8 +55,9 @@ router.get('/buyNow', userControler.proceedToCheckOutGet)
 // for verifying the payment
 router.post('/verify-payment', userControler.verifyRazorpayPayment)
 
-// my orders
+//? ORDER ROUTERS
 router.get('/view-orders', sessionChecker.isUserExist, userControler.getUserOrders)
+router.get('/view-order-bundle/:id',sessionChecker.isUserExist, userControler.viewOrderBundle)
 
 // cancell orders
 router.post('/cancell-order', userControler.cancellOrders)

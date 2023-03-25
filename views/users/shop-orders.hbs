@@ -36,6 +36,43 @@
 </div>
 
 
+{{!-- Modal for returning the product --}}
+	<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content bg-danger">
+				<div class="modal-header border-0">
+					<button type="button" class="btn-close text-white" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-center p-4">
+					<i class="fas fa-exclamation-circle fa-4x text-white mb-3"></i>
+					<h5 class="modal-title text-white mb-3" id="returnModalLabel">Return Order</h5>
+					<form id="returnForm">
+						<div class="mb-3">
+							<label for="reason" class="form-label text-white">Reason for return:</label>
+							<select class="form-select" id="reason" name="reason">
+								<option value="" selected disabled>Select a reason</option>
+								<option value="defective item">Defective item</option>
+								<option value="wrong item">Wrong item received</option>
+								<option value="damaged item">Item arrived damaged</option>
+								<option value="others">Other</option>
+							</select>
+						</div>
+						<div class="mb-3" id="otherReasonContainer" style="display:none;">
+							<label for="otherReason" class="form-label text-white">Other reason:</label>
+							<textarea class="form-control" id="otherReason" name="otherReason"></textarea>
+						</div>
+						<button type="button" class="btn btn-sm btn-link text-white"
+							data-bs-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-sm btn-light px-3 py-2 me-2"
+							onclick="returnOrderModal()">Submit</button>
+						<input type="hidden" id="orderId" value="">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 
 
@@ -229,76 +266,97 @@
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
+
+
+
+
                         <table class="table  shopping-summery text-center">
                             <thead>
                                 <tr class="main-heading">
-                                    <th scope="col" colspan="2">Product</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col"></th>
+                                    <th scope="col" class="col-3">OrderId</th>
+                                    <th scope="col" class="col-2">Date</th>
+                                    <th scope="col" class="price col-2">Price</th>
+                                    <th scope="col" class="price col-2">Status</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#each orders}}
+                                {{#each orderGroup}}
                                 <tr>
-                                    <td class="image product-thumbnail"><img src="{{product.images.image1}}" alt="#">
-                                    </td>
-                                    <td class="product-des product-name">
-                                        <h5 class="product-name"><a
-                                                href="shop-product-right.html">{{product.product_title}}
-                                            </a></h5>
-                                        <p class="font-xs">{{product.product_description}}</p>
-                                    </td>
-                                    <td class="price" data-title="Price"><span>${{product.product_price}}</span>
-                                    </td>
+                                    <td class="col-3"><a href="/view-order-bundle/{{_id}}" style="" title="{{products.length}} products">{{_id}}</a></td>
+                                    <td class="col-2"> {{formatDate date}}</td>
+                                    <td class="price col-2" data-title="Price"><span>{{ formatCurrency
+                                            offerTotal}}</span></td>
                                     {{#if (eq status "placed")}}
-                                    <td><span class="badge rounded-pill alert-success">Placed</span></td>
+                                    <td class="price col-2"> <span
+                                            class="badge rounded-pill alert-success">Placed</span></td>
                                     {{else if (eq status "pending")}}
-                                    <td><span class="badge rounded-pill alert-warning">Pending</span></td>
+                                    <td class="price col-2"><span
+                                            class="badge rounded-pill alert-warning">Pending</span></td>
                                     {{else if (eq status "cancelled")}}
-                                    <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
+                                    <td class="price col-2"><span
+                                            class="badge rounded-pill alert-danger">Canceled</span></td>
                                     {{else if (eq status "confirmed")}}
-                                    <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
+                                    <td class="price col-2"><span
+                                            class="badge rounded-pill alert-warning">Confirmed</span></td>
                                     {{else if (eq status "shipped")}}
-                                    <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
+                                    <td class="price col-2"><span
+                                            class="badge rounded-pill alert-primary">Shipped</span></td>
                                     {{else if (eq status "delivery")}}
-                                    <td><span class="badge rounded-pill alert-info">Delivery</span></td>
+                                    <td class="price col-2"><span class="badge rounded-pill alert-info">Delivery</span>
+                                    </td>
                                     {{else if (eq status "completed")}}
-                                    <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
+                                    <td class="price col-2"><span
+                                            class="badge rounded-pill alert-secondary">Completed</span></td>
                                     {{/if}}
-
                                     <td>
-                                        <div>
+                                        <div class="action-icons">
                                             {{#or (eq status "cancelled") (eq status "pending")}}
-                                            <button style="background-color:#FFCA2C;border: none;"
-                                                class="btn btn-sm text-dark">Contact
+                                            <button  style="font-size: 24px;background-color: transparent;color: none;border: none;"
+                                                class=" text-warning text-center" title="Help">
+                                          <i class="las la-info-circle"  style="font-size: 24px;"></i>
                                             </button>
-                                            {{!-- <a href="/track-order/{{_id}}" class="btn btn-danger btn-sm">Track
-                                                --}}
-                                            </a>
                                             {{else}}
                                             {{#if (eq status "completed")}}
-                                            <button id="cancelBtn" style="background-color: red;border:none"
-                                                onclick="setOrderCancellData('{{_id}}')" class="btn btn-danger btn-sm"
-                                                data-bs-toggle="modal" data-bs-target="#cancelModal">Return</button>
-                                                {{else}}
-                                            <button id="cancelBtn" style="background-color: red;border:none"
-                                                onclick="setOrderCancellData('{{_id}}')" class="btn btn-danger btn-sm"
-                                                data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                                            {{#if (not returnStatus)}}
+                                            <button id="returnBtn"
+                                                style="font-size: 24px;background-color: transparent;color: none;border: none;"
+                                                onclick="setReturnData('{{_id}}')"
+                                                class="  text-danger  text-center" title="Return"
+                                                 data-bs-toggle="modal" data-bs-target="#returnModal">
+                                                <i class="las la-truck-loading" style="font-size: 24px;"></i></button>
+                                                {{/if}}
+                                            {{else}}
+                                            <button id="cancelBtn"
+                                                style="font-size: 24px;background-color: transparent;border: none;"
+                                                onclick="setOrderCancellData('{{_id}}')" class="  text-danger"
+                                                	data-bs-toggle="modal" data-bs-target="#cancelModal" title="Cancel">
+                                                <i class="las la-times-circle"></i>
+                                            </button>
+
                                             {{/if}}
-                                            <a href="/track-order/{{_id}}" class="btn btn-danger btn-sm">Track
-                                            </a>
-
+                                            
                                             {{/or}}
+                                            <a href="/track-order/{{_id}}" class=" text-success"
+                                                style="font-size: 24px;background-color: transparent;border: none;" title="Track">
+                                                <i class="las la-map-marker-alt" style="font-size: 24px;"></i>
+                                            </a>
+                                            <a class=" text-primary text-center"
+                                                style="font-size: 24px;background-color: transparent;border: none;" href="/view-order-bundle/{{_id}}"> <i
+                                                    class="las la-eye" style="font-size: 24px;" title="View more"></i></a>
 
+                                            <p><i class="3-dots fa fa-ellipsis-h"></i></p>
                                         </div>
-
+                                    </td>
 
                                     </td>
                                 </tr>
                                 {{/each}}
                             </tbody>
                         </table>
+
+
+
                     </div>
                 </div>
             </div>
@@ -308,3 +366,60 @@
 </main>
 
 {{>foot-user}}
+<style>
+    tr{
+        height: 60px;
+
+    }
+    .action-icons button {
+        display: none;
+    }
+
+    .action-icons a {
+        display: none;
+    }
+
+    tr:hover .action-icons button {
+        display: inline-block;
+    }
+
+    tr:hover .action-icons a {
+        display: inline-block;
+    }
+
+    tr:hover .action-icons p {
+        display: none;
+    }
+
+    tr:hover {
+        height: 65px;
+        background-color: #f4f4f4;
+    }
+</style>
+
+<script>
+
+    function setReturnData(orderId) {
+		document.getElementById('orderId').value = orderId
+	}
+    const returnOrderModal = () => {
+		const orderId = document.getElementById('orderId').value
+		const reason = document.getElementById('reason').value
+		returnProducts(orderId, reason)
+	}
+    const returnProducts = (orderId, reason) => {
+		$.ajax({
+			url: '/return-products',
+			data: {
+				orderId,
+				reason
+			},
+			method: 'post',
+			success: () => {
+				location.href = '/return-prducts'
+			}
+
+		})
+	}
+
+</script>

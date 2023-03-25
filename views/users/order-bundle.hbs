@@ -1,0 +1,298 @@
+{{>head-user}}
+{{>user-header}}
+<div class="screen-overlay"></div>
+<main class="main-wrap">
+    <section class="content-main">
+
+        <div class="card" style="padding-left: 100px;padding-right: 100px;">
+            <header class="card-header" style="margin-top: 2em;">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                        <h4>Order Details</h4>
+                        <span class="">
+                            <i class="material-icons md-calendar_today"></i> <b>{{formatDate orderDetails.date}}</b>
+                        </span> <br>
+                    </div>
+                </div>
+            </header> <!-- card-header end// -->
+            <div class="card-body ">
+                <div class="row mb-50 mt-20 order-info-wrap">
+                    <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-person"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Customer</h6>
+                                <p class="mb-1">
+                                    {{orderDetails.name}} <br> <template class="__cf_email__"
+                                        data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template>
+                                    <br> +91 {{orderDetails.mobile}}
+                                </p>
+                                <a href="#">View profile</a>
+                            </div>
+                        </article>
+                    </div> <!-- col// -->
+                    <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-local_shipping"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Order info</h6>
+                                <p class="mb-1">
+                                    Shipping: Fargo express <br> Pay method: {{orderDetails.paymentMethod}} <br> Status:
+                                    {{orderDetails.status}}
+                                </p>
+                                <a href="#">Download info</a>
+                            </div>
+                        </article>
+                    </div> <!-- col// -->
+                    <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-place"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Deliver to</h6>
+                                <p class="mb-1">
+                                    City: {{orderDetails.deliveryDetails.city}},
+                                    {{address.address.state}}<br>{{orderDetails.deliveryDetails.landmark}},
+                                    {{orderDetails.deliveryDetails.pincode}}, {{orderDetails.deliveryDetails.locality}}
+                                    <br> Po Box 10000
+                                </p>
+                                <a href="#">View profile</a>
+                            </div>
+                        </article>
+                    </div> <!-- col// -->
+                </div> <!-- row // -->
+
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th width="40%">Product</th>
+                                        <th width="20%">Unit Price</th>
+                                        <th width="20%">Quantity</th>
+                                        <th width="20%">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each orderDetails.products}}
+                                    <tr>
+                                        <td>
+                                            <a class="itemside d-flex align-items-center" href="#">
+                                                <div class="left">
+                                                    <img src="{{item.images.image1}}" width="45" height="45"
+                                                        class="img-xs" alt="Item">
+                                                </div>
+                                                <div class="info ms-3 ml-2">{{item.product_title}}</div>
+                                            </a>
+                                        </td>
+
+                                        {{#if offerPrice}}
+                                        <td> {{ formatCurrency offerPrice}}</td>
+                                        {{else}}
+                                        <td> {{formatCurrency item.product_price}}</td>
+                                        {{/if}}
+                                        <td> {{quantity}}</td>
+                                        <td class="text-end">
+                                            {{#multiply offerPrice quantity}}
+                                            {{log this}}
+                                            {{formatCurrency this}}
+                                            {{/multiply}}
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                    <tr>
+                                        <td colspan="4">
+                                            <article class="float-end me-3">
+
+                                                <dl class="dlist me-3 d-flex">
+                                                    <dt style="padding-right: 10px; white-space: nowrap;">Subtotal:</dt>
+                                                    <dd style="white-space: nowrap;">{{formatCurrency
+                                                        orderDetails.offerTotal}}</dd>
+                                                </dl>
+                                                <dl class="dlist d-flex">
+                                                    <dt style="padding-right: 10px; white-space: nowrap;">Shipping cost:
+                                                    </dt>
+                                                    <dd style="white-space: nowrap;">10.00</dd>
+                                                </dl>
+                                                <dl class="dlist d-flex">
+                                                    <dt style="padding-right: 10px; white-space: nowrap;">Grand total:
+                                                    </dt>
+                                                    <dd style="white-space: nowrap;"><b class="h5">{{formatCurrency
+                                                            orderDetails.offerTotal}}</b></dd>
+                                                </dl>
+                                                <dl class="dlist d-flex">
+                                                    <dt class="text-muted"
+                                                        style="padding-right: 10px; white-space: nowrap;">Status:</dt>
+                                                    <dd style="white-space: nowrap;">
+                                                        <span
+                                                            class="badge rounded-pill alert-success text-success">Payment
+                                                            done</span>
+                                                    </dd>
+                                                </dl>
+                                            </article>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> <!-- table-responsive// -->
+                    </div> <!-- col// -->
+                    <div class="col-lg-1"></div>
+                    {{!-- <div class="col-lg-4">
+                        <div class="box shadow-sm bg-light mt-4" style="height: 125px;">
+                            <h6 class="mb-15 text-success">Actions</h6>
+                            <div class="row">
+                                {{#if orderDetails.reasonToCancel}}
+                                {{! If reasonToCancel exists, hide the Cancel and Return buttons }}
+                                <div class="col-md-6 text-center mt-3">
+                                    <a class=" btn-success btn-sm mx-auto" href="/track-order/{{_id}}" data-bs-toggle=""
+                                        data-bs-target="" title="Track">T
+                                        <i class="las la-map-marker-alt" style="font-size: 16px;"></i>
+                                    </a>
+                                </div>
+                                <div class="col-md-6 text-center mt-3">
+                                    <button class=" btn-light btn-sm mx-auto" data-bs-toggle="" data-bs-target=""
+                                        title="Help">H
+                                        <i class="las la-question" style="font-size: 16px;"></i></button>
+                                </div>{{else if orderDetails.returnReason}}
+                                {{! If returnReason exists, hide the Cancel and Return buttons }}
+                                <div class="col-md-6 text-center mt-3">
+                                    <a class=" btn-success btn-sm mx-auto" data-bs-toggle="" data-bs-target=""
+                                        href="/track-order/{{_id}}" title="Track">T
+                                        <i class="las la-map-marker-alt" style="font-size: 16px;"></i>
+                                    </a>
+                                </div>
+                                <div class="col-md-6 text-center mt-3">
+                                    <button class=" btn-info btn-sm mx-auto" data-bs-toggle="" data-bs-target=""
+                                        title="Help">H
+                                        <i class="las la-question" style="font-size: 16px;"></i></button>
+                                    </button>
+                                </div>{{else}}
+                                {{! If neither reasonToCancel nor returnReason exists, show all buttons }}
+                                <div class="col-md-3 text-center mt-3">
+                                    <a class=" btn-success btn-sm mx-auto" data-bs-toggle="" data-bs-target=""
+                                        href="/track-order/{{orderDetails._id}}" title="Track">T
+                                        <i class="las la-map-marker-alt" style="font-size: 16px;"></i>
+                                    </a>
+                                </div>
+
+                                {{#if ( eq status 'completed')}}
+                                <div class="col-md-3 text-center mt-3 ">
+
+                                    <button class=" btn-danger btn-sm mx-auto" data-bs-toggle="" data-bs-target=""
+                                        title="Return">R
+                                        <i class="las la-truck-loading" style="font-size: 16px;"></i></button>
+                                </div>
+                                {{else}}
+                                <div class="col-md-3 text-center mt-3">
+                                    <button class=" btn-danger btn-sm mx-auto" 	data-bs-toggle="modal" data-bs-target="#cancelModal"
+                                        title="Cancell" id="cancelBtn">C
+                                        <i class="las la-times-circle" style="font-size: 16px;"></i>
+                                    </button>
+                                </div>
+
+                                {{/if}}
+                                <div class="col-md-3 text-center mt-3">
+                                    <button class=" btn-info btn-sm  mx-auto" data-bs-toggle="" data-bs-target=""
+                                        title="Help">H
+                                        <i class="las la-question" style="font-size: 16px;"></i></button>
+                                    </button>
+                                </div>{{/if}}
+
+                            </div>
+                        </div> --}}
+                        {{!-- <div class="box shadow-sm bg-light mt-3">
+                            <h6 class="mb-15">Payment info</h6>
+                            <p>
+                                <img src="/assets/imgs/card-brands/2.png" class="border" height="20"> Master Card ****
+                                **** 4768 <br>
+                                Business name: Grand Market LLC <br>
+                                Phone: +1 (800) 555-154-52
+                            </p>
+                        </div> --}}
+                    </div> <!-- col// -->
+                </div>
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+    </section> <!-- content-main end// -->
+
+    
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-danger">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fas fa-exclamation-circle fa-4x text-white mb-3"></i>
+                <h5 class="modal-title text-white mb-3" id="cancelModalLabel">Cancel Order</h5>
+                <form id="cancelForm">
+                    <div class="mb-3">
+                        <label for="reason" class="form-label text-white">Reason for cancellation:</label>
+                        <select class="form-select" id="reason" name="reason">
+                            <option value="" selected disabled>Select a reason</option>
+                            <option value="not available">Item not available</option>
+                            <option value="wrong item">Wrong item ordered</option>
+                            <option value="delayed delivery">Delivery delayed</option>
+                            <option value="others">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="otherReasonContainer" style="display:none;">
+                        <label for="otherReason" class="form-label text-white">Other reason:</label>
+                        <textarea class="form-control" id="otherReason" name="otherReason"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-link text-white" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-sm btn-light px-3 py-2 me-2"
+                        onclick="cancellOrderModal()">Submit</button>
+                    <input type="hidden" id="orderId" value="">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{!-- Modal for returning the product --}}
+	<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content bg-danger">
+				<div class="modal-header border-0">
+					<button type="button" class="btn-close text-white" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-center p-4">
+					<i class="fas fa-exclamation-circle fa-4x text-white mb-3"></i>
+					<h5 class="modal-title text-white mb-3" id="returnModalLabel">Return Order</h5>
+					<form id="returnForm">
+						<div class="mb-3">
+							<label for="reason" class="form-label text-white">Reason for return:</label>
+							<select class="form-select" id="reason" name="reason">
+								<option value="" selected disabled>Select a reason</option>
+								<option value="defective item">Defective item</option>
+								<option value="wrong item">Wrong item received</option>
+								<option value="damaged item">Item arrived damaged</option>
+								<option value="others">Other</option>
+							</select>
+						</div>
+						<div class="mb-3" id="otherReasonContainer" style="display:none;">
+							<label for="otherReason" class="form-label text-white">Other reason:</label>
+							<textarea class="form-control" id="otherReason" name="otherReason"></textarea>
+						</div>
+						<button type="button" class="btn btn-sm btn-link text-white"
+							data-bs-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-sm btn-light px-3 py-2 me-2"
+							onclick="returnOrderModal()">Submit</button>
+						<input type="hidden" id="orderId" value="">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    {{>foot-user}}
+    <!-- Include the Bootstrap Datepicker CSS and JS files -->
