@@ -3,6 +3,7 @@ import twilio from 'twilio'
 import { v4 as uuidv4 } from 'uuid'
 import { validationResult } from 'express-validator'
 import adminHelpers from '../helpers/admin-helpers.js'
+import otherHelpers from '../helpers/otherHelpers.js'
 export const userControler = {
   userHome: async (req, res) => {
     try {
@@ -11,9 +12,10 @@ export const userControler = {
       if (req.session.user) {
         cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
       }
-      // console.log(req.session)
+      console.log(req.session)
       const products = await userHelpers.viewProduct()
       res.render('index', { user: req.session.user, products, cartCount })
+      req.session.guestUser = null
     } catch (error) {
       console.error(error)
       res.status(500).send('Internal Server Error')
@@ -260,9 +262,9 @@ export const userControler = {
   proceedToCheckOutGet: async (req, res) => {
     try {
       const cartItems = await userHelpers.getcartProducts(req.session?.user._id)
-      console.log(cartItems)
+      const couponAppliedTotal = req.session.couponAppliedDetails?.priceAfterDiscount
       const address = await userHelpers.getAllAddresses(req.session.user._id)
-      res.render('users/shop-checkout', { user: req.session.user, cartItems, address })
+      res.render('users/shop-checkout', { user: req.session.user, cartItems, address, couponAppliedTotal})
     } catch (error) {
       console.error(error)
       res.status(500).send('Internal Server Error')
@@ -276,20 +278,22 @@ export const userControler = {
       if (products[0]?.products.length) {
         totalPrice = await userHelpers.findTotalAmout(userId)
       }
-      let couponCode = null
-      if( req.session?.couponCode) {
-       couponCode = req.session.couponCode
+      let couponObj = null
+      if(req.session.couponAppliedDetails){
+        couponObj = req.session.couponAppliedDetails
       }
-      const response = await userHelpers.placeOrders(req.body, products, totalPrice, couponCode)
+      const response = await userHelpers.placeOrders(req.body, products, totalPrice, couponObj)
       const insertedOrderId = response.insertedId
-      const total = totalPrice?.offerTotal
+      let total = totalPrice?.offerTotal
+      if(couponObj?.discountAmount){
+        total = total - couponObj.discountAmount
+      }
       const { payment_method: paymentMethod } = req.body
       if (paymentMethod === 'cod') {
         const codResponse = {
           statusCod:true,
-          coupon: await userHelpers.createCouponForUsers(userId)
+          coupon: await otherHelpers.checkProbabilityForCoupon(.5,userId)
         }
-        console.log(codResponse)
         res.json(codResponse)
       } else if (paymentMethod === 'razorpay') {
         const razorpayResponse = await userHelpers.getRazorpay(insertedOrderId, total)
@@ -315,6 +319,7 @@ export const userControler = {
   orderPlacedLanding: (req, res) => {
     try {
       res.render('users/order-placed-landing')
+      req.session.couponAppliedDetails = null 
     } catch (error) {
       console.log(error)
       res.status(500).json({ message: 'Internal server error' })
@@ -322,10 +327,12 @@ export const userControler = {
   },
   verifyRazorpayPayment: async (req, res) => {
     try {
+      const userId = req.session.user._id
       userHelpers.verifyRazorpayPayments(req.body).then(() => {
-        userHelpers.changePaymentStatus(req.body['payment[receipt]']).then(() => {
+        userHelpers.changePaymentStatus(req.body['payment[receipt]']).then(async() => {
+          const coupon = await otherHelpers.checkProbabilityForCoupon(.5,userId) 
           console.log('Payment is success')
-          res.json({ status: true })
+          res.json({ status: true, coupon})
         })
       }).catch((err) => {
         console.log(err)
@@ -338,10 +345,8 @@ export const userControler = {
   },
   getUserOrders: async (req, res) => {
     try {
-      // const odr = await userHelpers.getCurrentUserOrders(req.session.user._id)
-      const orderGroup = await userHelpers.getOrderedGroup(req.session.user._id)
-      console.log(orderGroup)
-      console.log(orderGroup[0].products)
+      let orderGroup = await userHelpers.getOrderedGroup(req.session.user._id)
+      orderGroup = orderGroup.reverse()
       res.render('users/shop-orders', { orderGroup })
     } catch (error) {
       console.log(error)
@@ -579,7 +584,8 @@ export const userControler = {
       console.log(total)
       console.log(userId)
       const response = await userHelpers.getUserWallet(insertedOrderId, parseInt(total), userId)
-      console.log(response)
+      const coupon = await otherHelpers.checkProbabilityForCoupon(.5,userId)
+      response.coupon = coupon
       res.json(response)
     } catch (error) {
       console.log(error)
@@ -598,12 +604,10 @@ export const userControler = {
   },
   applyCouponCode: async (req, res) => {
     try { 
-      // console.log(req.body)
-      const { couponCode, amount } = req.body
-      req.session.couponCode = couponCode
+      const { couponCode, amount} = req.body
       const response = await userHelpers.redeemCoupon(couponCode, amount)
+      req.session.couponAppliedDetails = response
       res.json(response)
-      // console.log(response)
     } catch (error) { 
       console.log(error)    
     }

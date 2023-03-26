@@ -613,8 +613,11 @@ const userHelpers = {
       throw new Error("Failed to get user cart.")
     }
   },
-  placeOrders: async (orderInfo, products, totalPrice, couponCode) => {
+  placeOrders: async (orderInfo, products, totalPrice, couponObj) => {
     try {
+      if(!couponObj){
+        couponObj = {}
+      }
       const {
         userId,
         payment_method: paymentMethod,
@@ -622,13 +625,23 @@ const userHelpers = {
         mobile,
         deliveryAddress,
       } = orderInfo
-      const { total, offerTotal, discountPrice } = totalPrice
+      const { total, discountPrice } = totalPrice
+      let offerTotal = totalPrice.offerTotal
+      const { coupon, discountAmount} = couponObj
+      if(discountAmount) {
+        offerTotal = offerTotal - discountAmount
+      }
+      console.log(coupon)
+      console.log(coupon?.couponCode)
       const paymentStatus = paymentMethod === "cod" ? "done" : "pending"
       const order = {
         userId: ObjectId(userId),
         name,
         mobile,
-        couponCode,
+        couponDetails:{
+          couponCode: coupon?.couponCode,
+          discountAmount:discountAmount, 
+        },
         deliveryAddressId: deliveryAddress,
         paymentMethod,
         totalPrice: total,
@@ -650,7 +663,7 @@ const userHelpers = {
         .get()
         .collection(collection.COUPONS)
         .updateOne(
-          { couponCode },
+          { couponCode:coupon?.couponCode},
           {
             $set: {
               used: true,
@@ -718,7 +731,6 @@ const userHelpers = {
   verifyRazorpayPayments: (paymentInfo) => {
     try {
       return new Promise((resolve, reject) => {
-        const crypto = require("crypto")
         let hmac = crypto.createHmac("sha256", "gvv1U5AQUyqTxHzkwWIt8M7x")
         hmac.update(
           paymentInfo["order[razorpay_order_id]"] +
@@ -1592,8 +1604,6 @@ const userHelpers = {
       const couponCollection = db.get().collection(collection.COUPONS)
       const coupon = await couponCollection.findOne({ couponCode: couponCode })
       const total = parseInt(amount)
-      console.log(total)
-      console.log(coupon)
       if (!coupon) {
         return { valid: false, message: "Invalid coupon code" }
       }
@@ -1633,7 +1643,14 @@ const userHelpers = {
             { upsert: true }
           )
       }
-      return { valid: true, coupon: coupon, discountAmount }
+      const responseObject = {
+        valid: true,
+        coupon,
+        discountAmount,
+        originalAmount:total,
+        priceAfterDiscount:total-discountAmount
+      }
+      return responseObject
     } catch (error) {
       console.log(error)
     }

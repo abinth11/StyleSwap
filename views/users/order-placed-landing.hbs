@@ -131,74 +131,73 @@
       transform: scale(1);
     }
   }
-  
-/* Customize the tooltip */
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
-}
 
-/* Tooltip text */
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
+  /* Customize the tooltip */
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+  }
 
-  /* Position the tooltip text */
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -60px;
+  /* Tooltip text */
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
 
-  /* Fade in tooltip */
-  opacity: 0;
-  transition: opacity 0.3s;
-}
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
 
-/* Show the tooltip text when you mouse over the tooltip */
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
 
-
-
-
+  /* Show the tooltip text when you mouse over the tooltip */
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
 </style>
 <div class="container">
   <div class="row" style="height: 300px;padding-top: 3em;">
-    <div class="  col-md-6  d-flex align-items-center justify-content-center " style="height: 200px;padding-top: 6em;">
-<div class="col-xl-6 col-lg-7 col-md-7 col-10" >
-  <figure class="card border-1 " style="height: 18em;border-radius:10px ;">
-    <div class="card-header bg-white text-center" style="border-top-left-radius: 10px ;border-top-right-radius: 10px;">
-      <img height="50" src="" class="img-fluid" id="logo" alt="Logo" 
-           style="height: 90px;width: 90px;border-radius: 5px;">
-    </div>
-    <figcaption class="card-body text-center">
-      <h6 class="card-title m-0" id="brand"></h6>
-      <p class="card-text">Get <span id="percentage"></span>% off your entire purchase!</p>
-      <div class="coupon-container">
-        <div class="row ">
-          <div class="col-md-7 d-flex align-items-center">
-            <p style="margin-left: 4em;" id="coupon-code"></p>
+    <div class="col-md-6  d-flex align-items-center justify-content-center "
+      style="height: 200px;padding-top: 6em;">
+      <div  id="coupon-div" class="col-xl-6 col-lg-7 col-md-7 col-10">
+        <figure class="card border-1 " style="height: 18em;border-radius:10px ;">
+          <div class="card-header bg-white text-center"
+            style="border-top-left-radius: 10px ;border-top-right-radius: 10px;">
+            <img height="50" src="" class="img-fluid" id="logo" alt="Logo"
+              style="height: 90px;width: 90px;border-radius: 5px;">
           </div>
-          <div class="col-md-5 d-flex align-items-center">
-            <button class=" text-center copy-btn" id="copy-btn" style="color: #ADB5BD;background-color:transparent;width: 28px;height: 30px;border: none;">
-  <i class="fas fa-lg fa-copy"></i>
-</button>
+          <figcaption class="card-body text-center">
+            <h6 class="card-title m-0" id="brand"></h6>
+            <p class="card-text">Get <span id="percentage"></span>% off your entire purchase!</p>
+            <div class="coupon-container">
+              <div class="row ">
+                <div class="col-md-7 d-flex align-items-center">
+                  <p style="margin-left: 4em;" id="coupon-code"></p>
+                </div>
+                <div class="col-md-5 d-flex align-items-center">
+                  <button class=" text-center copy-btn" id="copy-btn"
+                    style="color: #ADB5BD;background-color:transparent;width: 28px;height: 30px;border: none;">
+                    <i class="fas fa-lg fa-copy"></i>
+                  </button>
 
-          </div>
-        </div>
+                </div>
+              </div>
+            </div>
+          </figcaption>
+        </figure>
       </div>
-    </figcaption>
-  </figure>
-</div>
     </div>
     <div class="col-md-6  alig-items-center justify-content-center d-flex" style="height: 200px;">
       <h3>Download invoice</h3>
@@ -230,25 +229,40 @@
 <script>
   const urlParams = new URLSearchParams(window.location.search)
   const couponDetailsParam = urlParams.get('coupon')
-  const couponDetails = JSON.parse(decodeURIComponent(couponDetailsParam))
-  console.log(couponDetails)
-  const {
-    couponCode,
-    brand,
-    discountPercentage,
-    minimumPurchaseAmount,
-    expirationDate,
-    image,
-    numberOfUser,
-    used
-  } = couponDetails
 
-  $('#coupon-code').text(couponCode)
-  $('#brand').text(brand)
-  $('#percentage').text(discountPercentage)
-  $('#logo').attr('src', image);
+  try {
+    const couponDetails = JSON.parse(decodeURIComponent(couponDetailsParam))
+    console.log(couponDetails)
 
-$(".copy-btn").on("click", function(){
+    if (couponDetails) {
+      $('#coupon-div').show()
+      console.log('coupon here')
+      const {
+        couponCode,
+        brand,
+        discountPercentage,
+        minimumPurchaseAmount,
+        expirationDate,
+        image,
+        numberOfUser,
+        used
+      } = couponDetails
+
+      $('#coupon-code').text(couponCode)
+      $('#brand').text(brand)
+      $('#percentage').text(discountPercentage)
+      $('#logo').attr('src', image);
+    } else {
+      console.log('no coupon')
+      $('#coupon-div').hide()
+    }
+  } catch (error) {
+    console.error(error)
+    $('#coupon-div').hide()
+    $('#coupon-error-message').text('Invalid or missing coupon data. Please try again.')
+  }
+
+  $(".copy-btn").on("click", function () {
     var code = $("#coupon-code").text();
     var dummy = document.createElement('input');
     document.body.appendChild(dummy);
@@ -256,15 +270,15 @@ $(".copy-btn").on("click", function(){
     dummy.select();
     document.execCommand('copy');
     document.body.removeChild(dummy);
-    
+
     // Show tooltip
-    $(this).tooltip({title: "copied!", trigger: "manual"}).tooltip("show");
-    
+    $(this).tooltip({ title: "copied!", trigger: "manual" }).tooltip("show");
+
     // Hide tooltip after 1.5 seconds
-    setTimeout(function(){
-        $(".copy-btn").tooltip("hide");
+    setTimeout(function () {
+      $(".copy-btn").tooltip("hide");
     }, 1500);
-});
+  });
 
 
 

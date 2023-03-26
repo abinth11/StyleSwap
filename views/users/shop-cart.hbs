@@ -659,11 +659,17 @@
                                                         cartItems.offerTotal}}</span>
                                                 </td>
                                             </tr>
+                                             <tr>
+                                                <td class="cart_total_label">Coupon code discount</td>
+                                                <td class="cart_total_amount">
+                                                    <span class="font-lg fw-900 text-brand" id="coupon-discounted-amout">₹0.00</span></td>
+                                            </tr>
                                             <tr>
                                                 <td class="cart_total_label">Saved</td>
                                                 <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand">{{formatCurrency saved
+                                                        class="font-lg fw-900 text-brand" id="saved-amount" >{{formatCurrency saved
                                                         }}</span></td>
+                                                        <input type="hidden" id="saved-amount-input" value="{{saved}}">
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Shipping</td>
@@ -722,8 +728,10 @@ $("#coupon-form").submit((e) => {
   e.preventDefault();
   const applyButton = document.getElementById('apply-btn');
   let amount = document.getElementById('totalPrice').value;
+  const saved = document.getElementById('saved-amount-input').value
   const formData = $('#coupon-form').serializeArray();
   formData.push({ name: "amount", value: amount });  // add the amount value to the serialized form data
+  formData.push({name:'saved', value:saved})
   console.log(formData);
   $.ajax({
     type: "POST",
@@ -734,6 +742,13 @@ $("#coupon-form").submit((e) => {
         const { discountAmount } = response;
         amount = parseInt(amount);
         console.log(response);
+        const couponDiscountSpan = document.getElementById('coupon-discounted-amout')
+        let savedAmountBeforeCoupon = document.getElementById('saved-amount-input').value
+        savedAmountBeforeCoupon = parseFloat(savedAmountBeforeCoupon)
+        console.log(savedAmountBeforeCoupon)
+        const savedAmount = document.getElementById('saved-amount')
+        savedAmount.textContent = savedAmountBeforeCoupon+discountAmount
+        discountAmount ?couponDiscountSpan.textContent = discountAmount :couponDiscountSpan.textContent = 0
         const amountAfterDiscount = amount - discountAmount;
         const discountedAmountSpan = document.getElementById("totalAmout");
         discountedAmountSpan.textContent = amountAfterDiscount;

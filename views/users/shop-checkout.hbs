@@ -272,11 +272,17 @@
                                         </tr>
                                         <tr>
                                             <th>Total</th>
-                                            {{#if cartItems}}
+                                            {{#if couponAppliedTotal}}
+                                            <td colspan="2" class="product-subtotal"><span
+                                                    class="font-xl text-brand fw-900">{{formatCurrency
+                                                    couponAppliedTotal}}</span>
+                                            </td>
+                                            {{else}}
                                             <td colspan="2" class="product-subtotal"><span
                                                     class="font-xl text-brand fw-900">{{ formatCurrency
                                                     cartItems.offerTotal}}</span>
                                             </td>
+
                                             {{/if}}
                                         </tr>
                                     </tbody>
@@ -513,7 +519,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-fill-out btn-block mt-30" id="rzp-button1">Place
+                                    <button class="btn btn-fill-out btn-block mt-30" id="rzp-button1" type="submit">Place
                                         Order</button>
                                 </div>
                             </div>
@@ -582,18 +588,11 @@
             url: '/proceed-to-checkout',
             data: $('#place-order').serialize(),
             success: (response) => {
-                console.log(response)
                 if (response.statusCod) {
-                    const coupon = JSON.stringify(response.coupon)
-                    const couponDetailsParam = encodeURIComponent(coupon)
-
-                    const landingPageUrl = '/order-placed-landing?coupon=' + couponDetailsParam
-
+                    couponResponsePareser(response)
                     $('#successModal').modal('show')
-                    setTimeout(function () {
-                    location.href = landingPageUrl
-                    }, 3000);
                 } else if (response.id) {
+                    console.log(response)
                     getRazorpay(response);
                 } else if (response.paypal) {
                     location.href = response.reUrl
@@ -644,9 +643,7 @@
                                             }
                                         }).then((result) => {
                                             if (result.isConfirmed) {
-                                                setTimeout(function () {
-                                                    location.href = '/order-placed-landing';
-                                                }, 1000);
+                                               couponResponsePareser(response)
                                             }
                                         });
                                     } else {
@@ -733,10 +730,10 @@
             },
             success: (response) => {
                 if (response.status) {
+                    console.log(response)
                     $('#successModal').modal('show')
-                    setTimeout(function () {
-                        location.href = '/order-placed-landing';
-                    }, 3000);
+                    couponResponsePareser(response)
+
                 } else {
                     $('#failureModal').modal('show');
                     setTimeout(() => {
@@ -758,5 +755,15 @@
                 location.reload();
             }
         })
+    }
+
+    const couponResponsePareser = (response) => {
+        const coupon = JSON.stringify(response.coupon)
+        const couponDetailsParam = encodeURIComponent(coupon)
+        const landingPageUrl = '/order-placed-landing?coupon=' + couponDetailsParam
+        setTimeout(function () {
+            location.href = landingPageUrl
+        }, 2000);
+
     }
 </script>
