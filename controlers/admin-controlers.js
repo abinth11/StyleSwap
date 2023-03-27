@@ -1,10 +1,9 @@
 import adminHelpers from '../helpers/admin-helpers.js'
 import { validationResult } from 'express-validator'
-import otherHelpers from '../helpers/otherHelpers.js'
 import generateReport from '../middlewares/salesReport.js'
 import fs from 'fs'
 import { v2 as cloudinary } from 'cloudinary'
-import { uploadImages, uploadSingle } from '../config/cloudinary.js'
+import { uploadSingle } from '../config/cloudinary.js'
 const adminControler = {
   adminLoginGet: (req, res) => {
     const { admin, loginError } = req.session
@@ -36,23 +35,21 @@ const adminControler = {
   adminDashboard: async (req, res) => {
     try {
       const [
-        totoalRevenue,
+        totalRevenue,
         totalOrders,
         totalProducts,
-        monthlyEarnings
-      ] = await Promise.all([
+        monthlyEarnings,
+      ] = await Promise.allSettled([
         adminHelpers.calculateTotalRevenue(),
         adminHelpers.calculateTotalOrders(),
         adminHelpers.calculateTotalNumberOfProducts(),
-        adminHelpers.calculateMonthlyEarnings()
-      ])
-      const formattedRevenue = otherHelpers.currencyFormatter(totoalRevenue)
-      const formattedMonthlyEarnings = otherHelpers.currencyFormatter(monthlyEarnings)
+        adminHelpers.calculateMonthlyEarnings(),
+      ]).then((results) => results.filter((result) => result.status === 'fulfilled').map((result) => result.value)) 
       res.render('admin/index', {
-        totoalRevenue: formattedRevenue,
+        totalRevenue,
         totalOrders,
         totalProducts,
-        monthlyEarnings: formattedMonthlyEarnings
+        monthlyEarnings,
       })
     } catch (error) {
       console.log(error)
@@ -81,11 +78,14 @@ const adminControler = {
       if (errors.length === 0) {
         // Process the uploaded files and respond to the client
         cloudinary.config({
+          // eslint-disable-next-line no-undef
           cloud_name: process.env.CLOUD_NAME,
+          // eslint-disable-next-line no-undef
           api_key: process.env.API_KEY,
+          // eslint-disable-next-line no-undef
           api_secret: process.env.API_SECRET
         })
-        async function uploadImages(images) {
+        const uploadImages = async (images)=> {
           const urls = []
           for (let i = 0; i < images.length; i++) {
             const result = await cloudinary.uploader.upload(images[i].path)
@@ -397,7 +397,7 @@ const adminControler = {
   deleteSubCategory: async (req, res) => {
     try {
       const response = await adminHelpers.deleteSubCategory(req.params.id)
-      res.status(200).json({ message: response });
+      res.status(200).json({ message: response })
     } catch (error) {
       console.log(error)
       res.status(500).send('Internal server error')
@@ -433,6 +433,47 @@ const adminControler = {
     try {
       const coupons = await adminHelpers.getAllCoupons()
       res.render('admin/view-coupon', { coupons })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  getChartData: async (req, res)=> {
+    try {
+      const mostSellingProducts = await adminHelpers.mostSellingProducts()
+      const chartData = mostSellingProducts.slice(0,5).map((product) => {
+        return {
+          name: product.product_details[0].product_title,
+          sold: product.sold,
+        }
+      })
+      res.json({chartData})
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  getData: async (req, res) => {
+    try {
+      const [
+        sales,
+        products,
+        visitors,
+        orderStat,
+        paymentStat
+      ] = await Promise.allSettled([
+        adminHelpers.calculateMonthlySalesForGraph(),
+        adminHelpers.NumberOfProductsAddedInEveryMonth(),
+        adminHelpers.findNumberOfMonthlyVisitors(),
+        adminHelpers.orderStatitics(),
+        adminHelpers.paymentStat()
+      ]).then((results) => results.filter((result) => result.status === 'fulfilled').map((result) => result.value))
+       const response = {
+        sales ,
+        products,
+        visitors,
+        orderStat,
+        paymentStat
+       }
+       res.json(response)
     } catch (error) {
       console.log(error)
     }

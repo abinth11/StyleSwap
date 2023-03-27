@@ -10,8 +10,9 @@
                 <p>Coupon management</p>
             </div>
             <div>
-                <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Add New
-                    Brand</a>
+                <a href="/admin/dashboard/add-coupon" class="btn btn-primary"><i
+                        class="text-muted material-icons md-post_add"></i>Add New
+                    Coupon</a>
             </div>
         </div>
         <div class="card mb-4">
@@ -41,18 +42,20 @@
             <div class="card-body">
                 <div class="row gx-3">
                     {{#each coupons}}
-                      <div class="col-xl-3 col-lg-4 col-md-5 col-7">
-                        <figure class="card border-1" style="height: 28em;">
+                    <div class="col-xl-3 col-lg-4 col-md-5 col-7">
+                        <figure class="card border-1">
                             <div class="card-header bg-white text-center">
-                                <img height="50" src="{{image}}" class="img-fluid" alt="Logo">
+                                <img height="50" src="{{image}}" class="img-fluid" alt="Logo"
+                                    style="width: 80px;height: 90px;">
                             </div>
                             <figcaption class="card-body text-center">
-                                <h6 class="card-title m-0">Cardinal</h6>
+                                <h6 class="card-title m-0">{{title}}</h6>
                                 <p class="card-text">Get {{percentage}}% off your entire purchase!</p>
                                 <div class="coupon-container">
-  <div class="coupon-code">CODE123</div>
-  <button class="btn btn-primary copy-btn"><i class="fas fa-copy"></i></button>
-</div>
+                                    <p>Brand : {{brand}}</p>
+                                    <div class="coupon-code">Minimum Purchase amount: {{price_limit}}</div>
+                                    <p>Category {{category}}</p>
+                                </div>
 
 
                             </figcaption>
@@ -60,34 +63,7 @@
                     </div>
                     {{/each}}
 
-                    <div class="col-xl-3 col-lg-4 col-md-5 col-7">
-                        <figure class="card border-1" style="height: 20em;">
-                            <div class="card-header bg-white text-center">
-                                <img height="76" src="/assets/imgs/brands/brand-1.jpg" class="img-fluid" alt="Logo">
-                            </div>
-                            <figcaption class="card-body text-center">
-                                <h6 class="card-title m-0">Cardinal</h6>
-                                <p class="card-text">Get 20% off your entire purchase!</p>
-                                <div class="coupon-container">
-  <div class="coupon-code">CODE123</div>
-  <button class="btn btn-primary copy-btn"><i class="fas fa-copy"></i></button>
-</div>
 
-                            </figcaption>
-                        </figure>
-                    </div>
-
-                    <div class="col-xl-3 col-lg-4 col-md-5 col-7">
-                        <figure class="card border-1" style="height: 17em;">
-                            <div class="card-header bg-white text-center">
-                                <img height="76" src="/assets/imgs/brands/brand-1.jpg" class="img-fluid" alt="Logo">
-                            </div>
-                            <figcaption class="card-body text-center">
-                                <h6 class="card-title m-0">Cardinal</h6>
-                                <a href="#"> 398 items </a>
-                            </figcaption>
-                        </figure>
-                    </div> <!-- col.// -->
                     <div class="col-xl-2 col-lg-3 col-md-4 col-6">
                         <figure class="card border-1">
                             <div class="card-header bg-white text-center">
@@ -284,18 +260,18 @@
 
     <script>
         var clipboard = new ClipboardJS('.copy-btn', {
-  text: function() {
-    return document.querySelector('.coupon-code').textContent;
-  }
-});
+            text: function () {
+                return document.querySelector('.coupon-code').textContent;
+            }
+        });
 
-clipboard.on('success', function(e) {
-  alert('Coupon code copied to clipboard!');
-});
+        clipboard.on('success', function (e) {
+            alert('Coupon code copied to clipboard!');
+        });
 
-clipboard.on('error', function(e) {
-  alert('Failed to copy coupon code!');
-});
+        clipboard.on('error', function (e) {
+            alert('Failed to copy coupon code!');
+        });
 
 
     </script>

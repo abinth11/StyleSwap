@@ -11,6 +11,7 @@ const collection = {
   GUEST_USERS: 'guestusers',
   SUB_CATEGORIES: 'subcategories',
   COUPON_TEMPLATE: 'coupontemplate',
-  COUPONS:'coupons'
+  COUPONS:'coupons',
+  VISITORS:'visitors'
 }
 export default collection

@@ -3,9 +3,9 @@ const router = express.Router()
 import { userControler } from '../controlers/user-controlers.js'
 import userValidation from '../validation/userValidation.js'
 import sessionChecker from '../middlewares/session-checks.js'
-
+import { trackVisitors } from '../middlewares/trackusers.js'
 /* GET home page. */
-router.get('/', userControler.userHome)
+router.get('/',trackVisitors, userControler.userHome)
 
 // view more for each product in home page
 router.get('/shop-product-right/:id', userControler.shopProductRight)

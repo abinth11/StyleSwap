@@ -23,7 +23,7 @@
                                 class="text-primary material-icons md-monetization_on"></i></span>
                         <div class="text">
                             <h6 class="mb-1 card-title">Revenue</h6>
-                            <span>${{totoalRevenue}}</span>
+                            <span>{{formatCurrency totalRevenue}}</span>
                             <span class="text-sm">
                                 Shipping fees are not included
                             </span>
@@ -65,7 +65,8 @@
                         <span class="icon icon-sm rounded-circle bg-info-light"><i
                                 class="text-info material-icons md-shopping_basket"></i></span>
                         <div class="text">
-                            <h6 class="mb-1 card-title">Monthly Earning</h6> <span>${{monthlyEarnings}}</span>
+                            <h6 class="mb-1 card-title">Monthly Earning</h6> <span>{{ formatCurrency
+                                monthlyEarnings}}</span>
                             <span class="text-sm">
                                 Based in your local time.
                             </span>
@@ -80,6 +81,12 @@
                     <article class="card-body">
                         <h5 class="card-title">Sale statistics</h5>
                         <canvas id="myChart" height="120px"></canvas>
+                    </article>
+                </div>
+                <div class="card mb-4">
+                    <article class="card-body">
+                        <h5 class="card-title">Order statistics</h5>
+                        <canvas id="orderStatitics" height="120px"></canvas>
                     </article>
                 </div>
                 <div class="row">
@@ -228,8 +235,14 @@
             <div class="col-xl-4 col-lg-12">
                 <div class="card mb-4">
                     <article class="card-body">
-                        <h5 class="card-title">Revenue Base on Area</h5>
-                        <canvas id="myChart2" height="217"></canvas>
+                        <h5 class="card-title">Most selling products</h5>
+                        <canvas id="most-selling" height="217"></canvas>
+                    </article>
+                </div>
+                <div class="card mb-4">
+                    <article class="card-body">
+                        <h5 class="card-title">Payment Statitics</h5>
+                        <canvas id="payment-statitics" height="217"></canvas>
                     </article>
                 </div>
                 <div class="card mb-4">
@@ -600,8 +613,8 @@
                             showCancelButton: true,
                             confirmButtonText: 'Try again',
                             cancelButtonText: 'ok'
-                        }).then((result)=>{
-                            if(result.isConfirmed){
+                        }).then((result) => {
+                            if (result.isConfirmed) {
                                 location.href = '/admin/create-report'
                             }
                         })

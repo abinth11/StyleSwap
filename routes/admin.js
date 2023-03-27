@@ -137,4 +137,9 @@ router.post('/create-report', adminControler.makeReport)
 // Logout admin 
 router.get('/logoutAdmin', adminControler.logoutAdmin)
 
+//? Routes for fetching the data for graphs and charts
+//! error warning (promise errors)
+router.get('/data-for-most-selling-product', sessionCheck.isAdminExist, adminControler.getChartData)
+router.get('/data-for-other-graphs-and-chart', sessionCheck.isAdminExist, adminControler.getData)
+
 export default router
