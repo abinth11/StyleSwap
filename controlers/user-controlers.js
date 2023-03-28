@@ -292,7 +292,7 @@ export const userControler = {
       if (paymentMethod === 'cod') {
         const codResponse = {
           statusCod:true,
-          coupon: await otherHelpers.checkProbabilityForCoupon(.5,userId)
+          coupon: await otherHelpers.checkProbabilityForCoupon(0,userId)
         }
         res.json(codResponse)
       } else if (paymentMethod === 'razorpay') {

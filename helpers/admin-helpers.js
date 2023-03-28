@@ -2,6 +2,7 @@ import db from "../config/connection.js"
 import collection from "../config/collections.js"
 import { ObjectId as objectId } from "mongodb"
 import moment from "moment"
+import { TodayInstance } from "twilio/lib/rest/api/v2010/account/usage/record/today.js"
 const adminHelpers = {
   adminLogin: async (adminInfo) => {
     try {
@@ -634,6 +635,42 @@ const adminHelpers = {
       throw new Error(error)
     }
   },
+  calculateTotalRevenueByDate: async (from, to) => {
+    try {
+      var isoFromDate = new Date(from).toISOString()
+      var isoToDate = new Date(to).toISOString()
+      const revenue = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              status: "completed",
+              returnReason: { $exists: false },
+              date: {
+                $gte: new Date(isoFromDate),
+                $lt: new Date(isoToDate)
+              }
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              totalRevenue: { $sum: "$offerTotal" },
+            },
+          },
+        ])
+        .toArray()
+      if (revenue.length) {
+        return revenue[0]?.totalRevenue
+      } else {
+        return 0
+      }
+    } catch (error) {
+      console.log(error)
+      throw new Error(error)
+    }
+  },
   calculateTotalOrders: async () => {
     try {
       const orders = await db
@@ -641,6 +678,29 @@ const adminHelpers = {
         .collection(collection.ORDER_COLLECTION)
         .countDocuments()
       return orders
+    } catch (error) {
+      console.log(error)
+      throw new Error(error)
+    }
+  },
+  calculateTotalOrdersByDate: async (from, to) => {
+    try {
+      const fromDate = new Date(from)
+      const toDate = new Date(to)
+      const orders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+        {
+          $match: {
+            date: {
+              $gte: fromDate,
+              $lt: toDate
+            }
+          },
+        },
+        {
+          $count: "totalOrders",
+        },
+      ]).toArray()
+      return orders[0] ? orders[0].totalOrders : 0
     } catch (error) {
       console.log(error)
       throw new Error(error)
@@ -658,6 +718,19 @@ const adminHelpers = {
       throw new Error(error)
     }
   },
+  calculateTotalNumberOfProductsByDate: async (from, to) => {
+    try {
+      const products = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .countDocuments({ addedAt: {$gte: new Date(from), $lte: new Date(to)}})
+      return products
+    } catch (error) {
+      console.log(error)
+      throw new Error(error)
+    }
+  }
+,
   calculateMonthlyEarnings: async () => {
     try {
       const monthlyIncome = await db
@@ -699,6 +772,38 @@ const adminHelpers = {
       console.log(error)
       throw new Error(error)
     }
+  },
+  calculateAverageOrderValue: async() => {
+    try {
+      const aov = await db.get().collection(collection.ORDER_COLLECTION)
+      .aggregate([
+        {
+          $match: {
+            status: "completed",
+            returnReason: { $exists: false },
+            reasonToCancel: { $exists: false }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalOrders: { $sum: 1 },
+            totalAmount: { $sum: "$offerTotal" }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            AOV: { $divide: [ "$totalAmount", "$totalOrders" ] }
+          }
+        }
+      ])
+      .toArray()
+      return aov[0].AOV
+    } catch (error) {
+      console.log(error)
+    }
+
   },
   refundAmont: async (refundInfo) => {
     try {
@@ -961,93 +1066,99 @@ const adminHelpers = {
                   $cond: [
                     {
                       $and: [
-                        { $eq: ['$status', 'placed'] },
-                        { $not: [{ $ifNull: ['$reasonTocancell', false] }] },
-                        { $not: [{ $ifNull: ['$returnReason', false] }] }
-                      ]
+                        { $eq: ["$status", "placed"] },
+                        { $not: [{ $ifNull: ["$reasonTocancell", false] }] },
+                        { $not: [{ $ifNull: ["$returnReason", false] }] },
+                      ],
                     },
                     1,
-                    0
-                  ]
-                }
+                    0,
+                  ],
+                },
               },
               confirmedCount: {
                 $sum: {
                   $cond: [
                     {
                       $and: [
-                        { $eq: ['$status', 'confirmed'] },
-                        { $not: [{ $ifNull: ['$reasonTocancell', false] }] },
-                        { $not: [{ $ifNull: ['$returnReason', false] }] }
-                      ]
+                        { $eq: ["$status", "confirmed"] },
+                        { $not: [{ $ifNull: ["$reasonTocancell", false] }] },
+                        { $not: [{ $ifNull: ["$returnReason", false] }] },
+                      ],
                     },
                     1,
-                    0
-                  ]
-                }
+                    0,
+                  ],
+                },
               },
               shippedCount: {
                 $sum: {
                   $cond: [
                     {
                       $and: [
-                        { $eq: ['$status', 'shipped'] },
-                        { $not: [{ $ifNull: ['$reasonTocancell', false] }] },
-                        { $not: [{ $ifNull: ['$returnReason', false] }] }
-                      ]
+                        { $eq: ["$status", "shipped"] },
+                        { $not: [{ $ifNull: ["$reasonTocancell", false] }] },
+                        { $not: [{ $ifNull: ["$returnReason", false] }] },
+                      ],
                     },
-                 1,
-                    0
-                  ]
-                }
+                    1,
+                    0,
+                  ],
+                },
               },
               outForDeliveryCount: {
                 $sum: {
                   $cond: [
                     {
                       $and: [
-                        { $eq: ['$status', 'delivery'] },
-                        { $not: [{ $ifNull: ['$reasonTocancell', false] }] },
-                        { $not: [{ $ifNull: ['$returnReason', false] }] }
-                      ]
+                        { $eq: ["$status", "delivery"] },
+                        { $not: [{ $ifNull: ["$reasonTocancell", false] }] },
+                        { $not: [{ $ifNull: ["$returnReason", false] }] },
+                      ],
                     },
                     1,
-                    0
-                  ]
-                }
+                    0,
+                  ],
+                },
               },
               completedCount: {
                 $sum: {
                   $cond: [
                     {
                       $and: [
-                        { $eq: ['$status', 'completed'] },
-                        { $not: [{ $ifNull: ['$reasonTocancell', false] }] },
-                        { $not: [{ $ifNull: ['$returnReason', false] }] }
-                      ]
+                        { $eq: ["$status", "completed"] },
+                        { $not: [{ $ifNull: ["$reasonTocancell", false] }] },
+                        { $not: [{ $ifNull: ["$returnReason", false] }] },
+                      ],
                     },
                     1,
-                    0
-                  ]
-                }
+                    0,
+                  ],
+                },
               },
-              reasonToCancelCount: { $sum: { $cond: [{ $ifNull: ['$reasonTocancell', false] }, 1, 0] } },
-              returnReasonCount: { $sum: { $cond: [{ $ifNull: ['$returnReason', false] }, 1, 0] } },  
-            }
+              reasonToCancelCount: {
+                $sum: {
+                  $cond: [{ $ifNull: ["$reasonTocancell", false] }, 1, 0],
+                },
+              },
+              returnReasonCount: {
+                $sum: { $cond: [{ $ifNull: ["$returnReason", false] }, 1, 0] },
+              },
+            },
           },
           {
             $project: {
               _id: 0,
-              placedCount:1,
-              confirmedCount:1,
-              shippedCount:1,
-              outForDeliveryCount:1,
+              placedCount: 1,
+              confirmedCount: 1,
+              shippedCount: 1,
+              outForDeliveryCount: 1,
               completedCount: 1,
               reasonToCancelCount: 1,
-              returnReasonCount: 1,      
-            }
-          }
-        ])     
+              returnReasonCount: 1,
+            },
+          },
+        ])
         .toArray()
       const valuesArray = Object.values(orderStat[0])
       return valuesArray
@@ -1055,59 +1166,79 @@ const adminHelpers = {
       console.log(error)
     }
   },
-  paymentStat: async () => { 
+  paymentStat: async () => {
     try {
-      const payment = await db.get().collection(collection.ORDER_COLLECTION)
-      .aggregate([
-        {
-          $group: {
-            _id: null,
-            codCount: { $sum: { $cond: [{ $eq: ['$paymentMethod', 'cod'] }, 1, 0] } },
-            paypalCount: { $sum: { $cond: [{ $eq: ['$paymentMethod', 'paypal'] }, 1, 0] } },
-            walletCount: { $sum: { $cond: [{ $eq: ['$paymentMethod', 'wallet'] }, 1, 0] } },
-            razorpayCount: { $sum: { $cond: [{ $eq: ['$paymentMethod', 'razorpay'] }, 1, 0] } }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            codCount: 1,
-            paypalCount: 1,
-            walletCount: 1,
-            razorpayCount: 1
-          }
-        }
-      ]).toArray() 
+      const payment = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: null,
+              codCount: {
+                $sum: { $cond: [{ $eq: ["$paymentMethod", "cod"] }, 1, 0] },
+              },
+              paypalCount: {
+                $sum: { $cond: [{ $eq: ["$paymentMethod", "paypal"] }, 1, 0] },
+              },
+              walletCount: {
+                $sum: { $cond: [{ $eq: ["$paymentMethod", "wallet"] }, 1, 0] },
+              },
+              razorpayCount: {
+                $sum: {
+                  $cond: [{ $eq: ["$paymentMethod", "razorpay"] }, 1, 0],
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              codCount: 1,
+              paypalCount: 1,
+              walletCount: 1,
+              razorpayCount: 1,
+            },
+          },
+        ])
+        .toArray()
       const valuesArray = Object.values(payment[0])
-      valuesArray[1]=49   
+      valuesArray[1] = 49
       return valuesArray
     } catch (error) {
       console.log(error)
     }
   },
-  mostSellingProducts:async () => {
+  mostSellingProducts: async () => {
     try {
-      const mostSelling= await db.get().collection(collection.ORDER_COLLECTION)
-      .aggregate([
-        { $unwind: "$products" },
-        { $group: { _id: "$products.item", sold: { $sum: "$products.quantity" } } },
-        { $sort: { sold: -1 } },
-        { $limit: 5 },
-        {
-          $lookup: {
-            from: "products",
-            localField: "_id",
-            foreignField: "_id",
-            as: "product_details"
-          }
-        }
-      ])
-      .toArray()
+      const mostSelling = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          { $unwind: "$products" },
+          {
+            $group: {
+              _id: "$products.item",
+              sold: { $sum: "$products.quantity" },
+            },
+          },
+          { $sort: { sold: -1 } },
+          { $limit: 5 },
+          {
+            $lookup: {
+              from: "products",
+              localField: "_id",
+              foreignField: "_id",
+              as: "product_details",
+            },
+          },
+        ])
+        .toArray()
       return mostSelling
     } catch (error) {
       console.log(error)
     }
-  }
+  },
   // searchUsers:(name)=>{
   //     return new Promise((resolve,reject)=>{
   //         db.get().collection(collection.USER_COLLECTION).findOne({name:name}).then((data)=>{

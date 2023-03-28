@@ -60,7 +60,7 @@ app.use('/admin', adminRouter)
 connect()
   .then(() => {
     console.log('Successfully connected to the database')
-    userHelpers.createIndexForAlgolia()
+    // userHelpers.createIndexForAlgolia()
   })
   .catch((err) => {
     console.log('Connection failed', err)

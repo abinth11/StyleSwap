@@ -10,9 +10,9 @@
                 <p>Whole data about your business here</p>
             </div>
             <div>
-                <button id="generate-report-button" class="btn btn-primary"><i
+                <a  class="btn btn-primary" href="/admin/dashboard/create-report"><i
                         class="text-muted material-icons md-post_add"></i>Create
-                    report</button>
+                    report</a>
             </div>
         </div>
         <div class="row">
@@ -503,129 +503,4 @@
     </section> <!-- content-main end// -->
     {{>admin-footer}}
 
-    <script>
-
-        // Get a reference to the button that triggers the sales report generation
-        const generateReportButton = document.getElementById('generate-report-button');
-
-        // Add a click event listener to the button
-        generateReportButton.addEventListener('click', () => {
-            // Show a SweetAlert popup with options for PDF and Excel
-            Swal.fire({
-                title: 'Select a file format',
-                text: 'Please choose the format in which you want to generate the sales report',
-                showCancelButton: true,
-                confirmButtonText: '<i class="fas fa-file-pdf"></i> PDF',
-                cancelButtonText: '<i class="fas fa-file-excel"></i> Excel',
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                reverseButtons: true,
-                focusConfirm: true,
-                focusCancel: false,
-                icon: 'question',
-                customClass: {
-                    title: 'popup-title',
-                    confirmButton: 'popup-confirm-button',
-                    cancelButton: 'popup-cancel-button'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // User selected PDF
-                    generateSalesReport('pdf')
-                } else {
-                    // User selected Excel
-                    generateSalesReport('excel')
-                }
-            });
-        });
-        const swalClasses = {
-            container: 'my-container-class',
-            title: 'my-title-class',
-            content: 'my-content-class',
-            confirmButton: 'my-confirm-button-class',
-            cancelButton: 'my-cancel-button-class'
-        }
-        // Define your custom CSS for the Swal dialog box
-        const swalCustomCss = {
-            container: 'my-container-class',
-            title: 'my-title-class',
-            content: 'my-content-class',
-            confirmButton: 'my-confirm-button-class',
-            cancelButton: 'my-cancel-button-class'
-        }
-
-
-
-        const generateSalesReport = (format) => {
-            console.log(format)
-            $.ajax({
-                url: '/admin/create-report',
-                data: { format },
-                method: 'post',
-                xhrFields: {
-                    responseType: 'blob' // set the response type to blob
-                },
-                success: function (response, status, xhr) {
-                    const contentType = xhr.getResponseHeader('Content-Type')
-                    const fileExtension = contentType === 'application/pdf' ? 'pdf' : 'xlsx'
-                    const fileName = `sales-report.${fileExtension}`
-                    const blob = new Blob([response], { type: contentType })
-
-                    if (contentType === 'application/pdf') {
-                        // Confirm if user wants to open PDF file in new window
-                        Swal.fire({
-                            title: 'Do you want to download the PDF file?',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonText: '<i class="fas fa-download"></i> Download',
-                            cancelButtonText: 'Cancel',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                const fileURL = URL.createObjectURL(blob)
-                                const a = document.createElement('a')
-                                a.href = fileURL
-                                a.download = 'file.pdf'
-                                document.body.appendChild(a)
-                                a.click()
-                                document.body.removeChild(a)
-                            }
-                        })
-                    } else if (contentType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                        // Confirm if user wants to download Excel file
-                        Swal.fire({
-                            title: 'Do you want to download the Excel file?',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonText: '<i class="fas fa-download"></i> Download',
-                            cancelButtonText: 'Cancel'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                const link = document.createElement('a')
-                                link.href = window.URL.createObjectURL(blob)
-                                link.download = fileName
-                                link.click()
-                            }
-                        })
-                    } else {
-                        Swal.fire({
-                            title: 'Download failed please try again later..!',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonText: 'Try again',
-                            cancelButtonText: 'ok'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.href = '/admin/create-report'
-                            }
-                        })
-                        // Unsupported file type
-                        console.error('Unsupported file type:', contentType)
-                    }
-                }, error: function (xhr, status, error) {
-                    console.log('Error generating report:', error)
-                }
-            })
-        }
-
-
-    </script>
+   

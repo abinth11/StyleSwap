@@ -35,6 +35,7 @@
     "node-cron": "^3.0.2",
     "paypal-rest-sdk": "^1.8.1",
     "pdfkit": "^0.13.0",
+    "pdfkit-table": "^0.1.99",
     "pdfmake": "^0.2.7",
     "razorpay": "^2.8.6",
     "twilio": "^3.84.0",

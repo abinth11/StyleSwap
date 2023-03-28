@@ -51,7 +51,7 @@ router.route('/proceed-to-checkout')
 router.get('/order-placed-landing', sessionChecker.isUserExist, userControler.orderPlacedLanding)
 // buy now for each products
 router.get('/buyNow', userControler.proceedToCheckOutGet)
-
+  
 // for verifying the payment
 router.post('/verify-payment', userControler.verifyRazorpayPayment)
 
