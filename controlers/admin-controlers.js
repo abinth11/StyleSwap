@@ -252,9 +252,7 @@ const adminControler = {
   },
   viewAllOrders: async (req, res) => {
     const orders = await adminHelpers.getAllUserOrders()
-    console.log(orders)
-    const odr = adminHelpers.ISO_to_Normal_Date(orders)
-    res.render("admin/page-orders-1", { odr })
+    res.render("admin/page-orders-1", { orders })
   },
   viewOrderDetails: async (req, res) => {
     const orderDetails = await adminHelpers.getCurrentProducts(req.params.id)
@@ -285,6 +283,7 @@ const adminControler = {
   },
   addOffersPost: (req, res) => {
     adminHelpers.addOffer(req.body).then((response) => {
+      console.log(response)
       res.json(response)
     })
   },
@@ -295,6 +294,7 @@ const adminControler = {
     res.render("admin/offer-products", { prodInfo: req.query })
   },
   addOffersProductsPost: (req, res) => {
+    console.log(req.body)
     adminHelpers.addOfferToProducts(req.body).then(() => {
       res.redirect(
         "/admin/dashboard/view-product-list/add-offers-for-products"
@@ -569,7 +569,7 @@ const adminControler = {
   },
   getData: async (req, res) => {
     try {
-      const [sales, products, visitors, orderStat, paymentStat] =
+      const [sales,products, visitors, orderStat, paymentStat] =
         await Promise.allSettled([
           adminHelpers.calculateMonthlySalesForGraph(),
           adminHelpers.NumberOfProductsAddedInEveryMonth(),
@@ -591,6 +591,16 @@ const adminControler = {
       res.json(response)
     } catch (error) {
       console.log(error)
+    }
+  },
+  getUserReviews: async (req,res) => {
+    try {
+      const userReviews = await adminHelpers.getUserReviews()
+      const reviews = userReviews?.reverse()
+      res.render('admin/product-review', {reviews})
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({Message:"Internal Server Error"})
     }
   },
   logoutAdmin: (req, res) => {

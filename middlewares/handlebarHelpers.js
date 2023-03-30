@@ -4,6 +4,11 @@ export const helpers = {
     const options = { month: "long", day: "numeric", year: "numeric" }
     return date.toLocaleDateString("en-US", options)
   },
+  formatDateTwo: function(dateString) {
+    const date = new Date(dateString)
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }
+    return date.toLocaleString('en-US', options)
+  },
   inc: (value) => {
     return parseInt(value) + 1
   },
@@ -21,7 +26,8 @@ export const helpers = {
     return !value
   },
   multiply: (a, b) => {
-    return a * b
+    const price = convertRupeeStringToNumber(a)
+    return price * b
   },
   subtract: (a, b) => {
     return a - b
@@ -49,4 +55,12 @@ export const helpers = {
     return formatter.format(value)
   },
   // add more helper functions here...
+}
+
+function convertRupeeStringToNumber(rupeeString) {
+  // Convert the string to a String object and remove the rupee symbol and any commas
+  const numericString = String(rupeeString).replace(/₹|,/g, '')
+
+  // Convert the string to a number and return it
+  return parseFloat(numericString)
 }

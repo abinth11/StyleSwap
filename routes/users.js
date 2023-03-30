@@ -109,12 +109,15 @@ router.post('/apply-coupon-code',sessionChecker.isUserExist, userControler.apply
 
 //for the serch feature
 router.get('/search-products', userControler.searchProducts)
+router.get('/index-products', userControler.indexProducts)
 
 //purchase based on category
 router.get('/mens-category', userControler.mensCategory)
 router.get('/womens-category', userControler.womensCategory)
 router.get('/kids-category', userControler.kidsCategory)
 
+//Routes for Ratings
+router.post('/shop-product-right/add-rating-for-products',userControler.addRatingForProducts)
 
 // User logout
 router.get('/logoutUser', userControler.userLogout)

@@ -12,6 +12,7 @@
     "www": "bin/www.js"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.6.0",
     "algoliasearch": "^4.16.0",
     "babel-eslint": "^10.1.0",
     "bcrypt": "^5.1.0",

@@ -203,6 +203,13 @@ router.get(
   adminControler.getData
 )
 
+//? routers for showing the reviews
+router.get(
+  "/dashboard/user-reviews",
+  sessionCheck.isAdminExist,
+  adminControler.getUserReviews
+)
+
 //? ADMIN LOGOUT
 //Logout admin
 router.get("/logoutAdmin", adminControler.logoutAdmin)

@@ -483,11 +483,12 @@
                                         <div class="mb-25">
                                             <h4>Payment</h4>
                                         </div>
+                                        <input type="hidden" value="" id="coupon-code-order" name="coupon-code">
+
                                         <div class="payment_option">
                                             <div class="custome-radio">
                                                 <input class="form-check-input" type="radio" name="payment_method"
                                                     id="exampleRadios3" value="paypal">
-                                                <input type="hidden" value="" id="coupon-code-order" name="coupon-code">
                                                 <label class="form-check-label" for="exampleRadios3"
                                                     data-bs-toggle="collapse" data-target="#bankTranfer"
                                                     aria-controls="bankTranfer">Paypal</label>
@@ -503,9 +504,9 @@
                                                 <input class="form-check-input" type="radio" name="payment_method"
                                                     id="exampleRadios5" value="razorpay">
                                                 <label class="form-check-label" for="exampleRadios5"
-                                                    data-bs-toggle="collapse" data-target="#paypal"
-                                                    aria-controls="paypal">Razorpay</label>
-                                                <div class="form-group collapse in" id="paypal">
+                                                    data-bs-toggle="collapse" data-target="#razorpay"
+                                                    aria-controls="razorpay">Razorpay</label>
+                                                <div class="form-group collapse in" id="razorpay">
                                                 </div>
                                             </div>
                                             <div class="custome-radio">
@@ -514,7 +515,7 @@
                                                 <label class="form-check-label" for="exampleRadios2"
                                                     data-bs-toggle="collapse" data-target="#wallet"
                                                     aria-controls="wallet">Wallet</label>
-                                                <div class="form-group collapse in" id="paypal">
+                                                <div class="form-group collapse in" id="wallet">
                                                 </div>
                                             </div>
                                         </div>
@@ -687,7 +688,6 @@
             "currency": "INR",
             "name": "Acme Corp", //your business name
             "description": "Test Transaction",
-            "image": "https://example.com/your_logo",
             "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
             "handler": function (response) {
                 verifyPayment(order, response);

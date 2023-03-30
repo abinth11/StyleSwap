@@ -12,6 +12,7 @@ const collection = {
   SUB_CATEGORIES: 'subcategories',
   COUPON_TEMPLATE: 'coupontemplate',
   COUPONS:'coupons',
-  VISITORS:'visitors'
+  VISITORS:'visitors',
+  PRODUCT_RATING:'ratings'
 }
 export default collection

@@ -4,11 +4,12 @@ import { v4 as uuidv4 } from 'uuid'
 import { validationResult } from 'express-validator'
 import adminHelpers from '../helpers/admin-helpers.js'
 import otherHelpers from '../helpers/otherHelpers.js'
+import { createIndexForAlgolia, searchWithAlgolia } from '../config/algoliasearch.js'
 export const userControler = {
   userHome: async (req, res) => {
     try {
       let cartCount 
-      userHelpers.resetCouponCount()
+      // userHelpers.resetCouponCount()
       if (req.session.user) {
         cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
       }
@@ -187,7 +188,12 @@ export const userControler = {
       const { id } = req.params
       const product = await userHelpers.viewCurrentProduct(id)
       console.log(product)
-      res.render('users/shop-product-right', { user: req.session.user, product })
+      console.log(product.ratingPercentages)
+      let reviews = 0
+      if(product?.ratings?.length){
+        reviews = product.ratings.length
+      }
+      res.render('users/shop-product-right', { user: req.session.user, product, reviews})
     } catch (error) {
       console.error(error)
       res.status(500).send('Internal Server Error')
@@ -292,7 +298,7 @@ export const userControler = {
       if (paymentMethod === 'cod') {
         const codResponse = {
           statusCod:true,
-          coupon: await otherHelpers.checkProbabilityForCoupon(0,userId)
+          coupon: await otherHelpers.checkProbabilityForCoupon(.6,userId)
         }
         res.json(codResponse)
       } else if (paymentMethod === 'razorpay') {
@@ -357,9 +363,9 @@ export const userControler = {
     try {
       const orderId = req.params.id
       const orderDetails = await userHelpers.getCurrentUserOrders(orderId)
+      console.log(orderDetails)
       console.log(orderDetails.products)
       res.render('users/order-bundle', {orderDetails})
-      console.log(orderDetails)
     } catch (error) {
       console.log(error)
       res.status(500).json({message:'Internal server error'})
@@ -550,6 +556,7 @@ export const userControler = {
   viewMoreProducts: async (req, res) => {
     try {
       const orderedProductsWithSameId = await userHelpers.getProductsWithSameId(req.params.id)
+      console.log(orderedProductsWithSameId)
       res.render('users/view-more-orders', { orderedProductsWithSameId })
     } catch (error) {
       console.log(error)
@@ -647,18 +654,45 @@ export const userControler = {
     }
 
   },
-  searchProducts:async (req, res) => {
+  indexProducts: async (req,res) => {
+    //* function to index the products from database for searching
+    const result = await createIndexForAlgolia()
+    console.log(result)
+    res.json(result)
+  },
+  searchProducts: async (req, res) => {
     try {
-      const query = req.query.q // get the search query from the request query string
+      const query = req.query.q
       console.log(query)
-      const results = await userHelpers.searchWithAlgolia(query) 
-      // const results = await index.search({ query }); // perform the search on the Algolia index
-      console.log(results)
-      res.json(results.hits) // return the search results as JSON
-    } catch (error) { 
+      const { hits } = await searchWithAlgolia(query)
+      console.log(hits)
+      if (hits.length === 0) {
+        res.status(404).json({ message: 'No results found' })
+      } else {
+        res.json(hits)
+      }
+  
+    } catch (error) {
       console.error(error)
-      res.status(500).json('Error searching for data')
+      res.status(500).json({message:"Error while searching data"})
     }
+  },
+  addRatingForProducts: async (req, res) => {
+   try {
+    console.log(req.body)
+    if(req.session?.user?._id) {
+      const userInfo = req.session.user
+      const response = await userHelpers.addRatingForProducts(req.body, userInfo)
+      console.log(response)
+      res.json(response)
+    } else {
+      res.json({Message:"Please login to add a review ", status:false})
+    }
+    
+   } catch (error) {
+    console.log(error)
+    res.status(500).json({message:"Error while adding rating"})
+   }
   },
   userLogout: (req, res) => {
     try {

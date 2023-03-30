@@ -6,7 +6,6 @@ import { ObjectId } from "mongodb"
 import Razorpay from "razorpay"
 import paypal from "paypal-rest-sdk"
 import crypto from "crypto"
-import algoliasearch from "algoliasearch"
 let sotoredAmount
 const userHelpers = {
   regisUserUser: async (userData) => {
@@ -106,7 +105,179 @@ const userHelpers = {
       const product = await db
         .get()
         .collection(collection.PRODUCT_COLLECTION)
-        .find({ _id: ObjectId(productId) })
+        .aggregate([
+          {
+            $match: {
+              _id: ObjectId(productId),
+            },
+          },
+          {
+            $lookup: {
+              from: collection.PRODUCT_RATING,
+              localField: "_id",
+              foreignField: "productId",
+              as: "ratings",
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              product_title: 1,
+              product_sku: 1,
+              product_color: 1,
+              product_size: 1,
+              product_brand: 1,
+              product_description: 1,
+              product_price: 1,
+              product_warranty: 1,
+              product_return: 1,
+              product_quantity: 1,
+              product_category: 1,
+              delivery: 1,
+              offerPrice: 1,
+              isActive: 1,
+              images: 1,
+              offerStartDate: 1,
+              offerPercentage: 1,
+              addedAt: 1,
+              ratings: 1,
+              productRating: {
+                $avg: "$ratings.rating",
+              },
+              ratingPercentages: {
+                $let: {
+                  vars: {
+                    totalRatings: {
+                      $size: "$ratings",
+                    },
+                  },
+                  in: {
+                    one: {
+                      $cond: [
+                        { $eq: ["$$totalRatings", 0] },
+                        0,
+                        {
+                          $multiply: [
+                            {
+                              $divide: [
+                                {
+                                  $size: {
+                                    $filter: {
+                                      input: "$ratings",
+                                      cond: { $eq: ["$$this.rating", 1] },
+                                    },
+                                  },
+                                },
+                                "$$totalRatings",
+                              ],
+                            },
+                            100,
+                          ],
+                        },
+                      ],
+                    },
+                    two: {
+                      $cond: [
+                        { $eq: ["$$totalRatings", 0] },
+                        0,
+                        {
+                          $multiply: [
+                            {
+                              $divide: [
+                                {
+                                  $size: {
+                                    $filter: {
+                                      input: "$ratings",
+                                      cond: { $eq: ["$$this.rating", 2] },
+                                    },
+                                  },
+                                },
+                                "$$totalRatings",
+                              ],
+                            },
+                            100,
+                          ],
+                        },
+                      ],
+                    },
+                    three: {
+                      $cond: [
+                        { $eq: ["$$totalRatings", 0] },
+                        0,
+                        {
+                          $multiply: [
+                            {
+                              $divide: [
+                                {
+                                  $size: {
+                                    $filter: {
+                                      input: "$ratings",
+                                      cond: { $eq: ["$$this.rating", 3] },
+                                    },
+                                  },
+                                },
+                                "$$totalRatings",
+                              ],
+                            },
+                            100,
+                          ],
+                        },
+                      ],
+                    },
+                    four: {
+                      $cond: [
+                        { $eq: ["$$totalRatings", 0] },
+                        0,
+                        {
+                          $multiply: [
+                            {
+                              $divide: [
+                                {
+                                  $size: {
+                                    $filter: {
+                                      input: "$ratings",
+                                      cond: { $eq: ["$$this.rating", 4] },
+                                    },
+                                  },
+                                },
+                                "$$totalRatings",
+                              ],
+                            },
+                            100,
+                          ],
+                        },
+                      ],
+                    },
+                    five: {
+                      $cond: [
+                        { $eq: ["$$totalRatings", 0] },
+                        0,
+                        {
+                          $multiply: [
+                            {
+                              $divide: [
+                                {
+                                  $size: {
+                                    $filter: {
+                                      input: "$ratings",
+                                      cond: { $eq: ["$$this.rating", 5] },
+                                    },
+                                  },
+                                },
+                                "$$totalRatings",
+                              ],
+                            },
+                            100,
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ])
         .toArray()
       return product[0]
     } catch (error) {
@@ -615,7 +786,7 @@ const userHelpers = {
   },
   placeOrders: async (orderInfo, products, totalPrice, couponObj) => {
     try {
-      if(!couponObj){
+      if (!couponObj) {
         couponObj = {}
       }
       const {
@@ -627,8 +798,8 @@ const userHelpers = {
       } = orderInfo
       const { total, discountPrice } = totalPrice
       let offerTotal = totalPrice.offerTotal
-      const { coupon, discountAmount} = couponObj
-      if(discountAmount) {
+      const { coupon, discountAmount } = couponObj
+      if (discountAmount) {
         offerTotal = offerTotal - discountAmount
       }
       console.log(coupon)
@@ -638,9 +809,9 @@ const userHelpers = {
         userId: ObjectId(userId),
         name,
         mobile,
-        couponDetails:{
+        couponDetails: {
           couponCode: coupon?.couponCode,
-          discountAmount:discountAmount, 
+          discountAmount: discountAmount,
         },
         deliveryAddressId: deliveryAddress,
         paymentMethod,
@@ -663,7 +834,7 @@ const userHelpers = {
         .get()
         .collection(collection.COUPONS)
         .updateOne(
-          { couponCode:coupon?.couponCode},
+          { couponCode: coupon?.couponCode },
           {
             $set: {
               used: true,
@@ -873,57 +1044,59 @@ const userHelpers = {
   },
   getCurrentUserOrders: async (orderId) => {
     try {
-      const order = await db.get().collection(collection.ORDER_COLLECTION).aggregate(
-        [
+      const order = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
           {
-               $match: {
-                 _id: ObjectId(orderId)
-               }
-           },
+            $match: {
+              _id: ObjectId(orderId),
+            },
+          },
           {
             $addFields: {
-              deliveryAddressId: { $toObjectId: "$deliveryAddressId" }
-            }
+              deliveryAddressId: { $toObjectId: "$deliveryAddressId" },
+            },
           },
           {
             $lookup: {
               from: collection.ADDRESS_COLLECTION,
               localField: "deliveryAddressId",
               foreignField: "_id",
-              as: "deliveryAddress"
-            }
+              as: "deliveryAddress",
+            },
           },
           {
             $addFields: {
               deliveryDetails: {
                 $mergeObjects: {
-                  $arrayElemAt: ["$deliveryAddress", 0]
-                }
-              }
-            }
-          },
-          { 
-            $project: {
-              deliveryAddress: 0
-            }
+                  $arrayElemAt: ["$deliveryAddress", 0],
+                },
+              },
+            },
           },
           {
-            $unwind: "$products"
+            $project: {
+              deliveryAddress: 0,
+            },
+          },
+          {
+            $unwind: "$products",
           },
           {
             $lookup: {
               from: collection.PRODUCT_COLLECTION,
               localField: "products.item",
               foreignField: "_id",
-              as: "products.item"
-            }
+              as: "products.item",
+            },
           },
           {
             $addFields: {
               "products.item": {
-                $arrayElemAt: ["$products.item", 0]
-              }
-            }
+                $arrayElemAt: ["$products.item", 0],
+              },
+            },
           },
           {
             $group: {
@@ -940,15 +1113,15 @@ const userHelpers = {
               status: { $first: "$status" },
               date: { $first: "$date" },
               deliveryDetails: { $first: "$deliveryDetails" },
-              reasonTocancell: {$first : "$reasonTocancell"},
-              returnReason: {$first: '$returnReason'},
-              returnStatus: {$first : '$returnStatus'},
-              refundStatus: {$first: '$refundStatus'},
-              products: { $push: "$products" }
-            }
-          }
-        ] 
-      ).toArray()
+              reasonTocancell: { $first: "$reasonTocancell" },
+              returnReason: { $first: "$returnReason" },
+              returnStatus: { $first: "$returnStatus" },
+              refundStatus: { $first: "$refundStatus" },
+              products: { $push: "$products" },
+            },
+          },
+        ])
+        .toArray()
       return order[0]
     } catch (error) {
       console.log(error)
@@ -1647,8 +1820,8 @@ const userHelpers = {
         valid: true,
         coupon,
         discountAmount,
-        originalAmount:total,
-        priceAfterDiscount:total-discountAmount
+        originalAmount: total,
+        priceAfterDiscount: total - discountAmount,
       }
       return responseObject
     } catch (error) {
@@ -1696,55 +1869,6 @@ const userHelpers = {
       console.log(error)
     }
   },
-  createIndexForAlgolia: async () => {
-    try {
-      // eslint-disable-next-line no-undef
-      const applicationId = process.env.ALGOLIA_APPLICATION_ID
-      // eslint-disable-next-line no-undef
-      const apikey = process.env.ALGOLIA_ADMIN_API_KEY
-      const client = algoliasearch(applicationId, apikey)
-      const index = client.initIndex("searchIndex")
-      await db
-        .get()
-        .collection(collection.PRODUCT_COLLECTION)
-        .find({})
-        .toArray()
-        .then((objectsToIndex) => {
-          index.saveObjects(objectsToIndex, {
-            autoGenerateObjectIDIfNotExist: true,
-            objectID: (product) => product._id.toString(),
-          })
-        })
-        .catch((error) => {
-          console.log("Error indexing data:", error)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-  },
-  searchWithAlgolia: async (query) => {
-    try {
-      // todo hits array is empty 
-      // eslint-disable-next-line no-undef
-      const applicationId = process.env.ALGOLIA_APPLICATION_ID
-      // eslint-disable-next-line no-undef
-      const apikey = process.env.ALGOLIA_ADMIN_API_KEY
-      const client = algoliasearch(applicationId, apikey)
-      const index = client.initIndex("searchIndex")
-      console.log(index)
-      const results = await index.search(
-        {
-          query: query,
-          hitsPerPage: 10,
-          page: 0,
-        }
-        
-      )
-      return results
-    } catch (error) {
-      console.log(error)
-    }
-  },
   getMensProducts: async () => {
     try {
       const products = await db
@@ -1781,12 +1905,86 @@ const userHelpers = {
       console.log(error)
     }
   },
+  addRatingForProducts: async (ratingInfo, userInfos) => {
+    try {
+      const { _id: userId, name, email, active} = userInfos
+      const { comment, rating, productId } = ratingInfo
+      //? check if the user has purchased the product to add rating
+      const purchased = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              userId: ObjectId(userId), // Replace with the user ID you want to check
+              status: "completed", // Only take orders with completed status
+            },
+          },
+          {
+            $unwind: "$products", // Unwind the products array
+          },
+          {
+            $match: {
+              "products.item": ObjectId(productId), // Replace with the product ID you want to check
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              orderId: "$_id",
+              productId: "$products.item",
+            },
+          },
+        ])
+        .toArray()
+      if (purchased.length === 0) {
+        return {
+          Message: "Please purchase the product to add a reiveiw",
+          notPurchased: true,
+        }
+      }
+      const alreadyPosted = await db
+        .get()
+        .collection(collection.PRODUCT_RATING)
+        .findOne({
+          productId: ObjectId(productId),
+          "userDetails.userId": userId,
+        })
+      console.log(alreadyPosted)
+      if (alreadyPosted) {
+        return {
+          Message: "Review already posted",
+          alreadyPosted: true,
+        }
+      }
+      const ratingSchema = {
+        productId: ObjectId(productId),
+        userDetails: {
+          userId,
+          name,
+          email,
+          active
+        },
+        rating: parseInt(rating),
+        comment,
+        addedAt: new Date(),
+      }
+      const response = await db
+        .get()
+        .collection(collection.PRODUCT_RATING)
+        .insertOne(ratingSchema)
+      return { Message: "Added your review", status: true, response }
+    } catch (error) {
+      console.log(error)
+    }
+  },
   getOrderedGroup: async (userId) => {
     try {
       const orders = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
-        .find({ userId: ObjectId(userId) }).toArray()
+        .find({ userId: ObjectId(userId) })
+        .toArray()
       return orders
     } catch (errors) {
       console.log(errors)

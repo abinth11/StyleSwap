@@ -37,7 +37,7 @@ const adminHelpers = {
       ...rest,
       product_price: parseInt(productPrice),
       offerPrice: parseInt(productPrice),
-      addedAt: Date.now(),
+      addedAt: new Date(),
       isActive: true,
       images: {
         image1: urls[0],
@@ -649,8 +649,8 @@ const adminHelpers = {
               returnReason: { $exists: false },
               date: {
                 $gte: new Date(isoFromDate),
-                $lt: new Date(isoToDate)
-              }
+                $lt: new Date(isoToDate),
+              },
             },
           },
           {
@@ -687,19 +687,23 @@ const adminHelpers = {
     try {
       const fromDate = new Date(from)
       const toDate = new Date(to)
-      const orders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
-        {
-          $match: {
-            date: {
-              $gte: fromDate,
-              $lt: toDate
-            }
+      const orders = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              date: {
+                $gte: fromDate,
+                $lt: toDate,
+              },
+            },
           },
-        },
-        {
-          $count: "totalOrders",
-        },
-      ]).toArray()
+          {
+            $count: "totalOrders",
+          },
+        ])
+        .toArray()
       return orders[0] ? orders[0].totalOrders : 0
     } catch (error) {
       console.log(error)
@@ -723,14 +727,15 @@ const adminHelpers = {
       const products = await db
         .get()
         .collection(collection.PRODUCT_COLLECTION)
-        .countDocuments({ addedAt: {$gte: new Date(from), $lte: new Date(to)}})
+        .countDocuments({
+          addedAt: { $gte: new Date(from), $lte: new Date(to) },
+        })
       return products
     } catch (error) {
       console.log(error)
       throw new Error(error)
     }
-  }
-,
+  },
   calculateMonthlyEarnings: async () => {
     try {
       const monthlyIncome = await db
@@ -773,37 +778,38 @@ const adminHelpers = {
       throw new Error(error)
     }
   },
-  calculateAverageOrderValue: async() => {
+  calculateAverageOrderValue: async () => {
     try {
-      const aov = await db.get().collection(collection.ORDER_COLLECTION)
-      .aggregate([
-        {
-          $match: {
-            status: "completed",
-            returnReason: { $exists: false },
-            reasonToCancel: { $exists: false }
-          }
-        },
-        {
-          $group: {
-            _id: null,
-            totalOrders: { $sum: 1 },
-            totalAmount: { $sum: "$offerTotal" }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            AOV: { $divide: [ "$totalAmount", "$totalOrders" ] }
-          }
-        }
-      ])
-      .toArray()
+      const aov = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              status: "completed",
+              returnReason: { $exists: false },
+              reasonToCancel: { $exists: false },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              totalOrders: { $sum: 1 },
+              totalAmount: { $sum: "$offerTotal" },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              AOV: { $divide: ["$totalAmount", "$totalOrders"] },
+            },
+          },
+        ])
+        .toArray()
       return aov[0].AOV
     } catch (error) {
       console.log(error)
     }
-
   },
   refundAmont: async (refundInfo) => {
     try {
@@ -1235,6 +1241,37 @@ const adminHelpers = {
         ])
         .toArray()
       return mostSelling
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  getUserReviews: async () => {
+    try {
+      const reviews = await db
+      .get()
+      .collection(collection.PRODUCT_RATING)
+      .aggregate([
+        {
+          $lookup: {
+            from: collection.PRODUCT_COLLECTION,
+            foreignField: '_id',
+            localField: 'productId',
+            as: 'productDetails'
+          }
+        },
+        {
+          $addFields: {
+            product: { $arrayElemAt: ['$productDetails', 0] }
+          }
+        },
+        {
+          $project: {
+            productDetails: 0
+          }
+        }
+      ])
+      .toArray()
+      return reviews
     } catch (error) {
       console.log(error)
     }

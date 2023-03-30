@@ -73,10 +73,13 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th width="40%">Product</th>
-                                        <th width="20%">Unit Price</th>
-                                        <th width="20%">Quantity</th>
-                                        <th width="20%">Total</th>
+                                        <th width="35%">Product</th>
+                                        <th width="19%">Unit Price</th>
+                                        <th width="15%">Quantity</th>
+                                        <th width="15%">Total</th>
+                                        {{#if (eq orderDetails.status "completed")}}
+                                        <th width="26%" id="actions"> Actions </th>
+                                        {{/if}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -98,17 +101,20 @@
                                         <td> {{formatCurrency item.product_price}}</td>
                                         {{/if}}
                                         <td> {{quantity}}</td>
-                                        <td class="text-end">
+                                        <td >
                                             {{#multiply offerPrice quantity}}
-                                            {{log this}}
                                             {{formatCurrency this}}
                                             {{/multiply}}
                                         </td>
+                                       {{#if (eq ../orderDetails.status "completed")}}
+                                        <td id="rating-button"><a href="/shop-product-right/{{item._id}}#ratings" >Rate Product<span><i class="fa fa-sm fa-star star rating-star"style="color:#ffcc00;" ></i></span></a></td>
+                                        {{/if}}
                                     </tr>
+                                    
                                     {{/each}}
                                     <tr>
-                                        <td colspan="4">
-                                            <article class="float-end me-3">
+                                        <td colspan="6">
+                                            <article class="float-end ">
 
                                                 <dl class="dlist me-3 d-flex">
                                                     <dt style="padding-right: 10px; white-space: nowrap;">Subtotal:</dt>
@@ -296,3 +302,5 @@
 
     {{>foot-user}}
     <!-- Include the Bootstrap Datepicker CSS and JS files -->
+
+  

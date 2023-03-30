@@ -1,0 +1,23 @@
+
+#? Twilio Account Info - used for sending otp
+TWILIO_ACCOUNT_SID='your_account_sid'
+TWILIO_AUTH_TOKEN='auth_token'
+TWILIO_SERVICE_SID='service_sid'
+
+#? Cloudinary Details - used to store the images 
+CLOUD_NAME = 'your_coud_name'
+API_KEY = 'api_key'
+API_SECRET = 'api_secret'
+
+#? Algolia Account Info - Used for index based searching
+ALGOLIA_APPLICATION_ID='your_application_id'
+ALGOLIA_ADMIN_API_KEY='admin_api_key'
+ALGOLIA_SEARCH_API_KEY='search_api_key'
+
+#? Razorpay Payment Gateway
+RAZORPAY_KEY_ID = 'key_id'
+RAZORPAY_KEY_SECRET = 'key_secret'
+
+#? Paypal Payment Gateway
+PAYPAL_CLIENT_ID = 'client_id'
+PAYPAL_CLIENT_SECRET = 'client_secret'
