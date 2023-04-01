@@ -38,15 +38,19 @@
                                         name="product_title" value="{{product.product_title}}">
                                 </div>
                                 <div class="row gx-3">
-                                    <div class="col-md-4  mb-3">
+                                    {{!-- <div class="col-md-4  mb-3">
                                         <label for="product_sku" class="form-label">SKU</label>
                                         <input type="text" placeholder="Type here" class="form-control" id="product_sku"
                                             name="product_sku" value="{{product.product_sku}}">
-                                    </div>
+                                    </div> --}}
                                     <div class="col-md-4  mb-3">
-                                        <label for="product_color" class="form-label">Color</label>
-                                        <input type="text" placeholder="Type here" class="form-control"
-                                            id="product_color" name="product_color" value="{{product.product_color}}">
+                <label for="product_size" class="form-label">Sizes</label>
+                                 <select id="color-select" name="product_size" class="form-select" >
+                                  {{#each sizes}}
+                                  <option value="{{this.size}}">{{this.size}}</option>
+                                  {{/each}}
+                                  </select>
+                                    <small class="error-msg text-danger"></small>
                                     </div>
                                     <div class="col-md-4  mb-3">
                                         <label for="product_size" class="form-label">Size</label>

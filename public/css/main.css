@@ -4333,6 +4333,9 @@ table .product-thumbnail img {
 .color-filter.list-filter a span.product-color-white {
   border: 1px solid #ddd;
 }
+.color-filter.list-filter a span.product-color-black {
+  border: 1px solid #0000;
+}
 
 .color-filter.list-filter li.active a::before {
   content: "";
@@ -4511,6 +4514,9 @@ table .product-thumbnail img {
 
 .product-color-white {
   background: #ffffff;
+}
+.product-color-black {
+  background: #000;
 }
 
 .product-color-orange {

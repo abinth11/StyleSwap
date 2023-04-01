@@ -6,8 +6,8 @@
     <section class="content-main">
         <div class="content-header">
             <div>
-                <h2 class="content-title card-title">Products List</h2>
-                <p>Lorem ipsum dolor sit amet.</p>
+                <h2 class="content-title card-title">Productc Base Models</h2>
+                <p>You can add individual products by selecting a product</p>
             </div>
             <div class="me-5">
                 {{!-- <a href="#" class="btn btn-light rounded font-md">Export</a>
@@ -46,14 +46,14 @@
                         <div class="col-lg-1 col-sm-1 col-3 col-price">
                             <h6>Id</h6>
                         </div>
-                        <div class="col-lg-2 col-sm-3 col-6 flex-grow-1 col-name">
+                        <div class="col-lg-3 col-sm-3 col-7 flex-grow-1 col-name">
+                            <h6>Product Name</h6>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price">
                             <h6>Price</h6>
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-price">
-                            <h6>Size</h6>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price">
-                            <h6>Color</h6>
+                            <h6>Category</h6>
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-status">
                             <h6>Status</h6>
@@ -70,22 +70,22 @@
                     </div>
                 </article>
 
-                {{#each products}}
+                {{#each productTemplates}}
                 <article class="itemlist product-item">
                     <div class="row align-items-center">
                         <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
                             <a class="itemside" href="#">
                                 {{inc @index}}
                                 <div class=" ms-3 left">
-                                    <img src="{{images.image1}}" class="img-sm img-thumbnail" alt="Item">
+                                    <img src="{{image}}" class="img-sm img-thumbnail" alt="Item">
                                 </div>
                                 <div class="info">
-                                    <h6 class="mb-0">{{formatCurrency product_price}}</h6>
+                                    <p class="mb-0"><b>{{product_name}}</b></p>
                                 </div>
                             </a>
                         </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>{{product_size}}</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-category category"> <span>{{product_color}}</span>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>{{formatCurrency regular_price}}</span> </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-category category"> <span>{{category}}</span>
                         </div>
                         <div class="col-lg-2 col-sm-2 col-4 col-status status">
                             {{#if isActive}}
@@ -99,9 +99,9 @@
                             <span>02.11.2021</span>
                         </div> --}}
                         <div class="col-lg-2 col-sm-2 col-4 col-action ">
-                            <a href="/admin/dashboard/view-product-template/edit-child-product/{{_id}}"
+                            <a href="/admin/dashboard/view-product-list/edit-products-list/{{_id}}"
                                 class="btn btn-sm font-sm rounded btn-warning text-white" title="Edit">
-                                <i class="material-icons md-edit"></i>
+                                <i class="las la-pen-fancy text-white" style="font-size: 16px;"></i>
                             </a>
                             {{#if isActive}}
                             <a id="disable" class="btn btn-sm font-sm btn-danger rounded"
@@ -117,9 +117,18 @@
                             {{else}}
                             <a id="enable" class="btn btn-sm font-sm btn-success rounded"
                                 onclick="disableEnableProduct('{{_id}}',{{isActive}})" title="Enable">
-                                <i class="fas fa-unlock text-white"></i>
+                                <i class="las la-unlock text-white" style="font-size: 16px;"></i>
                             </a>
                             {{/if}}
+                            <a id="" href="/admin/dashboard/view-product-template/add-products/{{_id}}" class="btn btn-sm font-sm btn-success rounded"
+                                onclick="" title="Add ">
+                                <i class="las la-plus-circle text-white" style="font-size: 16px;"></i>
+                            </a>
+                            <a id="" href="/admin/dashboard/view-product-templates/view-child-products/{{_id}}" class="btn btn-sm font-sm btn-warning rounded"
+                                onclick="" title="view childs ">
+                                <i class=" las la-arrows-alt text-white" style="font-size: 16px;"></i>
+                            </a>
+                
                         </div>
                     </div> <!-- row .// -->
                 </article> <!-- itemlist  .// -->

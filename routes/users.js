@@ -5,10 +5,14 @@ import userValidation from '../validation/userValidation.js'
 import sessionChecker from '../middlewares/session-checks.js'
 import { trackVisitors } from '../middlewares/trackusers.js'
 /* GET home page. */
-router.get('/',trackVisitors, userControler.userHome)
+//todo track visitors turned off coz of errors
+router.get('/', userControler.userHome)
 
 // view more for each product in home page
-router.get('/shop-product-right/:id', userControler.shopProductRight)
+router.get('/shop-product-right', userControler.shopProductRight)
+
+//changer prouduct colors 
+router.post('/shop-product-right',userControler.changeProduct)
 
 // User registration(singnUp)
 router.route('/userSignUp')
@@ -29,6 +33,7 @@ router.route('/loginWithOtp')
 router.route('/otpValidate')
   .get(sessionChecker.isUserExist, userControler.otpValidateGet)
   .post(userControler.otpValidatePost)
+
 
 // Cart for user
 router.get('/userCart', sessionChecker.isUserOrGuestExist, userControler.userCartGet)

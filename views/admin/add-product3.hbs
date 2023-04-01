@@ -4,7 +4,7 @@
 <main class="main-wrap">
     {{>admin-header}}
     <section class="content-main">
-        <form action="/admin/dashboard/view-products-in-list/add-products" method="post" enctype="multipart/form-data" id="add-product">
+        <form  id="add-product" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-9">
                     <div class="content-header">
@@ -20,43 +20,47 @@
                         </div>
                     </div>
                 </div>
-                {{!-- <div class="row" style="width: 75%;"> --}}
-                    {{#if Prostatus}}
-                    <p class="alert alert-success mt-3 text-center" style="width: 75%;">{{productAddingSucc}}</p>
-                    {{else if productAddingErr.0.msg }}
-                    <p class="alert alert-danger mt-3 text-center" style="width: 75%;">{{ productAddingErr.0.msg}}
-                    </p>
-                    {{else}}
-                    {{/if}}
-                    {{!--
-                </div> --}}
                 <div class="col-lg-6">
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="mb-4">
                                 <label for="product_title" class="form-label">Product title</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="product_title"
-                                    name="product_title">
+                                <input type="text" placeholder="{{productId}}" class="form-control" id="product_title"
+                                    name="product_title" >
+                                    <input type="hidden" value="{{productId}}" name="productId">
                                 <small class="error-msg text-danger"></small>
                             </div>
                             <div class="row gx-3">
                                 <div class="col-md-4  mb-3">
-                                    <label for="product_sku" class="form-label">SKU</label>
+                                      <label for="product_size" class="form-label">Sizes</label>
+                                 <select id="color-select" name="product_size" class="form-select">
+                                  {{#each sizes}}
+                                  <option value="{{this.code}}">{{this.size}}</option>
+                                  {{/each}}
+                                  </select>
+                                    <small class="error-msg text-danger"></small>
+                                    {{!-- <label for="product_sku" class="form-label">SKU</label>
                                     <input type="text" placeholder="Type here" class="form-control" id="product_sku"
                                         name="product_sku">
-                                    <small class="error-msg text-danger"></small>
+                                    <small class="error-msg text-danger"></small> --}}
                                 </div>
                                 <div class="col-md-4  mb-3">
-                                    <label for="product_color" class="form-label">Color</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_color"
-                                        name="product_color">
+                                     <label for="product_color" class="form-label">Colors</label>
+                                 <select id="color-select"  name="product_color" class="form-select">
+                                  {{#each colors}}
+                                  <option value="{{this.color}}">{{this.color}}</option>
+                                  {{/each}}
+                                  </select>
                                     <small class="error-msg text-danger"></small>
+                            
+                                       
                                 </div>
-                                <div class="col-md-4  mb-3">
-                                    <label for="product_size" class="form-label">Size</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_size"
-                                        name="product_size">
-                                    <small class="error-msg text-danger"></small>
+                                <div class="col-md-4  mb-2">
+                                    <label class="form-label">Quantity</label>
+                                <input type="number" placeholder="Type here" class="form-control"
+                                    name="product_quantity" id="product_quantity" min="0">
+                                <small class="error-msg text-danger"></small>
+                               
                                 </div>
                             </div>
                             <div class="mb-4">
@@ -100,7 +104,7 @@
                             <div class="mb-4">
                                 <label class="form-label">Price</label>
                                 <input type="text" placeholder="Type here" class="form-control" name="product_price"
-                                    id="product_price">
+                                    id="product_price" min="0">
                                 <small class="error-msg text-danger"></small>
                             </div>
                             <div class="mb-4">
@@ -114,35 +118,8 @@
                                 <input type="text" placeholder="Type here" class="form-control" name="product_return"
                                     id="product_return">
                                 <small class="error-msg text-danger"></small>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Quantity</label>
-                                <input type="number" placeholder="Type here" class="form-control"
-                                    name="product_quantity" id="product_quantity">
-                                <small class="error-msg text-danger"></small>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Status</label>
-                                <select class="form-select">
-                                    <option>Published</option>
-                                    <option>Draft</option>
-                                </select>
-                                <small class="error-msg text-danger"></small>
-                            </div>
-                            <hr>
-                            <h5 class="mb-3">Categories</h5>
-
-
-                            <div class="mb-4">
-                                <select class="form-select" name="product_category" id="category">
-                                    {{#each category}}
-                                    <option id="category">{{category_name}}</option>
-                                    {{/each}}
-
-                                </select>
-                                <small class="error-msg text-danger"></small>
-                            </div>
+                            </div>               
+                            <hr>  
                         </div>
                         <h5 class="mb-3 ms-3">Delivery Options</h5>
                         <div class="form-check ms-4">
@@ -151,24 +128,14 @@
                             <label class="form-check-label" for="product-cat-1"> Cash On Delivery </label>
                         </div>
                         <div class="form-check ms-4">
-                            <input class="form-check-input" type="checkbox" value="Credit Card" id="product-cat-2"
+                            <input class="form-check-input" type="checkbox" value="wallet" id="product-cat-4"
                                 name="delivery[]">
-                            <label class="form-check-label" for="product-cat-2">Credit Card </label>
+                            <label class="form-check-label" for="product-cat-4"> Wallet </label>
                         </div>
                         <div class="form-check ms-4">
-                            <input class="form-check-input" type="checkbox" value="Debit Card" id="product-cat-3"
+                            <input class="form-check-input" type="checkbox" value="razorpay" id="product-cat-5"
                                 name="delivery[]">
-                            <label class="form-check-label" for="product-cat-3">Debit Card </label>
-                        </div>
-                        <div class="form-check ms-4">
-                            <input class="form-check-input" type="checkbox" value="UPI" id="product-cat-4"
-                                name="delivery[]">
-                            <label class="form-check-label" for="product-cat-4"> UPI </label>
-                        </div>
-                        <div class="form-check ms-4">
-                            <input class="form-check-input" type="checkbox" value="Bank Transfer" id="product-cat-5"
-                                name="delivery[]">
-                            <label class="form-check-label" for="product-cat-5"> Bank Transfer </label>
+                            <label class="form-check-label" for="product-cat-5"> Razorpay </label>
                         </div>
                         <div class="form-check ms-4">
                             <input class="form-check-input" type="checkbox" value="Paypal" id="product-cat-6"
@@ -185,31 +152,85 @@
         </form>
     </section>
     {{>admin-footer}}
+
     {{!-- <script src="/frontendValidations/addProduct.js" type="text/javascript"></script> --}}
-    <script>
-        document.getElementById("add-button").addEventListener("click", function (event) {
-            // Prevent the default form submission behavior
-            event.preventDefault();
+        <script>
+           
+    $("#add-product").submit((e) => {
+      e.preventDefault();
+      const formData = new FormData($("#add-product")[0]); // Create a new FormData object from the form
 
-            // Submit the form
-            document.getElementById("add-product").submit();
+      // Show loading effect
+      const loading = Swal.fire({
+        title: "",
+        html: '<div class="loader"></div><br><span class="text">Uploading your data...</span>',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
 
-            // Display the swal after a delay
-            setTimeout(function () {
-                Swal.fire({
-                    title: 'Uploading Images',
-                    html: '<p>Please wait while we upload your images.</p><div class="lds-dual-ring"></div>',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    showCloseButton: false,
-                    showCancelButton: false
-                });
-            }, 1000); // Change the delay time (in milliseconds) as needed
-        });
+      $.ajax({
+        type: "POST",
+        url: "/admin/dashboard/view-product-template/add-products/",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: (response) => {
+          // Hide loading effect
+          console.log(response)
+          loading.close();
 
+          if (response.status) {
+            // Show success alert
+            Swal.fire({
+              text: response.Message,
+              icon: "success",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#3085d6",
+              didClose: () => {
+                location.reload();
+              }
+            });
+          }else if(response.error ) {
+             Swal.fire({
+              text: response.Msg[0].msg,
+              icon: "error",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#f37b7b",
+            });
+
+          } else {
+            // Show error alert
+            Swal.fire({
+              text: response.Message,
+              icon: "warning",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#f37b7b",
+              didClose: () => {
+                location.reload();
+              }
+            });
+          }
+        },
+        error: (error) => {
+            console.log(error)
+          // Hide loading effect
+          loading.close();
+
+          // Show error alert
+          Swal.fire({
+            text: "Internal Server Error",
+            icon: "error",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#f37b7b"
+          });
+        }
+      });
+    });
         function viewImage(event) {
             document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
         }
     </script>
+  

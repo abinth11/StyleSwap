@@ -13,10 +13,10 @@
                             <!-- MAIN SLIDES -->
                             <div class="product-image-slider">
                                 <figure class="border-radius-10">
-                                    <img src="{{product.images.image1}}" alt="product image">
+                                    <img src="{{product.images.image1}}" id="image-hover" alt="product image">
                                 </figure>
                                 <figure class="border-radius-10">
-                                    <img src="{{product.images.image2}}" alt="product image">
+                                    <img src="{{product.images.image2}}" id="hover-img" alt="product image">
                                 </figure>
                                 <figure class="border-radius-10">
                                     <img src="/imgs/shop/product-16-3.jpg" alt="product image">
@@ -340,7 +340,7 @@
                                     <!-- MAIN SLIDES -->
                                     <div class="product-image-slider" style="height: 470px;">
                                         <figure class="border-radius-10">
-                                            <img src="{{product.images.image1}}" alt="product image"
+                                            <img src="{{product.images.image2}}" id="image-one" alt="product image"
                                                 style="object-fit: fill;height: 100%;">
                                         </figure>
                                         <figure class="border-radius-10">
@@ -432,7 +432,7 @@
                                             <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
                                         </ul>
                                     </div>
-                                    <div class="attr-detail attr-color mb-15">
+                                    {{!-- <div class="attr-detail attr-color mb-15">
                                         <strong class="mr-10">Color</strong>
                                         <ul class="list-filter color-filter">
                                             <li><a href="#" data-color="Red"><span class="product-color-red"></span></a>
@@ -450,17 +450,33 @@
                                             <li><a href="#" data-color="Purple"><span
                                                         class="product-color-purple"></span></a></li>
                                         </ul>
+                                    </div> --}}
+
+                                    <div class="attr-detail attr-color mb-15">
+                                        <strong class="mr-10">Color</strong>
+                                        <ul class="list-filter color-filter">
+                                            <li>{{product.allowedColors}}</li>
+
+                                            {{#each availabeColors}}
+                                            <li><a onclick="changeProduct('{{this.id}}','{{../parentId}}')"
+                                                    data-color="{{this.color}}"><span
+                                                        class="product-color-{{lowerCase this.color}}"></span></a></li>
+                                            {{!-- {{#if (includes product.availabeColors this)}}
+                                            {{/if}} --}}
+                                            {{/each}}
+                                        </ul>
                                     </div>
+
                                     <div class="attr-detail attr-size">
                                         <strong class="mr-10">Size</strong>
                                         <ul class="list-filter size-filter font-small">
-                                            <li><a href="#">S</a></li>
-                                            <li class="active"><a href="#">M</a></li>
-                                            <li><a href="#">L</a></li>
-                                            <li><a href="#">XL</a></li>
-                                            <li><a href="#">XXL</a></li>
+                                            {{#each availabeSizes}}
+                                            <li><a>{{this}}</a></li>
+                                            {{/each}}
                                         </ul>
                                     </div>
+
+
                                     <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                     <div class="detail-extralink">
                                         <div class="detail-qty border radius">
@@ -504,7 +520,8 @@
                                         href="#Reviews">Reviews</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="Reviews-tab" data-bs-toggle="tab" href="#Description">Description
+                                    <a class="nav-link" id="Reviews-tab" data-bs-toggle="tab"
+                                        href="#Description">Description
                                         ({{reviews}})</a>
                                 </li>
                             </ul>
@@ -596,11 +613,12 @@
                                                     </div>
                                                 </div>
                                                 {{/each}}
-                                            <div id="ratings"></div>
+                                                <div id="ratings"></div>
                                             </div>
-                                            <button id="view-more-button" class="btn btn-sm " style="color: #046963;background-color: transparent;">View More</button>
+                                            <button id="view-more-button" class="btn btn-sm "
+                                                style="color: #046963;background-color: transparent;">View More</button>
                                         </div>
-                                        <div class="col-lg-4 " >
+                                        <div class="col-lg-4 ">
                                             <h4 class="mb-30">Customer reviews</h4>
                                             <div class="d-flex mb-30">
                                                 <div class="product-rate d-inline-block mr-15">
@@ -654,25 +672,26 @@
 
                                     </div>
 
-                                    <div class="comment-form " >
+                                    <div class="comment-form ">
                                         <h4 class="mb-15 text-center">Add a review</h4>
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 ">
                                                 <div class="rating-stars ">
-                                                    <div class=" d-flex align-items-center justify-content-center" style="">
-                                                    <input type="radio" name="rating"  value="1" id="rating-1" >
-                                                    <label for="rating-1"><i class="fa  fa-star"></i></label>
-                                                    <input type="radio" name="rating" value="2" id="rating-2" >
-                                                    <label for="rating-2"><i class="fa fa-star"></i></label>
-                                                    <input type="radio" name="rating" value="3" id="rating-3">
-                                                    <label for="rating-3"><i class="fa fa-star"></i></label>
-                                                    <input type="radio" name="rating" value="4" id="rating-4">
-                                                    <label for="rating-4"><i class="fa fa-star"></i></label>
-                                                    <input type="radio" name="rating" value="5" id="rating-5">
-                                                    <label for="rating-5"><i class="fa fa-star"></i></label>
+                                                    <div class=" d-flex align-items-center justify-content-center"
+                                                        style="">
+                                                        <input type="radio" name="rating" value="1" id="rating-1">
+                                                        <label for="rating-1"><i class="fa  fa-star"></i></label>
+                                                        <input type="radio" name="rating" value="2" id="rating-2">
+                                                        <label for="rating-2"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" name="rating" value="3" id="rating-3">
+                                                        <label for="rating-3"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" name="rating" value="4" id="rating-4">
+                                                        <label for="rating-4"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" name="rating" value="5" id="rating-5">
+                                                        <label for="rating-5"><i class="fa fa-star"></i></label>
 
                                                     </div>
-                                                   
+
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 col-md-12 mt-3 ">
@@ -914,10 +933,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                   
+
                                 </div>
                             </div>
-                           
+
                         </div>
                     </div>
     </section>
@@ -927,12 +946,12 @@
 
 <script>
 
- $(document).ready(function() {
-  if(window.location.hash && window.location.hash == '#ratings') {
-    var targetElement = $('#ratings');
-    $('html, body').animate({ scrollTop: targetElement.offset().top }, 500);
-  }
-});
+    $(document).ready(function () {
+        if (window.location.hash && window.location.hash == '#ratings') {
+            var targetElement = $('#ratings');
+            $('html, body').animate({ scrollTop: targetElement.offset().top }, 500);
+        }
+    });
 </script>
 
 
@@ -1031,20 +1050,68 @@
 
 
 <script>
-$(document).ready(function() {
-  const comments = $('.single-comment');
-  const viewMoreButton = $('#view-more-button');
+    $(document).ready(function () {
+        const comments = $('.single-comment');
+        const viewMoreButton = $('#view-more-button');
 
-  // Hide all comments except for the first 3
-  comments.slice(3).hide();
+        // Hide all comments except for the first 3
+        comments.slice(3).hide();
 
-  // Toggle visibility of comments when "View More" button is clicked
-  viewMoreButton.on('click', function() {
-    comments.slice(3).toggle();
-    $(this).text(function(_, text) {
-      return text === 'View More' ? 'View Less' : 'View More';
+        // Toggle visibility of comments when "View More" button is clicked
+        viewMoreButton.on('click', function () {
+            comments.slice(3).toggle();
+            $(this).text(function (_, text) {
+                return text === 'View More' ? 'View Less' : 'View More';
+            });
+        });
     });
-  });
-});
+
+
+
+    // Define a function to retrieve and update the product details
+function updateProductDetails() {
+  // Check if product details are stored in localStorage
+  const storedProductDetails = localStorage.getItem('productDetails');
+
+  if (storedProductDetails) {
+    // Parse the JSON data
+    const productDetails = JSON.parse(storedProductDetails);
+
+    // Update the product details on the page
+    const productImage = document.querySelector('#image-one');
+    const hoverImage = document.querySelector('#image-hover')
+    productImage.src = productDetails.product.images.image1;
+    hoverImage.src = productDetails.product.images.image1;
+
+    // Update any other elements that depend on the product details
+  }
+}
+
+
+// Call the function when the page finishes loading
+window.onload = function() {
+  updateProductDetails();
+};
+
+
+   const changeProduct = (productId, parentId) => {
+    // Make the AJAX request to get the updated product details
+    $.ajax({
+        url: 'shop-product-right',
+        type: "POST",
+        data: { productId, parentId },
+        success: (response) => {
+            // Update the DOM elements with the new product data
+            const productImage = document.querySelector('#image-one');
+            const hoverImage = document.querySelector('#image-hover');
+            productImage.src = response.product.images.image1;
+            hoverImage.src = response.product.images.image2;
+            console.log(response.product.images.image2)
+            // Store the updated product details in localStorage
+            localStorage.setItem('productDetails', JSON.stringify(response));
+        }
+    });
+}
+
 
 </script>

@@ -142,7 +142,9 @@
                                 <div class="short-desc mb-30">
                                     <p class="font-sm">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquam rem officia, corrupti reiciendis minima nisi modi,!</p>
                                 </div>
-                                
+  
+
+          
                                 <div class="attr-detail attr-color mb-15">
                                     <strong class="mr-10">Color</strong>
                                     <ul class="list-filter color-filter">
@@ -155,6 +157,19 @@
                                         <li><a href="#" data-color="Purple"><span class="product-color-purple"></span></a></li>
                                     </ul>
                                 </div>
+<!-- product-details.hbs -->
+{{!-- <div class="attr-detail attr-color mb-15">
+    <strong class="mr-10">Color</strong>
+    <ul class="list-filter color-filter">
+        {{#each product.availabeColors}}
+            {{#if allowedColors.includes(this)}}
+                <li><a href="#" data-color="{{this}}"><span class="product-color-{{this.toLowerCase()}}"></span></a></li>
+            {{/if}}
+        {{/each}}
+    </ul>
+</div> --}}
+
+
                                 <div class="attr-detail attr-size">
                                     <strong class="mr-10">Size</strong>
                                     <ul class="list-filter size-filter font-small">
@@ -496,9 +511,9 @@
                                 <div class="product-cart-wrap mb-30">
                                     <div class="product-img-action-wrap">
                                         <div class="product-img product-img-zoom">
-                                            <a href="/shop-product-right/{{_id}}">
+                                            <a href="/shop-product-right?productId={{_id}}&parentId={{parentId}}">
                                                 <img class="default-img" src="{{images.image1}}" alt="">
-                                                <img class="hover-img" src="{{images.image2}}" alt="">
+                                                <img class="hover-img" src="{{image}}" alt="">
                                             </a>
                                         </div>
                                         <div class="product-action-1">
@@ -518,7 +533,7 @@
                                     </div>
                                     <div class="product-content-wrap">
                                         <div class="product-category">
-                                            <a href="shop-grid-right.html">{{product_category}}</a>
+                                            <a href="shop-grid-right.html">{{category}}</a>
                                         </div>
                                         <h2><a href="shop-product-right.html">{{product_title}}</a></h2>
                                         <div class="rating-result" title="90%">
@@ -530,9 +545,9 @@
                                             {{#if offerPrice}}
                                             <span>{{formatCurrency offerPrice}} </span>
                                             {{else}}
-                                            <span>{{formatCurrency product_price}}</span>
+                                            <span>{{formatCurrency regular_price}}</span>
                                             {{/if}}
-                                            <span class="old-price">{{formatCurrency product_price}}</span>
+                                            <span class="old-price">{{formatCurrency regular_price}}</span>
                                         </div>
                                         <div class="product-action-1 show">
 <button id="myModalButton" aria-label=" Cart" class="action-btn hover-up" onclick="addToCart('{{_id}}')" data-bs-toggle="modal" data-bs-target="#myModal"><i class="fi-rs-shopping-bag-add"></i></button>

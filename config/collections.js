@@ -1,5 +1,6 @@
 const collection = {
   PRODUCT_COLLECTION: 'products',
+  PRODUCT_TEMPLATE:'productTemplate',
   USER_COLLECTION: 'users',
   ADMIN_COLLECTION: 'admin',
   CATEGORY_COLLECTION: 'categories',
@@ -13,6 +14,8 @@ const collection = {
   COUPON_TEMPLATE: 'coupontemplate',
   COUPONS:'coupons',
   VISITORS:'visitors',
-  PRODUCT_RATING:'ratings'
+  PRODUCT_RATING:'ratings',
+  COLORS:'colors',
+  SIZES:'sizes',
 }
 export default collection

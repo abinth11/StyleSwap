@@ -100,6 +100,16 @@ const userHelpers = {
       throw new Error("Failed to fetch products")
     }
   },
+  findParent:async (parentId) => {
+    try {
+      const parent = await db.get().collection(collection.PRODUCT_TEMPLATE).findOne({_id:ObjectId(parentId)})
+      return parent
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  },
   viewCurrentProduct: async (productId) => {
     try {
       const product = await db
@@ -122,17 +132,14 @@ const userHelpers = {
           {
             $project: {
               _id: 1,
-              product_title: 1,
-              product_sku: 1,
-              product_color: 1,
-              product_size: 1,
-              product_brand: 1,
-              product_description: 1,
-              product_price: 1,
+              product_name: 1,
+              availabeColors: 1,
+              availabeSizes: 1,
+              regular_price: 1,
               product_warranty: 1,
               product_return: 1,
-              product_quantity: 1,
-              product_category: 1,
+              category: 1,
+              sub_category:1,
               delivery: 1,
               offerPrice: 1,
               isActive: 1,
@@ -284,6 +291,15 @@ const userHelpers = {
       console.log(error)
       throw new Error("Failed to fetch current product")
     }
+  },
+  getAllChildWithColor :(color) => {
+    try {
+      const products = db.get().collection(collection.PRODUCT_COLLECTION).find({product_color:color}).toArray()
+      return products
+    } catch (error) {
+      console.log(error)
+    }
+
   },
   getLoginedUser: async (userId) => {
     try {
@@ -1713,10 +1729,10 @@ const userHelpers = {
 
     const selectedCouponTemplate = couponTemplates[randomIndex]
     console.log(selectedCouponTemplate)
-    const MIN_EXPIRY_DAYS = 15
-    const MAX_EXPIRY_DAYS = 30
 
     //? calculate the expiry date for the new coupon
+    const MIN_EXPIRY_DAYS = 15
+    const MAX_EXPIRY_DAYS = 30
     const expiryDays =
       Math.floor(Math.random() * (MAX_EXPIRY_DAYS - MIN_EXPIRY_DAYS + 1)) +
       MIN_EXPIRY_DAYS

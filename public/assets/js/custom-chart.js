@@ -11,7 +11,7 @@ fetch("/admin/data-for-other-graphs-and-chart")
     orderStat,
     paymentStat
   } = data
-  console.log(data)
+
   /* Sale statistics Chart */
   if ($("#myChart").length) {
     const ctx = document.getElementById("myChart").getContext("2d")

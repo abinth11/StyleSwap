@@ -15,6 +15,7 @@ export const userControler = {
       }
       console.log(req.session)
       const products = await userHelpers.viewProduct()
+      console.log(products)
       res.render('index', { user: req.session.user, products, cartCount })
       req.session.guestUser = null
     } catch (error) {
@@ -183,17 +184,39 @@ export const userControler = {
       res.status(500).send('Internal Server Error')
     }
   },
+  changeProduct:async(req, res) =>{
+    try {
+      const {productId,parentId} = req.body
+      const parent = await userHelpers.findParent(parentId)
+      const product = await userHelpers.viewCurrentProduct(productId)
+      const allowedColors = ["red", "green", "blue", "yellow","black"]
+      const availabeColors = parent.availabeColors
+      const availabeSizes = parent.availabeSizes
+      res.status(200).json({
+        product,
+        allowedColors,
+        availabeColors,
+        availabeSizes
+      })
+    }catch (error) {
+      res.statu(500).json({Message:"Error while changing product color",error:true})
+    }
+
+  },
   shopProductRight: async (req, res) => {
     try {
-      const { id } = req.params
-      const product = await userHelpers.viewCurrentProduct(id)
-      console.log(product)
-      console.log(product.ratingPercentages)
+      const { productId,parentId } = req.query
+      const parent = await userHelpers.findParent(parentId)
+    
+      const product = await userHelpers.viewCurrentProduct(productId)
+      const allowedColors = ["red", "green", "blue", "yellow","black"]
+      const availabeColors = parent.availabeColors
+      const availabeSizes = parent.availabeSizes
       let reviews = 0
       if(product?.ratings?.length){
         reviews = product.ratings.length
       }
-      res.render('users/shop-product-right', { user: req.session.user, product, reviews})
+      res.render('users/shop-product-right', { user: req.session.user, product, reviews,allowedColors,availabeColors,availabeSizes,parentId})
     } catch (error) {
       console.error(error)
       res.status(500).send('Internal Server Error')
@@ -601,9 +624,8 @@ export const userControler = {
   },
   viewCoupons:async (req, res) => {
     try {
-      const myCoupons = await userHelpers.getUserCoupons(req.session.user._id)
-      console.log(req.session.user._id)
-      console.log(myCoupons)
+      const coupons = await userHelpers.getUserCoupons(req.session.user._id)
+      const myCoupons = coupons.reverse()
       res.render('users/view-coupons-user', { myCoupons })
     } catch (error) {
       console.log(error)

@@ -21,11 +21,21 @@ router.get(
 
 //? ROUTES FOR HANDLING PRODUCTS
 //* upload.array() method is handling the images upload by multer library
+//for adding product templates
+router
+   .route('/dashboard/add-product-templates')
+  .get(sessionCheck.isAdminExist,adminControler.addProductTemplateGet)
+  .post(
+    upload.single('product_thumbanil'),
+    adminControler.addProductTemplatePost
+    )
+router.get('/dashboard/view-product-templates',adminControler.viewProductTemplages)
 // For adding products
 router
-  .route("/dashboard/view-products-in-list/add-products")
-  .get(sessionCheck.isAdminExist, adminControler.addProducts3Get)
+  .get("/dashboard/view-product-template/add-products/:productId",sessionCheck.isAdminExist, adminControler.addProducts3Get)
+router
   .post(
+    "/dashboard/view-product-template/add-products/",
     upload.array("product_image", 10),
     adminValidate.addProductValidate,
     adminControler.addProducts3Post
@@ -33,7 +43,7 @@ router
 
 // For viewing products
 router.get(
-  "/dashboard/view-products-in-list",
+  "/dashboard/view-product-templates/view-child-products/:parentId",
   sessionCheck.isAdminExist,
   adminControler.viewProductList
 )
@@ -41,19 +51,19 @@ router.get(
 //  Edit products
 // * @param id is the parameter for the url (it is a product id)
 router
-  .route("/dashboard/view-product-list/edit-products-list/:id")
+  .route("/dashboard/view-product-template/edit-child-product/:id")
   .get(sessionCheck.isAdminExist, adminControler.editProductsListGet)
   .post(adminValidate.addProductValidate, adminControler.editProductsListPut)
 
 // disable product in list view
 router.post(
-  "/dashboard/view-product-list/diable-and-enable-products",
+  "/dashboard/view-product-template/diable-and-enable-products",
   adminControler.disableAndEnableProduct
 )
 
 // Add offers for individual products
 router
-  .route("/dashboard/view-product-list/add-offers-for-products")
+  .route("/dashboard/view-product-template/add-offers-for-products")
   .get(adminControler.addOffersProducts)
   .post(adminControler.addOffersProductsPost)
 
@@ -108,7 +118,11 @@ router.get(
 )
 
 // Manage product variants
-router.get("/add-product-variants", adminControler.addProductsVariants)
+router.get("/dashboard/add-product-variants", adminControler.addProductsVariants)
+
+router.post('/dashboard/add-color',sessionCheck.isAdminExist,adminControler.addColors)
+router.post('/dashboard/add-size',sessionCheck.isAdminExist,adminControler.addSize)
+
 
 //? ROUTES FOR HANDLING ORDERS
 // view and manage orders

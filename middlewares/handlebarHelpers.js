@@ -54,6 +54,14 @@ export const helpers = {
     })
     return formatter.format(value)
   },
+  includes:(array, value) => {
+    return array.includes(value)
+  },
+  lowerCase: (str)=> {
+    return str.toLowerCase()
+  }
+  
+  
   // add more helper functions here...
 }
 

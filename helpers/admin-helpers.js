@@ -2,7 +2,6 @@ import db from "../config/connection.js"
 import collection from "../config/collections.js"
 import { ObjectId as objectId } from "mongodb"
 import moment from "moment"
-import { TodayInstance } from "twilio/lib/rest/api/v2010/account/usage/record/today.js"
 const adminHelpers = {
   adminLogin: async (adminInfo) => {
     try {
@@ -30,19 +29,69 @@ const adminHelpers = {
       throw new Error("Login failed")
     }
   },
+  addProductTemplate: async (productInfo, image) => {
+    try {
+      const {
+        product_name,
+        product_description,
+        regular_price,
+        sub_category,
+        category,
+      } = productInfo
+      const product = {
+        product_name,
+        product_description,
+        regular_price:parseInt(regular_price),
+        sub_category,
+        category,
+        availabeColors:[{}],
+        availabeSizes:[],
+        image,
+        addedAt:new Date()
+      }
+      const response = await db
+        .get()
+        .collection(collection.PRODUCT_TEMPLATE)
+        .insertOne(product)
+      return response
+    } catch (error) {
+      console.log(error)
+      throw new Error("Error while adding product template")
+    }
+  },
+  getProductTemplates: async() => {
+    try {
+      const productTemplate = await db.get().collection(collection.PRODUCT_TEMPLATE).find({}).toArray()
+      return productTemplate
+
+    } catch (error) {
+      console.log(error)
+      throw new Error("Error while getting product templates")
+    }
+
+  },
   addProducts: async (product, urls) => {
-    console.log(urls)
-    const { product_price: productPrice, ...rest } = product
+    console.log(product)
+    const { product_price: productPrice,
+      productId,
+      product_quantity,
+      product_color,
+      product_size,
+       ...rest } = product
     const productData = {
+      parentId:objectId(productId),
       ...rest,
       product_price: parseInt(productPrice),
+      quantity:parseInt(product_quantity),
       offerPrice: parseInt(productPrice),
       addedAt: new Date(),
       isActive: true,
       images: {
         image1: urls[0],
         image2: urls[1],
-        images3: urls[2],
+        image3: urls[2],
+        image4:urls[3],
+        image5:urls[4]
       },
     }
     try {
@@ -50,17 +99,29 @@ const adminHelpers = {
         .get()
         .collection(collection.PRODUCT_COLLECTION)
         .insertOne(productData)
+      const childId = result.insertedId
+      await db.get().collection(collection.PRODUCT_TEMPLATE).updateOne({_id:objectId(productId)},
+      {
+        $addToSet: {
+           availabeSizes: product_size,
+           availabeColors: {
+              color: product_color,
+              id:objectId(childId)
+           }
+        }
+     }
+      )
       return { ...result, productData }
     } catch (error) {
       throw new Error("Failed to add product")
     }
   },
-  viewProduct: async () => {
+  viewProduct: async (parentId) => {
     try {
       const products = await db
         .get()
         .collection(collection.PRODUCT_COLLECTION)
-        .find()
+        .find({parentId:objectId(parentId)})
         .toArray()
       return products
     } catch (error) {
@@ -1248,41 +1309,71 @@ const adminHelpers = {
   getUserReviews: async () => {
     try {
       const reviews = await db
-      .get()
-      .collection(collection.PRODUCT_RATING)
-      .aggregate([
-        {
-          $lookup: {
-            from: collection.PRODUCT_COLLECTION,
-            foreignField: '_id',
-            localField: 'productId',
-            as: 'productDetails'
-          }
-        },
-        {
-          $addFields: {
-            product: { $arrayElemAt: ['$productDetails', 0] }
-          }
-        },
-        {
-          $project: {
-            productDetails: 0
-          }
-        }
-      ])
-      .toArray()
+        .get()
+        .collection(collection.PRODUCT_RATING)
+        .aggregate([
+          {
+            $lookup: {
+              from: collection.PRODUCT_COLLECTION,
+              foreignField: "_id",
+              localField: "productId",
+              as: "productDetails",
+            },
+          },
+          {
+            $addFields: {
+              product: { $arrayElemAt: ["$productDetails", 0] },
+            },
+          },
+          {
+            $project: {
+              productDetails: 0,
+            },
+          },
+        ])
+        .toArray()
       return reviews
     } catch (error) {
       console.log(error)
     }
   },
-  // searchUsers:(name)=>{
-  //     return new Promise((resolve,reject)=>{
-  //         db.get().collection(collection.USER_COLLECTION).findOne({name:name}).then((data)=>{
-  //             console.log(data);
-  //             resolve(data);
-  //         })
-  //     })
-  // }
+  addColor: async (color) => {
+    try {
+      const response = await db
+        .get()
+        .collection(collection.COLORS)
+        .insertOne(color)
+      return response
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  addSize: async (size) => {
+    try {
+      const response = await db
+        .get()
+        .collection(collection.SIZES)
+        .insertOne(size)
+      return response
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  getAllSize: async () => {
+    try {
+      const size = db.get().collection(collection.SIZES).find({}).toArray()
+      return size
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  getAllColor: async () => {
+    try {
+      const color = db.get().collection(collection.COLORS).find({}).toArray()
+      return color
+    } catch (error) {
+      console.log(error)
+    }
+  },
 }
 export default adminHelpers

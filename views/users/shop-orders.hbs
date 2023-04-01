@@ -270,11 +270,25 @@
 
 
 
-                        <table class="table  shopping-summery text-center">
+                        <table   id="userTable" class="table  shopping-summery text-center">
                             <thead>
                                 <tr class="main-heading">
                                     <th scope="col" class="col-3">OrderId</th>
-                                    <th scope="col" class="col-2">Date</th>
+                                    <th scope="col" class="col-2">
+                                         <div style="display: inline-flex; align-items: center;">
+                <div>Date</div>
+                <div class="ms-2 mb-2" style="display: flex; flex-direction: column;width: 2em;height: 2em;">
+                    <div style="height: 1em; cursor: pointer;" class="">
+                        <button style="border: none;background-color: transparent;" onclick="sortByDate('asc')"><i class="fas fa-chevron-up"
+                                style="display: inline-block;"></i></button>
+                    </div>
+                    <div style="height: 1em;cursor: pointer;">
+                        <button style="border: none;background-color: transparent;" onclick="sortByDate('desc')"><i class="fas fa-chevron-down"
+                                style="display: inline-block;"></i></button>
+                    </div>
+                </div>
+            </div>
+                                    </th>
                                     <th scope="col" class="price col-2">Price</th>
                                     <th scope="col" class="price col-2">Status</th>
                                     <th scope="col">Actions</th>
@@ -422,5 +436,25 @@
 
 		})
 	}
+
+    //Filter table by the date...
+      //sort by date
+        function sortByDate(order) {
+            var rows = $('#userTable tbody tr').get();
+            rows.sort(function (a, b) {
+                var A = $(a).children('td').eq(4).text().toUpperCase();
+                var B = $(b).children('td').eq(4).text().toUpperCase();
+                if (A < B) {
+                    return order === 'asc' ? -1 : 1;
+                }
+                if (A > B) {
+                    return order === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+            $.each(rows, function (index, row) {
+                $('#userTable tbody').append(row);
+            });
+        }
 
 </script>
