@@ -270,6 +270,7 @@ export const userControler = {
     try {
       const { userId } = req.body
       const response = await userHelpers.changeCartQuantity(req.body)
+      console.log(response)
       response.total = await userHelpers.findTotalAmout(userId)
       const subtotal = await userHelpers.findSubTotal(userId)
       response.subtotal = subtotal

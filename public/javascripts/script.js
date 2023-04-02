@@ -60,6 +60,15 @@ const changeQuantity = (cartId, productId, userId, count) => {
         $('#productRemovedModal').on('hidden.bs.modal', function () {
           location.reload()
         })
+      }else if (!response.status){
+        Swal.fire({
+          icon: 'warning',
+          title: 'Out of stock!',
+          text: 'The requested quantity is not available.',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#8B4000',
+          focusConfirm: '#FF0000'
+        })
       } else {
         document.getElementById(productId).innerHTML = quantity + count
         let total = response.total.total
