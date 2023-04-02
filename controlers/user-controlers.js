@@ -5,6 +5,7 @@ import { validationResult } from 'express-validator'
 import adminHelpers from '../helpers/admin-helpers.js'
 import otherHelpers from '../helpers/otherHelpers.js'
 import { createIndexForAlgolia, searchWithAlgolia } from '../config/algoliasearch.js'
+import fetchcallHelpers from '../helpers/fetch-apis.js'
 export const userControler = {
   userHome: async (req, res) => {
     try {
@@ -13,9 +14,7 @@ export const userControler = {
       if (req.session.user) {
         cartCount = await userHelpers.getCartProductsCount(req.session.user._id)
       }
-      console.log(req.session)
       const products = await userHelpers.viewProduct()
-      console.log(products)
       res.render('index', { user: req.session.user, products, cartCount })
       req.session.guestUser = null
     } catch (error) {
@@ -715,6 +714,20 @@ export const userControler = {
     console.log(error)
     res.status(500).json({message:"Error while adding rating"})
    }
+  },
+  getSizeAndColor:async(req,res)=>{
+    try {
+      const {productId} = req.params
+      console.log(productId+"pdosdofd")
+       const sizeAndColor = await fetchcallHelpers.getSizeAndColor(productId)
+       const colors = sizeAndColor.availabeColors
+       const sizes = sizeAndColor.availabeSizes
+       res.status(200).json({colors,sizes})
+
+    } catch (error) {
+      res.status(500).json({Message:"Internal server error",status:error})
+    }
+
   },
   userLogout: (req, res) => {
     try {

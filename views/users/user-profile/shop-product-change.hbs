@@ -1,4 +1,4 @@
-﻿{{>head-user}}
+{{>head-user}}
 <!-- Quick view -->
 <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel"
     aria-hidden="true">
@@ -16,7 +16,7 @@
                                     <img src="{{product.images.image1}}" id="image-hover" alt="product image">
                                 </figure>
                                 <figure class="border-radius-10">
-                                    <img src="{{product.images.image1}}" id="hover-img" alt="product image">
+                                    <img src="{{product.images.image2}}" id="hover-img" alt="product image">
                                 </figure>
                                 <figure class="border-radius-10">
                                     <img src="/imgs/shop/product-16-3.jpg" alt="product image">
@@ -340,7 +340,7 @@
                                     <!-- MAIN SLIDES -->
                                     <div class="product-image-slider" style="height: 470px;">
                                         <figure class="border-radius-10">
-                                            <img src="{{product.images.image1}}" id="image-one" alt="product image"
+                                            <img src="{{product.images.image2}}" id="image-one" alt="product image"
                                                 style="object-fit: fill;height: 100%;">
                                         </figure>
                                         <figure class="border-radius-10">
@@ -458,7 +458,7 @@
                                             <li>{{product.allowedColors}}</li>
 
                                             {{#each availabeColors}}
-                                            <li><a onclick="changeProduct('{{this.id}}','{{../parentId}}')"
+                                            <li><a href="/shop-product-change-color?productId={{this.id}},{{../parentId}}" 
                                                     data-color="{{this.color}}"><span
                                                         class="product-color-{{lowerCase this.color}}"></span></a></li>
                                             {{!-- {{#if (includes product.availabeColors this)}}
@@ -1068,10 +1068,9 @@
 
 
 
-    // Define a function to retrieve and update the product details
+    {{!-- // Define a function to retrieve and update the product details
 function updateProductDetails() {
   // Check if product details are stored in localStorage
-  
   const storedProductDetails = localStorage.getItem('productDetails');
 
   if (storedProductDetails) {
@@ -1090,10 +1089,9 @@ function updateProductDetails() {
 
 
 // Call the function when the page finishes loading
-
-{{!-- window.onload = function() {
+window.onload = function() {
   updateProductDetails();
-}; --}}
+};
 
 
    const changeProduct = (productId, parentId) => {
@@ -1103,18 +1101,17 @@ function updateProductDetails() {
         type: "POST",
         data: { productId, parentId },
         success: (response) => {
-            const key = 'productDetails'
             // Update the DOM elements with the new product data
             const productImage = document.querySelector('#image-one');
             const hoverImage = document.querySelector('#image-hover');
             productImage.src = response.product.images.image1;
-            hoverImage.src = response.product.images.image1;
+            hoverImage.src = response.product.images.image2;
             console.log(response.product.images.image2)
             // Store the updated product details in localStorage
             localStorage.setItem('productDetails', JSON.stringify(response));
         }
     });
-}
+} --}}
 
 
 </script>

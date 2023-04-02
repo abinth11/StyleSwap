@@ -78,9 +78,12 @@ const adminHelpers = {
       product_color,
       product_size,
        ...rest } = product
+       console.log(product_size)
     const productData = {
       parentId:objectId(productId),
       ...rest,
+      product_color,
+      product_size,
       product_price: parseInt(productPrice),
       quantity:parseInt(product_quantity),
       offerPrice: parseInt(productPrice),

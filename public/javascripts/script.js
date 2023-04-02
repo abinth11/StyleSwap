@@ -2,7 +2,8 @@
 /* eslint-disable no-undef */
 
 // eslint-disable-next-line no-unused-vars
-const addToCart = (productId) => {
+const addToCart = () => {
+  const productId = document.getElementById('pro-id-to-cart').value
   // eslint-disable-next-line no-undef
   $.ajax({
     url: '/add-to-cart/' + productId,

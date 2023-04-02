@@ -124,6 +124,7 @@ router.get('/kids-category', userControler.kidsCategory)
 //Routes for Ratings
 router.post('/shop-product-right/add-rating-for-products',userControler.addRatingForProducts)
 
+router.get('/get-available-size-and-color/:productId',userControler.getSizeAndColor)
 // User logout
 router.get('/logoutUser', userControler.userLogout)
 
