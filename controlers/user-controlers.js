@@ -228,6 +228,7 @@ export const userControler = {
       // console.log(user, guestUser)
       if (user) {
         const cartItems = await userHelpers.getcartProducts(req.session.user._id)
+        console.log(cartItems)
         const totalAmout = await userHelpers.findTotalAmout(req.session.user._id)
         let saved = 0
         if(totalAmout){

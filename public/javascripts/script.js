@@ -3,7 +3,7 @@
 
 // eslint-disable-next-line no-unused-vars
 const addToCart = () => {
-  const productId = document.getElementById('pro-id-to-cart').value
+  const productId = document.getElementById('colorSelect').value
   // eslint-disable-next-line no-undef
   $.ajax({
     url: '/add-to-cart/' + productId,
@@ -62,16 +62,16 @@ const changeQuantity = (cartId, productId, userId, count) => {
         })
       } else {
         document.getElementById(productId).innerHTML = quantity + count
-        const total = response.total.total
-        document.getElementById('totalAmout').innerHTML = `₹${total}`
-        console.log(response.total.total)
-         console.log(response.subtotal)
+        let total = response.total.total
+        total = formatMoney(total)
+        document.getElementById('totalAmout').innerHTML = total
         const subtotalArr = response.subtotal
         for (let i = 0; i < subtotalArr.length; i++) {
-          const subtotal = subtotalArr[i].subtotal
+          let subtotal = subtotalArr[i].subtotal
+          subtotal = formatMoney(subtotal)
           const productId = subtotalArr[i]._id.toString()
 
-          document.getElementById(`${productId}-subtotal`).innerHTML = `₹${subtotal}`
+          document.getElementById(`${productId}-subtotal`).innerHTML = subtotal
         }
       }
     },
@@ -144,6 +144,16 @@ const cancellOrder = (orderId, reason) => {
     }
   })
 }
+
+function formatMoney(amount) {
+  const formatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2
+  })
+  return formatter.format(amount)
+}
+
 
 // // Example of adding funds to the wallet
 // $('.modal-body form').submit(function (event) {

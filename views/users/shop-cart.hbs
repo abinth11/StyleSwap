@@ -280,12 +280,12 @@
                                         <p class="font-xs">Maboriosam in a tonto nesciung eget<br> distingy magndapibus.
                                         </p>
                                     </td>
-                                    {{#notNull offerPrice}}
+                                    {{#if offerPrice}}
                                     <td class="price" data-title="Price"><span>{{formatCurrency offerPrice}}</span></td>
                                     {{else}}
                                     <td class="price" data-title="Price"><span>{{formatCurrency product_price}}</span>
                                     </td>
-                                    {{/notNull}}
+                                    {{/if}}
                                     <td class="text-center" data-title="Stock">
                                         <div class="detail-qty border radius m-auto">
                                             {{!-- <a class="qty-down"

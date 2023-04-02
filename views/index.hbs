@@ -2726,15 +2726,7 @@
 
 
 <script>
-    function formatMoney(amount) {
-  const formatter = new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 2
-  });
-  return formatter.format(amount);
-}
-
+ 
 
     const selectOption = (productId) => {
         $('#pro-id-to-cart').val(`${productId}`);
@@ -2769,10 +2761,11 @@
                 // Populate available colors in the color select
                 response.colors.forEach((color) => {
                     if (color.color === currentColor) {
-                        $("#colorSelect").append(`<option value="${color.color}" selected>${color.color}</option>`);
+                        $("#colorSelect").append(`<option value="${color.id}" selected>${color.color}</option>`);
                     } else {
-                        $("#colorSelect").append(`<option value="${color.color}">${color.color}</option>`);
+                        $("#colorSelect").append(`<option value="${color.id}">${color.color}</option>`);
                     }
+                    
                 });
 
                 // Populate available colors in the color filter
