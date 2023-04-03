@@ -1,4 +1,5 @@
-E-commerce App
+`E-commerce App`
+
 This is an e-commerce app built with Node.js, Express, and MongoDB. It allows users to browse and purchase products online.
 
 Installation
