@@ -17,7 +17,7 @@ export const paymentControlers = {
           })
         } catch (error) {
           console.error(error)
-          res.status(500).send("Internal Server Error")
+          res.render("users/shop-checkout", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       proceedToCheckOutPost: async (req, res) => {
@@ -85,7 +85,7 @@ export const paymentControlers = {
           req.session.couponAppliedDetails = null
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/order-placed-landing", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       verifyRazorpayPayment: async (req, res) => {
@@ -123,7 +123,7 @@ export const paymentControlers = {
           res.render("users/wallet", { walletData })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/wallet", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       walletPayment: async (req, res) => {

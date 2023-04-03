@@ -37,7 +37,7 @@ export const cartControlers = {
           }
         } catch (error) {
           console.error(error)
-          res.status(500).send("Internal Server Error")
+          res.render("users/shop-cart", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       addToCartGet: async (req, res) => {
@@ -70,7 +70,7 @@ export const cartControlers = {
           res.json(response)
         } catch (error) {
           console.error(error)
-          res.status(500).send("Internal Server Error")
+          res.status(500).json("Internal Server Error")
         }
       },
       removeProducts: async (req, res) => {
@@ -79,7 +79,7 @@ export const cartControlers = {
           res.json(response)
         } catch (error) {
           console.error(error)
-          res.status(500).send("Internal Server Error")
+          res.status(500).json("Internal Server Error")
         }
       },
 

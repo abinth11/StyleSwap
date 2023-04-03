@@ -59,7 +59,7 @@ export const productControler = {
           res.render("users/shop-men", { products, numberofProducts })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "internal server error" })
+          res.render("users/shop-men", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       womensCategory: async (req, res) => {
@@ -70,7 +70,7 @@ export const productControler = {
           res.render("users/shop-womens", { products, numberofProducts })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "internal server error" })
+          res.render("users/shop-womens", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       kidsCategory: async (req, res) => {
@@ -80,7 +80,7 @@ export const productControler = {
           res.render("users/shop-womens", { products, numberofProducts })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "internal server error" })
+          res.render("users/shop-womens", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       indexProducts: async (req, res) => {
@@ -158,7 +158,7 @@ export const productControler = {
           userHelpers.returnProduct(req.body)
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/view-orders", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
 }

@@ -8,7 +8,7 @@ export const orderControler = {
           res.render("users/shop-orders", { orderGroup })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/shop-orders", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       viewOrderBundle: async (req, res) => {
@@ -20,7 +20,7 @@ export const orderControler = {
           res.render("users/order-bundle", { orderDetails })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/order-bundle", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       cancellOrders: async (req, res) => {
@@ -32,7 +32,7 @@ export const orderControler = {
           })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/shop-orders", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       trackOrders: async (req, res) => {
@@ -42,7 +42,7 @@ export const orderControler = {
           res.render("users/track-order", { order, statusDates })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/track-order", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
 }

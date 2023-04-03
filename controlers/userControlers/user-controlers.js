@@ -23,7 +23,7 @@ export const userControler = {
       res.render("users/dashboard", { user: req.session.user })
     } catch (error) {
       console.error(error)
-      res.status(500).send("Internal Server Error")
+      res.render("users/dashboard", { warningMessage: "Internal Server Error Please try again later..."})
     }
   },
   viewCoupons: async (req, res) => {
@@ -33,6 +33,7 @@ export const userControler = {
       res.render("users/view-coupons-user", { myCoupons })
     } catch (error) {
       console.log(error)
+      res.render("users/view-coupons-user", { warningMessage: "Internal Server Error Please try again later..."})
     }
   },
   applyCouponCode: async (req, res) => {
@@ -43,16 +44,17 @@ export const userControler = {
       res.json(response)
     } catch (error) {
       console.log(error)
+      res.render("users/shop-cart", { warningMessage: "Internal Server Error Please try again later..."})
     }
   },
- 
   userLogout: (req, res) => {
     try {
       req.session.user = null
       res.redirect("/")
     } catch (error) {
       console.log(error)
-      res.status(500).json({ message: "Internal server error" })
+      res.render("index", { warningMessage: "Internal Server Error Please try again later..."})
+
     }
   },
 }

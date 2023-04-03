@@ -14,18 +14,18 @@ export const profileControlers = {
           })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/edit-profile", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       editUserProfilePost: (req, res) => {
         try {
           const { userId } = req.params
           userHelpers.editProfile(userId, req.body).then(() => {
-            res.redirect("/")
+            res.redirect("/edit-profile")
           })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users-", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       addAddressPost: (req, res) => {
@@ -53,7 +53,7 @@ export const profileControlers = {
           res.render("users/user-profile/edit-address", { currentAddress, from })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/edit-address", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       editAddressPost: (req, res) => {
@@ -67,7 +67,7 @@ export const profileControlers = {
           })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/edit-address", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       deleteAddress: (req, res) => {
@@ -80,7 +80,7 @@ export const profileControlers = {
           })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/edit-address", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       userProfileDash: (req, res) => {
@@ -90,7 +90,7 @@ export const profileControlers = {
           })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/user-dashboard", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       userProfileOrders: async (req, res) => {
@@ -100,7 +100,7 @@ export const profileControlers = {
           res.render("users/user-profile/user-orders", { orders })
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/user-orders", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       userProfileTrackOrders: (req, res) => {
@@ -108,7 +108,7 @@ export const profileControlers = {
           res.render("users/user-profile/user-track-orders")
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/user-track-orders", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       userProfileAddress: async (req, res) => {
@@ -119,7 +119,7 @@ export const profileControlers = {
           req.session.updatedAddr = null
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/user-address", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       userAccountDetails: async (req, res) => {
@@ -132,7 +132,7 @@ export const profileControlers = {
           // req.session.profile_update_status=null;
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/user-account", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       updateProfile: (req, res) => {
@@ -144,7 +144,7 @@ export const profileControlers = {
           // req.session.profile_update_status=response;
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/user-account", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       changePassword: (req, res) => {
@@ -161,7 +161,7 @@ export const profileControlers = {
           req.session.updatePasswd_err = null
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/user-change-password", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
       changePasswordPost: async (req, res) => {
@@ -180,7 +180,7 @@ export const profileControlers = {
           }
         } catch (error) {
           console.log(error)
-          res.status(500).json({ message: "Internal server error" })
+          res.render("users/user-profile/user-change-password", { warningMessage: "Internal Server Error Please try again later..."})
         }
       },
 }
