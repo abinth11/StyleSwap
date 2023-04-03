@@ -3,6 +3,7 @@
 This is an e-commerce app built with Node.js, Express, and MongoDB. It allows users to browse and purchase products online.
 
 `Installation`
+
 To run this app locally, follow these steps:
 
 Clone the repository: git clone https://github.com/abinth11/Ecommerce-app
