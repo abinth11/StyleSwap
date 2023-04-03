@@ -1,8 +1,8 @@
-import adminHelpers from "../helpers/admin-helpers.js"
+import adminHelpers from "../../helpers/admin-helpers.js"
 import { validationResult } from "express-validator"
-import generateReport from "../middlewares/salesReport.js"
+import generateReport from "../../middlewares/salesReport.js"
 import fs from "fs"
-import { uploadSingle,uploadImages } from "../config/cloudinary.js"
+import { uploadSingle,uploadImages } from "../../config/cloudinary.js"
 const adminControler = {
   adminLoginGet: (req, res) => {
     const { admin, loginError } = req.session

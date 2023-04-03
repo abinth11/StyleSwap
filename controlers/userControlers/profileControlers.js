@@ -1,12 +1,13 @@
 import userHelpers from "../../helpers/user-helpers.js"
 import { validationResult } from "express-validator"
 import adminHelpers from "../../helpers/admin-helpers.js"
+import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
 export const profileControlers = {
     editUserProfile: async (req, res) => {
         try {
           const id = req.session?.user._id
-          const userDetails = await userHelpers.getLoginedUser(id)
-          const address = await userHelpers.getUserAddress(id)
+          const userDetails = await profileHelpers.getLoginedUser(id)
+          const address = await profileHelpers.getUserAddress(id)
           res.render("users/edit-profile", {
             userDetails,
             user: req.session.user,
@@ -20,7 +21,7 @@ export const profileControlers = {
       editUserProfilePost: (req, res) => {
         try {
           const { userId } = req.params
-          userHelpers.editProfile(userId, req.body).then(() => {
+          profileHelpers.editProfile(userId, req.body).then(() => {
             res.redirect("/edit-profile")
           })
         } catch (error) {
@@ -33,7 +34,7 @@ export const profileControlers = {
           const userId = req.session.user?._id
           const { addressFromCheckOut } = req.body
           req.body.userId = userId
-          userHelpers.addNewAddress(req.body).then(() => {
+          profileHelpers.addNewAddress(req.body).then(() => {
             const jsonResponse = addressFromCheckOut
               ? { addressFromCheckOut: true }
               : { addressFromProfile: true }
@@ -49,7 +50,7 @@ export const profileControlers = {
       editAddressGet: async (req, res) => {
         try {
           const { from } = req.query
-          const currentAddress = await userHelpers.getCurrentAddress(req.query.id)
+          const currentAddress = await profileHelpers.getCurrentAddress(req.query.id)
           res.render("users/user-profile/edit-address", { currentAddress, from })
         } catch (error) {
           console.log(error)
@@ -59,7 +60,7 @@ export const profileControlers = {
       editAddressPost: (req, res) => {
         try {
           const { from } = req.query
-          userHelpers.editAddress(req.query.addressId, req.body).then(() => {
+          profileHelpers.editAddress(req.query.addressId, req.body).then(() => {
             req.session.updatedAddr = "Successfully updated address"
             from === "profile"
               ? res.redirect("/profile-address")
@@ -73,7 +74,7 @@ export const profileControlers = {
       deleteAddress: (req, res) => {
         const { addressId, from } = req.body
         try {
-          userHelpers.addressDelete(addressId).then(() => {
+          profileHelpers.addressDelete(addressId).then(() => {
             from === "profile"
               ? res.redirect("/profile-address")
               : res.redirect("/proceed-to-checkout")
@@ -113,7 +114,7 @@ export const profileControlers = {
       },
       userProfileAddress: async (req, res) => {
         try {
-          const address = await userHelpers.getUserAddress(req.session.user._id)
+          const address = await profileHelpers.getUserAddress(req.session.user._id)
           const updateMsg = req.session.updatedAddr
           res.render("users/user-profile/user-address", { address, updateMsg })
           req.session.updatedAddr = null
@@ -124,7 +125,7 @@ export const profileControlers = {
       },
       userAccountDetails: async (req, res) => {
         try {
-          const userDetails = await userHelpers.getUserDetails(
+          const userDetails = await profileHelpers.getUserDetails(
             req.session.user._id
           )
           // let profile_update_status= req.session.profile_update_status
@@ -138,7 +139,7 @@ export const profileControlers = {
       updateProfile: (req, res) => {
         try {
           // let sessionUserId=req.session.user._id;
-          userHelpers.updateUserDetails(req.body).then(() => {
+          profileHelpers.updateUserDetails(req.body).then(() => {
             res.redirect("/profile-account-detail")
           })
           // req.session.profile_update_status=response;
@@ -169,7 +170,7 @@ export const profileControlers = {
           const errors = validationResult(req)
           req.session.updatePasswd_err = errors.errors
           if (req.session.updatePasswd_err.length === 0) {
-            const response = await userHelpers.changeUserPassword(
+            const response = await profileHelpers.changeUserPassword(
               req.params.id,
               req.body
             )

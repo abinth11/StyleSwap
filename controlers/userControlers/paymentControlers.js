@@ -1,9 +1,12 @@
 import userHelpers from "../../helpers/user-helpers.js"
 import otherHelpers from "../../helpers/otherHelpers.js"
+import { paymentHelpers } from "../../helpers/userHelpers/paymentHelpers.js"
+import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
+import { walletHelpers } from "../../helpers/userHelpers/walletHelpers.js"
 export const paymentControlers = {
     proceedToCheckOutGet: async (req, res) => {
         try {
-          const cartItems = await userHelpers.getcartProducts(
+          const cartItems = await cartHelpers.getcartProducts(
             req.session?.user._id
           )
           const couponAppliedTotal =
@@ -23,16 +26,16 @@ export const paymentControlers = {
       proceedToCheckOutPost: async (req, res) => {
         try {
           const { userId } = req.body
-          const products = await userHelpers.getAllProductsUserCart(userId)
+          const products = await cartHelpers.getAllProductsUserCart(userId)
           let totalPrice = {}
           if (products[0]?.products.length) {
-            totalPrice = await userHelpers.findTotalAmout(userId)
+            totalPrice = await cartHelpers.findTotalAmout(userId)
           }
           let couponObj = null
           if (req.session.couponAppliedDetails) {
             couponObj = req.session.couponAppliedDetails
           }
-          const response = await userHelpers.placeOrders(
+          const response = await paymentHelpers.placeOrders(
             req.body,
             products,
             totalPrice,
@@ -51,20 +54,20 @@ export const paymentControlers = {
             }
             res.json(codResponse)
           } else if (paymentMethod === "razorpay") {
-            const razorpayResponse = await userHelpers.getRazorpay(
+            const razorpayResponse = await paymentHelpers.getRazorpay(
               insertedOrderId,
               total
             )
             res.json(razorpayResponse)
           } else if (paymentMethod === "paypal") {
-            const paypalResponse = await userHelpers.getPaypal(
+            const paypalResponse = await paymentHelpers.getPaypal(
               insertedOrderId,
               total
             )
             console.log(paypalResponse)
             res.json(paypalResponse)
           } else if (paymentMethod === "wallet") {
-            const walletDetails = await userHelpers.getWalletData(
+            const walletDetails = await walletHelpers.getWalletData(
               req.session.user?._id
             )
             walletDetails.wallet = true
@@ -91,11 +94,11 @@ export const paymentControlers = {
       verifyRazorpayPayment: async (req, res) => {
         try {
           const userId = req.session.user._id
-          userHelpers
+          paymentHelpers
             .verifyRazorpayPayments(req.body)
             .then((response) => {
               console.log(response)
-              userHelpers
+              paymentHelpers
                 .changePaymentStatus(req.body["payment[receipt]"])
                 .then(async () => {
                   const coupon = await otherHelpers.checkProbabilityForCoupon(
@@ -117,7 +120,7 @@ export const paymentControlers = {
       },
       getWallet: async (req, res) => {
         try {
-          const walletData = await userHelpers.getWalletData(req.session.user._id)
+          const walletData = await walletHelpers.getWalletData(req.session.user._id)
           walletData.transactions = walletData.transactions.reverse()
           console.log(walletData)
           res.render("users/wallet", { walletData })
@@ -134,7 +137,7 @@ export const paymentControlers = {
           const { total } = req.body
           console.log(total)
           console.log(userId)
-          const response = await userHelpers.getUserWallet(
+          const response = await walletHelpers.getUserWallet(
             insertedOrderId,
             parseInt(total),
             userId

@@ -1,6 +1,7 @@
 import twilio from "twilio"
 import { validationResult } from "express-validator"
 import userHelpers from "../../helpers/user-helpers.js"
+import { loginAndSignUpHelpers } from "../../helpers/userHelpers/loginAndSignUpHelpers.js"
 export const userLoginAndSignupControler = {
   userSignUpGet: (req, res) => {
     try {
@@ -27,7 +28,7 @@ export const userLoginAndSignupControler = {
       req.session.err = errors.errors
       const { email, mobile } = req.body
       if (req.session.err.length === 0) {
-        const response = await userHelpers.regisUserUser(req.body)
+        const response = await loginAndSignUpHelpers.regisUserUser(req.body)
         if (response.email === email) {
           req.session.signUpErr = `${response.email} already exists please login`
           res.json({ status: false })
@@ -119,7 +120,7 @@ export const userLoginAndSignupControler = {
     try {
       const { mobile } = req.body
       req.session.mobile = mobile
-      const response = await userHelpers.loginWthOTP(req.body)
+      const response = await loginAndSignUpHelpers.loginWthOTP(req.body)
       if (response.status) {
         const verify = await twilio.generateOpt(mobile)
         req.session.vid = verify
@@ -151,7 +152,7 @@ export const userLoginAndSignupControler = {
       req.session.mobile = req.body.mobile
       const guestId = req.session.guestUser?.id
       if (err.length === 0) {
-        const response = await userHelpers.loginUser(req.body)
+        const response = await loginAndSignUpHelpers.loginUser(req.body)
         if (response.block) {
           req.session.loginError = "Your account is blocked by admin"
           res.json({ status: false })

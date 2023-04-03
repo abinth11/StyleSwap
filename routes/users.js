@@ -1,138 +1,229 @@
-import express from 'express'
+import express from "express"
 const router = express.Router()
-import { userControler } from '../controlers/userControlers/user-controlers.js'
-import userValidation from '../validation/userValidation.js'
-import sessionChecker from '../middlewares/session-checks.js'
-import { userLoginAndSignupControler } from '../controlers/userControlers/userLoginAndSignup.js'
-import { productControler } from '../controlers/userControlers/product-controlers.js'
-import { cartControlers } from '../controlers/userControlers/cartControlers.js'
-import { paymentControlers } from '../controlers/userControlers/paymentControlers.js'
-import { orderControler } from '../controlers/userControlers/order-controlers.js'
-import { profileControlers } from '../controlers/userControlers/profileControlers.js'
+import { userControler } from "../controlers/userControlers/user-controlers.js"
+import userValidation from "../validation/userValidation.js"
+import sessionChecker from "../middlewares/session-checks.js"
+import { userLoginAndSignupControler } from "../controlers/userControlers/userLoginAndSignup.js"
+import { productControler } from "../controlers/userControlers/product-controlers.js"
+import { cartControlers } from "../controlers/userControlers/cartControlers.js"
+import { paymentControlers } from "../controlers/userControlers/paymentControlers.js"
+import { orderControler } from "../controlers/userControlers/order-controlers.js"
+import { profileControlers } from "../controlers/userControlers/profileControlers.js"
 // import { trackVisitors } from '../middlewares/trackusers.js'
 
 /* GET home page. */
-//todo track visitors turned off coz of errors
-router.get('/', userControler.userHome)
+//todo track visitors MDDLEWARE turned off coz of errors possibilities
+router.get("/", userControler.userHome)
 
-// view more for each product in home page
-router.get('/shop-product-right', productControler.shopProductRight)
-
-//changer prouduct colors 
-router.post('/shop-product-right',productControler.changeProduct)
-
-// User registration(singnUp)
-router.route('/userSignUp')
+//? ROUTES FOR HANDLING SIGNUP AND LOGIN
+router
+  .route("/userSignUp")
   .get(userLoginAndSignupControler.userSignUpGet)
-  .post(userValidation.userSignUpValidate, userLoginAndSignupControler.usersignUpPost)
+  .post(
+    userValidation.userSignUpValidate,
+    userLoginAndSignupControler.usersignUpPost
+  )
 
-// User login
-router.route('/userLogin')
+// *login with phone number and password
+router
+  .route("/userLogin")
   .get(userLoginAndSignupControler.userLoginGet)
-  .post(userValidation.userLoginValidate, userLoginAndSignupControler.userLoginPost)
+  .post(
+    userValidation.userLoginValidate,
+    userLoginAndSignupControler.userLoginPost
+  )
 
-// login with otp withoug passwords 
-router.route('/loginWithOtp')
+// *login with otp
+router
+  .route("/loginWithOtp")
   .get(userLoginAndSignupControler.loginWithOtpGet)
   .post(userLoginAndSignupControler.loginWithOtpPost)
 
-// otp validation
-router.route('/otpValidate')
+// * validating otp
+router
+  .route("/otpValidate")
   .get(sessionChecker.isUserExist, userLoginAndSignupControler.otpValidateGet)
   .post(userLoginAndSignupControler.otpValidatePost)
 
-
+//? ROUTES TO HANDLE USER CART AND RELATED INFORMATIONS
 // Cart for user
-router.get('/userCart', sessionChecker.isUserOrGuestExist, cartControlers.userCartGet)
+router.get(
+  "/userCart",
+  sessionChecker.isUserOrGuestExist,
+  cartControlers.userCartGet
+)
 
 // add to the cart
-router.get('/add-to-cart/:id', cartControlers.addToCartGet)
+router.get("/add-to-cart/:id", cartControlers.addToCartGet)
 
 // change product quantity in the cart
-router.post('/change-quantity', cartControlers.changeCartProductQuantity)
+router.post("/change-quantity", cartControlers.changeCartProductQuantity)
 
 // remove products from the cart
-router.put('/remove-cart-product', cartControlers.removeProducts)
+router.put("/remove-cart-product", cartControlers.removeProducts)
 
+//? ROUTES FOR PAYMENT AND OTHER PAYMENT RELATED FUCNTIONS
 // proceed to chekout
-router.route('/proceed-to-checkout')
+router
+  .route("/proceed-to-checkout")
   .get(sessionChecker.isUserExist, paymentControlers.proceedToCheckOutGet)
   .post(paymentControlers.proceedToCheckOutPost)
 
 // order placed landing page
-router.get('/order-placed-landing', sessionChecker.isUserExist, paymentControlers.orderPlacedLanding)
-// buy now for each products
-router.get('/buyNow', paymentControlers.proceedToCheckOutGet)
-  
-// for verifying the payment
-router.post('/verify-payment', paymentControlers.verifyRazorpayPayment)
+router.get(
+  "/order-placed-landing",
+  sessionChecker.isUserExist,
+  paymentControlers.orderPlacedLanding
+)
 
-//? ORDER ROUTERS
-router.get('/view-orders', sessionChecker.isUserExist, orderControler.getUserOrders)
-router.get('/view-order-bundle/:id',sessionChecker.isUserExist, orderControler.viewOrderBundle)
+// wallet management
+router.get(
+  "/open-wallet",
+  sessionChecker.isUserExist,
+  paymentControlers.getWallet
+)
+router.post("/wallet-payment", paymentControlers.walletPayment)
+
+// for verifying the payment
+router.post("/verify-payment", paymentControlers.verifyRazorpayPayment)
+
+//? ROUTES FOR USER SIDE PRODUCTS 
+// view more for each product in home page
+router.get("/shop-product-right", productControler.shopProductRight)
+
+//changer prouduct colors
+router.post("/shop-product-right", productControler.changeProduct)
+
+// buy now for each products
+router.get("/buyNow", paymentControlers.proceedToCheckOutGet)
+
+
+
+//? ROUTES FOR ORDERS
+router.get(
+  "/view-orders",
+  sessionChecker.isUserExist,
+  orderControler.getUserOrders
+)
+router.get(
+  "/view-order-bundle/:id",
+  sessionChecker.isUserExist,
+  orderControler.viewOrderBundle
+)
 
 // cancell orders
-router.post('/cancell-order', orderControler.cancellOrders)
+router.post("/cancell-order", orderControler.cancellOrders)
 
+//? ROUTES TO HANDLE USER PROFILE
 // Edit profile
-router.get('/editProfile', sessionChecker.isUserExist, profileControlers.editUserProfile)
-router.post('/editProfile/:id', profileControlers.editUserProfilePost)
+router.get(
+  "/editProfile",
+  sessionChecker.isUserExist,
+  profileControlers.editUserProfile
+)
+router.post("/editProfile/:id", profileControlers.editUserProfilePost)
 
 // user profile part
-router.get('/profile-dashboard', sessionChecker.isUserExist, profileControlers.userProfileDash)
-router.get('/profile-orders', sessionChecker.isUserExist, profileControlers.userProfileOrders)
-router.get('/profile-orders-view-more/:id', sessionChecker.isUserExist, productControler.viewMoreProducts)
-router.get('/profile-track-orders', sessionChecker.isUserExist, profileControlers.userProfileTrackOrders)
-router.get('/profile-account-detail', sessionChecker.isUserExist, profileControlers.userAccountDetails)
-router.post('/update-user-profile', profileControlers.updateProfile)
-router.get('/profile-change-password', sessionChecker.isUserExist, profileControlers.changePassword)
+router.get(
+  "/profile-dashboard",
+  sessionChecker.isUserExist,
+  profileControlers.userProfileDash
+)
+router.get(
+  "/profile-orders",
+  sessionChecker.isUserExist,
+  profileControlers.userProfileOrders
+)
+router.get(
+  "/profile-orders-view-more/:id",
+  sessionChecker.isUserExist,
+  productControler.viewMoreProducts
+)
+router.get(
+  "/profile-track-orders",
+  sessionChecker.isUserExist,
+  profileControlers.userProfileTrackOrders
+)
+router.get(
+  "/profile-account-detail",
+  sessionChecker.isUserExist,
+  profileControlers.userAccountDetails
+)
+router.post("/update-user-profile", profileControlers.updateProfile)
+router.get(
+  "/profile-change-password",
+  sessionChecker.isUserExist,
+  profileControlers.changePassword
+)
 // change password
-router.post('/change-user-password/:id', userValidation.userPasswordUpdateValidation, profileControlers.changePasswordPost)
+router.post(
+  "/change-user-password/:id",
+  userValidation.userPasswordUpdateValidation,
+  profileControlers.changePasswordPost
+)
 
 // Address management
-router.get('/profile-address', sessionChecker.isUserExist, profileControlers.userProfileAddress)
-router.route('/addressManageMent')
-  .post(profileControlers.addAddressPost)
+router.get(
+  "/profile-address",
+  sessionChecker.isUserExist,
+  profileControlers.userProfileAddress
+)
+router.route("/addressManageMent").post(profileControlers.addAddressPost)
 // .get(sessionChecker.isUserExist,userControler.addAddressGet)
 
 // edit address
-router.route('/editAddress')
+router
+  .route("/editAddress")
   .get(profileControlers.editAddressGet)
   .post(profileControlers.editAddressPost)
 
 // delete address
-router.post('/delete-address', profileControlers.deleteAddress)
+router.post("/delete-address", profileControlers.deleteAddress)
 
 // track order
-router.get('/track-order/:id', orderControler.trackOrders)
+router.get("/track-order/:id", orderControler.trackOrders)
 
 // return order
-router.post('/return-products', productControler.returnProducts)
+router.post("/return-products", productControler.returnProducts)
 
-// wallet management
-router.get('/open-wallet', sessionChecker.isUserExist, paymentControlers.getWallet)
-router.post('/wallet-payment', paymentControlers.walletPayment)
-
-//view coupons 
-router.get('/view-coupons',sessionChecker.isUserExist, userControler.viewCoupons)
-
-// apply coupon 
-router.post('/apply-coupon-code',sessionChecker.isUserExist, userControler.applyCouponCode)
-
+//? ROUTES TO HANDLE PRODUCT SEARCH 
 //for the serch feature
-router.get('/search-products', productControler.searchProducts)
-router.get('/index-products', productControler.indexProducts)
+router.get("/search-products", productControler.searchProducts)
+router.get("/index-products", productControler.indexProducts)
 
+//? ROUTES FOR COUPONS 
+//view coupons
+router.get(
+  "/view-coupons",
+  sessionChecker.isUserExist,
+  userControler.viewCoupons
+)
+
+// apply coupon
+router.post(
+  "/apply-coupon-code",
+  sessionChecker.isUserExist,
+  userControler.applyCouponCode
+)
+
+//? ROUTES FOR CATEGORY WISE FILTERING
 //purchase based on category
-router.get('/mens-category', productControler.mensCategory)
-router.get('/womens-category', productControler.womensCategory)
-router.get('/kids-category', productControler.kidsCategory)
+router.get("/mens-category", productControler.mensCategory)
+router.get("/womens-category", productControler.womensCategory)
+router.get("/kids-category", productControler.kidsCategory)
 
+//? PRODUCT RATING AND REVIEW
 //Routes for Ratings
-router.post('/shop-product-right/add-rating-for-products',productControler.addRatingForProducts)
+router.post(
+  "/shop-product-right/add-rating-for-products",
+  productControler.addRatingForProducts
+)
 
-router.get('/get-available-size-and-color/:productId',productControler.getSizeAndColor)
+router.get(
+  "/get-available-size-and-color/:productId",
+  productControler.getSizeAndColor
+)
 // User logout
-router.get('/logoutUser', userControler.userLogout)
+router.get("/logoutUser", userControler.userLogout)
 
 export default router

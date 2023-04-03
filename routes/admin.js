@@ -1,6 +1,6 @@
 import express from "express"
 const router = express.Router()
-import adminControler from "../controlers/admin-controlers.js"
+import adminControler from "../controlers/adminControlers/admin-controlers.js"
 import adminValidate from "../validation/adminValidation.js"
 import upload from "../middlewares/multer.js"
 import sessionCheck from "../middlewares/session-checks.js"

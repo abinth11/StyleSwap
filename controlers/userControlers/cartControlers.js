@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
 import userHelpers from "../../helpers/user-helpers.js"
+import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
+import { guestHelper } from "../../helpers/userHelpers/guestHelper.js"
 export const cartControlers = {
     userCartGet: async (req, res) => {
         try {
@@ -7,11 +9,11 @@ export const cartControlers = {
           const guestUser = req.session.guestUser?.id
           // console.log(user, guestUser)
           if (user) {
-            const cartItems = await userHelpers.getcartProducts(
+            const cartItems = await cartHelpers.getcartProducts(
               req.session.user._id
             )
             console.log(cartItems)
-            const totalAmout = await userHelpers.findTotalAmout(
+            const totalAmout = await cartHelpers.findTotalAmout(
               req.session.user._id
             )
             let saved = 0
@@ -29,7 +31,7 @@ export const cartControlers = {
           } else if (guestUser) {
             // console.log(guestUser)
             console.log("guest user cart")
-            const cartItems = await userHelpers.getGuestUserCartProducts(
+            const cartItems = await guestHelper.getGuestUserCartProducts(
               req.session.guestUser.id
             )
             console.log(cartItems)
@@ -50,9 +52,9 @@ export const cartControlers = {
           const { id: productId } = req.params
           const userId = req.session.user?._id
           const guestUserId = req.session.guestUser.id
-          userId && (await userHelpers.addToCart(productId, userId, guestUserId))
+          userId && (await cartHelpers.addToCart(productId, userId, guestUserId))
           guestUserId &&
-            (await userHelpers.createGuestUser(guestUserId, productId))
+            (await guestHelper.createGuestUser(guestUserId, productId))
           res.json({ status: true })
         } catch (error) {
           console.error(error)
@@ -62,10 +64,10 @@ export const cartControlers = {
       changeCartProductQuantity: async (req, res) => {
         try {
           const { userId } = req.body
-          const response = await userHelpers.changeCartQuantity(req.body)
+          const response = await cartHelpers.changeCartQuantity(req.body)
           console.log(response)
-          response.total = await userHelpers.findTotalAmout(userId)
-          const subtotal = await userHelpers.findSubTotal(userId)
+          response.total = await cartHelpers.findTotalAmout(userId)
+          const subtotal = await cartHelpers.findSubTotal(userId)
           response.subtotal = subtotal
           res.json(response)
         } catch (error) {
@@ -75,7 +77,7 @@ export const cartControlers = {
       },
       removeProducts: async (req, res) => {
         try {
-          const response = await userHelpers.removeCartProducts(req.body)
+          const response = await cartHelpers.removeCartProducts(req.body)
           res.json(response)
         } catch (error) {
           console.error(error)
