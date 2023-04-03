@@ -653,6 +653,29 @@ const adminControler = {
       res.status(500).json({ Message: "Internal Server Error" })
     }
   },
+  stockManagement:async (req,res) => {
+    try {
+      const allProducts = await adminHelpers.getAllProductsAndOutofStock()
+      res.render('admin/stock-management', {allProducts})
+    } catch (error){
+      console.log(error)
+      res.status(500).json({Message:"Internal Server Error"})
+    }
+  },
+  changeProductStock: async(req, res) => {
+    try {
+      console.log(req.body)
+      const { productId, quantity} = req.body
+      const response = await adminHelpers.updateProductStock(productId,quantity)
+      console.log(response)
+     response
+     ?res.status(200).json({response,Message:"Updated successfully"})
+     :res.status(500).json({Message:"Something went wrong while updating the document.."})
+    } catch(error) {
+      console.log(error)
+      res.status(500).json({Message:"Internal server Error"})
+    }
+  },
   logoutAdmin: (req, res) => {
     req.session.admin = null
     res.redirect("/admin")

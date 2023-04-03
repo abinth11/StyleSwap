@@ -504,7 +504,7 @@ const userHelpers = {
         { $pull: { products: { item: ObjectId(productId) } } }
       )
       return { removed: true }
-    } else if (count > 0 && quantity > currentStockLevel) {
+    } else if (count > 0 && quantity >= currentStockLevel) {
       // Set the product's status to "out of stock" and notify the user
       await db.get().collection(collection.PRODUCT_COLLECTION).updateOne(
         { _id: ObjectId(productId) },
@@ -821,9 +821,9 @@ const userHelpers = {
       if (discountAmount) {
         offerTotal = offerTotal - discountAmount
       }
-      console.log(coupon)
-      console.log(coupon?.couponCode)
+      console.log(paymentMethod)
       const paymentStatus = paymentMethod === "cod" ? "done" : "pending"
+      console.log(paymentStatus)
       const order = {
         userId: ObjectId(userId),
         name,
@@ -849,7 +849,8 @@ const userHelpers = {
         .get()
         .collection(collection.ORDER_COLLECTION)
         .insertOne(order)
-      await db
+       //? marking the coupon as used
+      coupon && await db
         .get()
         .collection(collection.COUPONS)
         .updateOne(
@@ -860,7 +861,19 @@ const userHelpers = {
             },
           }
         )
-      await db
+        //? updating the stock after order placed 
+        for (const product of products[0].products) {
+          console.log(product)
+          const {item, quantity} = product
+          await db.get().collection(collection.PRODUCT_COLLECTION).updateOne(
+            { _id: item },
+            { $inc: { product_quantity: -quantity } }
+          ).then((response) => {
+            console.log(response)
+          })
+        }
+        //? clearing products from the cart
+       await db
         .get()
         .collection(collection.CART_COLLECTION)
         .deleteOne({ userId: ObjectId(orderInfo.userId) })
@@ -1052,7 +1065,8 @@ const userHelpers = {
               },
             }
           )
-          .then(() => {
+          .then((response) => {
+            console.log('response of payment status razorpay'+response)
             resolve()
           })
       })
@@ -2009,6 +2023,7 @@ const userHelpers = {
       console.log(errors)
     }
   },
+ 
 }
 
 export default userHelpers

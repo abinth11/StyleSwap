@@ -440,7 +440,7 @@
                                             <div class="form-check">
                                                 <input class="form-check-input address" type="radio"
                                                     name="deliveryAddress" id="flexRadioDefault1" value="{{_id}}"
-                                                    required>
+                                                    checked>
                                                 <label class="form-check-label" for="flexRadioDefault1">
                                                     <ul>
                                                         <li class="ms-3">Name: {{name}}</li>
@@ -495,7 +495,7 @@
                                             </div>
                                             <div class="custome-radio">
                                                 <input class="form-check-input" value="cod" type="radio"
-                                                    name="payment_method" id="exampleRadios4">
+                                                    name="payment_method" id="exampleRadios4" checked>
                                                 <label class="form-check-label" for="exampleRadios4"
                                                     data-bs-toggle="collapse" data-target="#checkPayment"
                                                     aria-controls="checkPayment">COD</label>
@@ -520,7 +520,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-fill-out btn-block mt-30" id="rzp-button1" type="submit">Place
+                                    <button class="btn btn-fill-out btn-block mt-30" id="rzp-button1"
+                                        type="submit">Place
                                         Order</button>
                                 </div>
                             </div>
@@ -584,101 +585,115 @@
 
     $("#place-order").submit((e) => {
         e.preventDefault()
-        $.ajax({
-            type: "POST",
-            url: '/proceed-to-checkout',
-            data: $('#place-order').serialize(),
-            success: (response) => {
-                if (response.statusCod) {
-                    couponResponsePareser(response)
-                    $('#successModal').modal('show')
-                } else if (response.id) {
-                    console.log(response)
-                    getRazorpay(response);
-                } else if (response.paypal) {
-                    location.href = response.reUrl
-                } else if (response.wallet) {
-                    const walletBalance = currencyFormatter.format(response.balance)
-                    const walletId = response._id
-                    const total = response.total
-                    Swal.fire({
-                        title: 'Your Wallet Information',
-                        html:
-                            '<p><strong>Wallet ID:</strong>' + walletId + '</p>' +
-                            '<p><strong>Balance:</strong>' + walletBalance + '</p>',
-                        showCloseButton: false,
-                        showCancelButton: true,
-                        focusConfirm: false,
-                        confirmButtonText:
-                            '<i class="fa fa-inr"></i> Pay',
-                        confirmButtonAriaLabel: 'Pay',
-                        cancelButtonText:
-                            '<i class="fa fa-thumbs-down"></i> Cancel',
-                        cancelButtonAriaLabel: 'Cancel',
-                        customClass: {
-                            container: 'my-swal'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Make AJAX call to pay with wallet
-                            $.ajax({
-                                type: "POST",
-                                url: "/wallet-payment",
-                                data: { confirmed: true, total },
-                                success: function (response) {
-                                    console.log(response)
-                                    // Handle payment success
-                                    if (response.paid) {
-                                        const amountPaid = currencyFormatter.format(response.amountPaid);
-                                        const newBalance = currencyFormatter.format(response.updatedBalance);
+        const deliveryAddress = $('input[name="deliveryAddress"]').val()
+        if (!deliveryAddress) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning...!',
+                text: 'Please add an address to place order.',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#8B4000',
+                focusConfirm: '#FF0000'
+            })
+        } else {
+            $.ajax({
+                type: "POST",
+                url: '/proceed-to-checkout',
+                data: $('#place-order').serialize(),
+                success: (response) => {
+                    if (response.statusCod) {
+                        couponResponsePareser(response)
+                        $('#successModal').modal('show')
+                    } else if (response.id) {
+                        console.log(response)
+                        getRazorpay(response);
+                    } else if (response.paypal) {
+                        location.href = response.reUrl
+                    } else if (response.wallet) {
+                        const walletBalance = currencyFormatter.format(response.balance)
+                        const walletId = response._id
+                        const total = response.total
+                        Swal.fire({
+                            title: 'Your Wallet Information',
+                            html:
+                                '<p><strong>Wallet ID:</strong>' + walletId + '</p>' +
+                                '<p><strong>Balance:</strong>' + walletBalance + '</p>',
+                            showCloseButton: false,
+                            showCancelButton: true,
+                            focusConfirm: false,
+                            confirmButtonText:
+                                '<i class="fa fa-inr"></i> Pay',
+                            confirmButtonAriaLabel: 'Pay',
+                            cancelButtonText:
+                                '<i class="fa fa-thumbs-down"></i> Cancel',
+                            cancelButtonAriaLabel: 'Cancel',
+                            customClass: {
+                                container: 'my-swal'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Make AJAX call to pay with wallet
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/wallet-payment",
+                                    data: { confirmed: true, total },
+                                    success: function (response) {
+                                        console.log(response)
+                                        // Handle payment success
+                                        if (response.paid) {
+                                            const amountPaid = currencyFormatter.format(response.amountPaid);
+                                            const newBalance = currencyFormatter.format(response.updatedBalance);
+                                            Swal.fire({
+                                                title: 'Payment Successful!',
+                                                html:
+                                                    '<p><strong>Amount Paid:</strong>' + amountPaid + '</p>' +
+                                                    '<p><strong>New Balance:</strong> ' + newBalance + '</p>',
+                                                icon: 'success',
+                                                showConfirmButton: true,
+                                                confirmButtonText: 'Close',
+                                                customClass: {
+                                                    container: 'my-swal'
+                                                }
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    couponResponsePareser(response)
+                                                }
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                title: 'Insufficient Balance!',
+                                                text: 'Your account balance is not enough to complete this transaction.',
+                                                icon: 'error',
+                                                showConfirmButton: true,
+                                                confirmButtonText: 'OK',
+                                                customClass: {
+                                                    container: 'my-swal'
+                                                }
+                                            });
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        // Handle payment error
                                         Swal.fire({
-                                            title: 'Payment Successful!',
-                                            html:
-                                                '<p><strong>Amount Paid:</strong>' + amountPaid + '</p>' +
-                                                '<p><strong>New Balance:</strong> ' + newBalance + '</p>',
-                                            icon: 'success',
+                                            title: 'Payment Error!',
+                                            text: 'An error occurred while processing your payment. Please try again later.',
+                                            icon: 'error',
                                             showConfirmButton: true,
                                             confirmButtonText: 'Close',
                                             customClass: {
                                                 container: 'my-swal'
                                             }
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                               couponResponsePareser(response)
-                                            }
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Insufficient Balance!',
-                                            text: 'Your account balance is not enough to complete this transaction.',
-                                            icon: 'error',
-                                            showConfirmButton: true,
-                                            confirmButtonText: 'OK',
-                                            customClass: {
-                                                container: 'my-swal'
-                                            }
                                         });
                                     }
-                                },
-                                error: function (xhr, status, error) {
-                                    // Handle payment error
-                                    Swal.fire({
-                                        title: 'Payment Error!',
-                                        text: 'An error occurred while processing your payment. Please try again later.',
-                                        icon: 'error',
-                                        showConfirmButton: true,
-                                        confirmButtonText: 'Close',
-                                        customClass: {
-                                            container: 'my-swal'
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
+                                });
+                            }
+                        });
+                    }
                 }
-            }
-        })
+            })
+
+        }
+
     })
 
     const getRazorpay = (order) => {
@@ -706,18 +721,16 @@
         };
         var rzp1 = new Razorpay(options);
         rzp1.on('payment.failed', function (response) {
-            alert(response.error.code);
-            alert(response.error.description);
-            alert(response.error.source);
-            alert(response.error.step);
-            alert(response.error.reason);
-            alert(response.error.metadata.order_id);
-            alert(response.error.metadata.payment_id);
+               Swal.fire({
+          icon: 'warning',
+          title: 'Payment failed',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#8B4000',
+          focusConfirm: '#FF0000'
+        })
         });
-        document.getElementById('rzp-button1').onclick = function (e) {
-            e.preventDefault();
-            rzp1.open();
-        }
+        rzp1.open();
+   
 
     }
     const verifyPayment = (payment, order) => {

@@ -1,4 +1,7 @@
 ﻿{{>head-user}}
+
+
+
 <!-- Quick view -->
 <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel"
     aria-hidden="true">
@@ -1069,52 +1072,55 @@
 
 
     // Define a function to retrieve and update the product details
-function updateProductDetails() {
-  // Check if product details are stored in localStorage
-  
-  const storedProductDetails = localStorage.getItem('productDetails');
+    function updateProductDetails() {
+        // Check if product details are stored in localStorage
 
-  if (storedProductDetails) {
-    // Parse the JSON data
-    const productDetails = JSON.parse(storedProductDetails);
+        const storedProductDetails = localStorage.getItem('productDetails');
 
-    // Update the product details on the page
-    const productImage = document.querySelector('#image-one');
-    const hoverImage = document.querySelector('#image-hover')
-    productImage.src = productDetails.product.images.image1;
-    hoverImage.src = productDetails.product.images.image1;
+        if (storedProductDetails) {
+            // Parse the JSON data
+            const productDetails = JSON.parse(storedProductDetails);
 
-    // Update any other elements that depend on the product details
-  }
-}
-
-
-// Call the function when the page finishes loading
-
-{{!-- window.onload = function() {
-  updateProductDetails();
-}; --}}
-
-
-   const changeProduct = (productId, parentId) => {
-    // Make the AJAX request to get the updated product details
-    $.ajax({
-        url: 'shop-product-right',
-        type: "POST",
-        data: { productId, parentId },
-        success: (response) => {
-            const key = 'productDetails'
-            // Update the DOM elements with the new product data
+            // Update the product details on the page
             const productImage = document.querySelector('#image-one');
-            const hoverImage = document.querySelector('#image-hover');
-            productImage.src = response.product.images.image1;
-            hoverImage.src = response.product.images.image1;
-            console.log(response.product.images.image2)
-            // Store the updated product details in localStorage
-            localStorage.setItem('productDetails', JSON.stringify(response));
+            const hoverImage = document.querySelector('#image-hover')
+            productImage.src = productDetails.product.images.image1;
+            hoverImage.src = productDetails.product.images.image1;
+
+            // Update any other elements that depend on the product details
         }
-    });
-}
+    }
+
+
+    // Call the function when the page finishes loading
+
+    {
+        {
+            !--window.onload = function() {
+                updateProductDetails();
+            }; --}
+    }
+
+
+    const changeProduct = (productId, parentId) => {
+        // Make the AJAX request to get the updated product details
+        $.ajax({
+            url: 'shop-product-right',
+            type: "POST",
+            data: { productId, parentId },
+            success: (response) => {
+                const key = 'productDetails'
+                // Update the DOM elements with the new product data
+                const productImage = document.querySelector('#image-one');
+                const hoverImage = document.querySelector('#image-hover');
+                productImage.src = response.product.images.image1;
+                hoverImage.src = response.product.images.image1;
+                console.log(response.product.images.image2)
+                // Store the updated product details in localStorage
+                localStorage.setItem('productDetails', JSON.stringify(response));
+            }
+        });
+    }
 
 
 </script>

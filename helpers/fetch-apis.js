@@ -11,6 +11,23 @@ const fetchcallHelpers = {
         } catch (error) {
             console.log(error)  
         }
+    },
+    checkOutofStock: async (productId) => {
+        try {
+            const product = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({_id : ObjectId(productId)})
+            if (product.product_quantity <= 0) {
+                return {
+                    stock:false,
+                    Message:"Product is out of stock"
+                }
+            } 
+            return {
+                stock:true,
+                Message:"Stock is available"
+            }
+        } catch(error) {
+            console.log(error)
+        }
     }
 }
 

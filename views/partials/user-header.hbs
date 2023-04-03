@@ -1,6 +1,20 @@
 
-
-
+{{#if warningMessage}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong! Please try again later.',
+        }).then(() => {
+            window.location.href = '/' // Redirect to home page
+        })
+        setTimeout(function () {
+            window.location.replace('/')
+        }, 5000)
+    })
+</script>
+{{/if}}
 
 <header class="header-area header-style-1 header-height-2">
 

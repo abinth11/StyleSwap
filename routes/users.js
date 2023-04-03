@@ -1,110 +1,117 @@
 import express from 'express'
 const router = express.Router()
-import { userControler } from '../controlers/user-controlers.js'
+import { userControler } from '../controlers/userControlers/user-controlers.js'
 import userValidation from '../validation/userValidation.js'
 import sessionChecker from '../middlewares/session-checks.js'
-import { trackVisitors } from '../middlewares/trackusers.js'
+import { userLoginAndSignupControler } from '../controlers/userControlers/userLoginAndSignup.js'
+import { productControler } from '../controlers/userControlers/product-controlers.js'
+import { cartControlers } from '../controlers/userControlers/cartControlers.js'
+import { paymentControlers } from '../controlers/userControlers/paymentControlers.js'
+import { orderControler } from '../controlers/userControlers/order-controlers.js'
+import { profileControlers } from '../controlers/userControlers/profileControlers.js'
+// import { trackVisitors } from '../middlewares/trackusers.js'
+
 /* GET home page. */
 //todo track visitors turned off coz of errors
 router.get('/', userControler.userHome)
 
 // view more for each product in home page
-router.get('/shop-product-right', userControler.shopProductRight)
+router.get('/shop-product-right', productControler.shopProductRight)
 
 //changer prouduct colors 
-router.post('/shop-product-right',userControler.changeProduct)
+router.post('/shop-product-right',productControler.changeProduct)
 
 // User registration(singnUp)
 router.route('/userSignUp')
-  .get(userControler.userSignUpGet)
-  .post(userValidation.userSignUpValidate, userControler.usersignUpPost)
+  .get(userLoginAndSignupControler.userSignUpGet)
+  .post(userValidation.userSignUpValidate, userLoginAndSignupControler.usersignUpPost)
 
 // User login
 router.route('/userLogin')
-  .get(userControler.userLoginGet)
-  .post(userValidation.userLoginValidate, userControler.userLoginPost)
+  .get(userLoginAndSignupControler.userLoginGet)
+  .post(userValidation.userLoginValidate, userLoginAndSignupControler.userLoginPost)
 
 // login with otp withoug passwords 
 router.route('/loginWithOtp')
-  .get(userControler.loginWithOtpGet)
-  .post(userControler.loginWithOtpPost)
+  .get(userLoginAndSignupControler.loginWithOtpGet)
+  .post(userLoginAndSignupControler.loginWithOtpPost)
 
 // otp validation
 router.route('/otpValidate')
-  .get(sessionChecker.isUserExist, userControler.otpValidateGet)
-  .post(userControler.otpValidatePost)
+  .get(sessionChecker.isUserExist, userLoginAndSignupControler.otpValidateGet)
+  .post(userLoginAndSignupControler.otpValidatePost)
 
 
 // Cart for user
-router.get('/userCart', sessionChecker.isUserOrGuestExist, userControler.userCartGet)
+router.get('/userCart', sessionChecker.isUserOrGuestExist, cartControlers.userCartGet)
 
 // add to the cart
-router.get('/add-to-cart/:id', userControler.addToCartGet)
+router.get('/add-to-cart/:id', cartControlers.addToCartGet)
 
 // change product quantity in the cart
-router.post('/change-quantity', userControler.changeCartProductQuantity)
+router.post('/change-quantity', cartControlers.changeCartProductQuantity)
 
 // remove products from the cart
-router.put('/remove-cart-product', userControler.removeProducts)
+router.put('/remove-cart-product', cartControlers.removeProducts)
 
 // proceed to chekout
 router.route('/proceed-to-checkout')
-  .get(sessionChecker.isUserExist, userControler.proceedToCheckOutGet)
-  .post(userControler.proceedToCheckOutPost)
+  .get(sessionChecker.isUserExist, paymentControlers.proceedToCheckOutGet)
+  .post(paymentControlers.proceedToCheckOutPost)
 
 // order placed landing page
-router.get('/order-placed-landing', sessionChecker.isUserExist, userControler.orderPlacedLanding)
+router.get('/order-placed-landing', sessionChecker.isUserExist, paymentControlers.orderPlacedLanding)
 // buy now for each products
-router.get('/buyNow', userControler.proceedToCheckOutGet)
+router.get('/buyNow', paymentControlers.proceedToCheckOutGet)
   
 // for verifying the payment
-router.post('/verify-payment', userControler.verifyRazorpayPayment)
+router.post('/verify-payment', paymentControlers.verifyRazorpayPayment)
 
 //? ORDER ROUTERS
-router.get('/view-orders', sessionChecker.isUserExist, userControler.getUserOrders)
-router.get('/view-order-bundle/:id',sessionChecker.isUserExist, userControler.viewOrderBundle)
+router.get('/view-orders', sessionChecker.isUserExist, orderControler.getUserOrders)
+router.get('/view-order-bundle/:id',sessionChecker.isUserExist, orderControler.viewOrderBundle)
 
 // cancell orders
-router.post('/cancell-order', userControler.cancellOrders)
+router.post('/cancell-order', orderControler.cancellOrders)
 
 // Edit profile
-router.get('/editProfile', sessionChecker.isUserExist, userControler.editUserProfile)
-router.post('/editProfile/:id', userControler.editUserProfilePost)
+router.get('/editProfile', sessionChecker.isUserExist, profileControlers.editUserProfile)
+router.post('/editProfile/:id', profileControlers.editUserProfilePost)
 
 // user profile part
-router.get('/profile-dashboard', sessionChecker.isUserExist, userControler.userProfileDash)
-router.get('/profile-orders', sessionChecker.isUserExist, userControler.userProfileOrders)
-router.get('/profile-orders-view-more/:id', sessionChecker.isUserExist, userControler.viewMoreProducts)
-router.get('/profile-track-orders', sessionChecker.isUserExist, userControler.userProfileTrackOrders)
-router.get('/profile-account-detail', sessionChecker.isUserExist, userControler.userAccountDetails)
-router.post('/update-user-profile', userControler.updateProfile)
-router.get('/profile-change-password', sessionChecker.isUserExist, userControler.changePassword)
+router.get('/profile-dashboard', sessionChecker.isUserExist, profileControlers.userProfileDash)
+router.get('/profile-orders', sessionChecker.isUserExist, profileControlers.userProfileOrders)
+router.get('/profile-orders-view-more/:id', sessionChecker.isUserExist, productControler.viewMoreProducts)
+router.get('/profile-track-orders', sessionChecker.isUserExist, profileControlers.userProfileTrackOrders)
+router.get('/profile-account-detail', sessionChecker.isUserExist, profileControlers.userAccountDetails)
+router.post('/update-user-profile', profileControlers.updateProfile)
+router.get('/profile-change-password', sessionChecker.isUserExist, profileControlers.changePassword)
 // change password
-router.post('/change-user-password/:id', userValidation.userPasswordUpdateValidation, userControler.changePasswordPost)
+router.post('/change-user-password/:id', userValidation.userPasswordUpdateValidation, profileControlers.changePasswordPost)
 
 // Address management
-router.get('/profile-address', sessionChecker.isUserExist, userControler.userProfileAddress)
+router.get('/profile-address', sessionChecker.isUserExist, profileControlers.userProfileAddress)
 router.route('/addressManageMent')
-  .post(userControler.addAddressPost)
+  .post(profileControlers.addAddressPost)
 // .get(sessionChecker.isUserExist,userControler.addAddressGet)
 
 // edit address
 router.route('/editAddress')
-  .get(userControler.editAddressGet)
-  .post(userControler.editAddressPost)
+  .get(profileControlers.editAddressGet)
+  .post(profileControlers.editAddressPost)
 
 // delete address
-router.post('/delete-address', userControler.deleteAddress)
+router.post('/delete-address', profileControlers.deleteAddress)
 
 // track order
-router.get('/track-order/:id', userControler.trackOrders)
+router.get('/track-order/:id', orderControler.trackOrders)
 
 // return order
-router.post('/return-products', userControler.returnProducts)
+router.post('/return-products', productControler.returnProducts)
 
 // wallet management
-router.get('/open-wallet', sessionChecker.isUserExist, userControler.getWallet)
-router.post('/wallet-payment', userControler.walletPayment)
+router.get('/open-wallet', sessionChecker.isUserExist, paymentControlers.getWallet)
+router.post('/wallet-payment', paymentControlers.walletPayment)
 
 //view coupons 
 router.get('/view-coupons',sessionChecker.isUserExist, userControler.viewCoupons)
@@ -113,18 +120,18 @@ router.get('/view-coupons',sessionChecker.isUserExist, userControler.viewCoupons
 router.post('/apply-coupon-code',sessionChecker.isUserExist, userControler.applyCouponCode)
 
 //for the serch feature
-router.get('/search-products', userControler.searchProducts)
-router.get('/index-products', userControler.indexProducts)
+router.get('/search-products', productControler.searchProducts)
+router.get('/index-products', productControler.indexProducts)
 
 //purchase based on category
-router.get('/mens-category', userControler.mensCategory)
-router.get('/womens-category', userControler.womensCategory)
-router.get('/kids-category', userControler.kidsCategory)
+router.get('/mens-category', productControler.mensCategory)
+router.get('/womens-category', productControler.womensCategory)
+router.get('/kids-category', productControler.kidsCategory)
 
 //Routes for Ratings
-router.post('/shop-product-right/add-rating-for-products',userControler.addRatingForProducts)
+router.post('/shop-product-right/add-rating-for-products',productControler.addRatingForProducts)
 
-router.get('/get-available-size-and-color/:productId',userControler.getSizeAndColor)
+router.get('/get-available-size-and-color/:productId',productControler.getSizeAndColor)
 // User logout
 router.get('/logoutUser', userControler.userLogout)
 

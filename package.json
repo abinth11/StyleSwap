@@ -39,6 +39,7 @@
     "pdfkit-table": "^0.1.99",
     "pdfmake": "^0.2.7",
     "razorpay": "^2.8.6",
+    "sweetalert2": "^11.7.3",
     "twilio": "^3.84.0",
     "uuid": "^9.0.0"
   },

@@ -67,6 +67,11 @@ router
   .get(adminControler.addOffersProducts)
   .post(adminControler.addOffersProductsPost)
 
+// stock management routes
+router
+  .route("/dashboard/stock-management")
+  .get(adminControler.stockManagement)
+  .post(sessionCheck.isAdminExist,adminControler.changeProductStock)
 // Grid view for the product
 router.get(
   "/dashboard/view-products-in-grid",

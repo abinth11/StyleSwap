@@ -1378,5 +1378,24 @@ const adminHelpers = {
       console.log(error)
     }
   },
+  getAllProductsAndOutofStock:async () => {
+    try {
+      const products = await db.get().collection(collection.PRODUCT_COLLECTION)
+      .find().sort({product_quantity:1}).toArray()
+      return products
+    } catch (errors) {
+      console.log(errors)
+    }
+  },
+  updateProductStock:async(productId,quantity) => {
+    try {
+      quantity = parseInt(quantity)
+      const response = await db.get().collection(collection.PRODUCT_COLLECTION)
+      .findOneAndUpdate({ _id: objectId(productId) }, { $inc: { product_quantity: quantity } }) 
+      return response.value.product_quantity
+    } catch (errors) {
+      console.log(errors)
+    }
+  }
 }
 export default adminHelpers

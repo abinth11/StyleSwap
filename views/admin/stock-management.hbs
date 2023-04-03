@@ -1,0 +1,184 @@
+{{>admin-head-html}}
+<div class="screen-overlay"></div>
+{{>admin-navbar}}
+<main class="main-wrap">
+    {{>admin-header}}
+    <section class="content-main">
+        <div class="card mb-4">
+            <header class="card-header">
+                <h4 class="card-title">Available stocks</h4>
+                <div class="row align-items-center">
+                    <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+                        <div class="custom_select">
+                            <select class="form-select select-nice">
+                                <option selected>All Categories</option>
+                                <option>Women's Clothing</option>
+                                <option>Men's Clothing</option>
+                                <option>Cellphones</option>
+                                <option>Computer & Office</option>
+                                <option>Consumer Electronics</option>
+                                <option>Jewelry & Accessories</option>
+                                <option>Home & Garden</option>
+                                <option>Luggage & Bags</option>
+                                <option>Shoes</option>
+                                <option>Mother & Kids</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <input type="date" value="02.05.2021" class="form-control">
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <div class="custom_select">
+                            <select class="form-select select-nice">
+                                <option selected disabled>Status</option>
+                                <option>All</option>
+                                <option>Available</option>
+                                <option>Out of stock</option>
+                                <option>Disabled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <div class="table-responsive">
+                        <table class="table align-middle table-nowrap mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="align-middle text-center" style="width:5%" scope="col">Sl No</th>
+                                    <th class=" align-middle text-center" style="width:28%" scope="col">Product</th>
+                                    <th class="align-middle text-center" style="width:20%" scope="col">Price</th>
+                                    <th class="align-middle text-center" style="width:20%" scope="col">Available stock
+                                    </th>
+                                    <th class="align-middle text-center" scope="col" style="width:27%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each allProducts}}
+                                <tr>
+                                    <td class="text-center align-middle">
+                                        {{inc @index}}
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div class="d-flex text-center" style="">
+                                            <div class="">
+                                                <img src="{{images.image1}}" alt="" style="width: 70px;height: 70px;">
+                                            </div>
+                                            <div style="">
+                                                <h5 class="ms-2 mt-4">{{product_title}}</h5>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="align-middle text-center">{{formatCurrency product_price}}</td>
+                                    <td class="align-middle text-center">
+                                        <p id="quantity-{{_id}}">{{product_quantity}}</p>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div class="input-group quantity-input" style="padding-left: 6em;">
+                                            <input type="hidden" value="{{_id}}" id="productId" name="productId"
+                                                class="productId">
+                                            <div class="input-group-prepend me-2">
+                                                <button class="btn btn-sm btn-outline-secondary minus-btn" type="button"
+                                                    id="minus-{{_id}}">-</button>
+                                            </div>
+                                            <input type="text" class="custom-input " id="input-{{_id}}" value="1">
+                                            <div class="input-group-append ms-2">
+                                                <button class="btn btn-sm btn-outline-secondary plus-btn" type="button"
+                                                    id="plus-{{_id}}">+</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!-- table-responsive end// -->
+            </div>
+        </div>
+        <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                    <li class="page-item"><a class="page-link" href="#">02</a></li>
+                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#">16</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><i
+                                class="material-icons md-chevron_right"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+    {{>admin-footer}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const plusBtns = document.querySelectorAll('.plus-btn');
+            plusBtns.forEach((plusBtn) => {
+                const parentDiv = plusBtn.parentNode.parentNode;
+                const inputField = parentDiv.querySelector('.custom-input');
+                const minusBtn = parentDiv.querySelector('.minus-btn');
+                const productIdInput = parentDiv.querySelector('.productId');
+
+                let productId = productIdInput.value;
+                let inputValue = parseInt(inputField.value);
+
+                plusBtn.addEventListener('click', () => {
+                    inputValue += 1;
+                    inputField.value = inputValue;
+                    updateQuantity(productId, 1)
+                });
+
+                minusBtn.addEventListener('click', () => {
+                    if (inputValue > 1) {
+                        inputValue -= 1;
+                        inputField.value = inputValue;
+                        updateQuantity(productId, -1)
+                    }
+                });
+
+                // Add an onchange event listener to the input field
+                inputField.addEventListener('change', () => {
+                    const quantity = parseInt(inputField.value);
+                    console.log(quantity)
+                    console.log(isNaN(quantity))
+                    if (quantity < 0 || isNaN(quantity)) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Invalid quantity',
+                            text: 'Please try to update a valid quantity..',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#8B4000',
+                            focusConfirm: '#FF0000',
+                            timer: 3000
+                        })
+                    } else {
+                        updateQuantity(productId, quantity)
+                    }
+                });
+            });
+        });
+
+        const updateQuantity = (productId, quantity) => {
+            $.ajax({
+                url: "/admin/dashboard/stock-management",
+                data: { productId, quantity },
+                type: "POST",
+                success: (response) => {
+                    if (response.response) {
+                        const stock = response.response
+                        document.getElementById(`quantity-${productId}`).innerHTML = stock + quantity
+                    }
+
+                },
+                error: (error) => {
+                    console.log(error)
+                }
+            })
+        }
+
+    </script>

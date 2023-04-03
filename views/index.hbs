@@ -61,7 +61,7 @@
                         <div class="row mt-2">
                             <h5 id="productPrice"></h5>
                         </div>
-                        <div class="mb-3 d-flex mt-4" >
+                        <div class="mb-3 d-flex mt-4">
                             <label for="sizeSelect" class="form-label mt-2">Size:</label>
                             <select class="form-select ms-3" id="sizeSelect" style="width: 6em;" required>
                                 <option value="" disabled>Select Size</option>
@@ -586,15 +586,25 @@
                                         <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
                                                 class="fi-rs-shuffle"></i></a>
                                     </div>
+
                                     {{#if isActive}}
-                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                    {{#if (eq product_quantity 0)}}
+                                     <div class="product-badges product-badges-position product-badges-mrg ">
+                                        <span class="hot bg-danger">Out of Stock</span>
+                                    </div>
+                                    {{else}}
+                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">Hot</span>
                                     </div>
+                                   
+                                    {{/if}}
                                     {{else}}
                                     <div class="product-badges product-badges-position product-badges-mrg ">
                                         <span class="hot bg-danger">Unavailable</span>
                                     </div>
                                     {{/if}}
+
+
                                 </div>
                                 <div class="product-content-wrap">
                                     <div class="product-category">
@@ -616,7 +626,7 @@
                                         <span class="old-price">{{formatCurrency product_price}}</span>
                                     </div>
                                     <input type="hidden" id="name-{{_id}}" value="{{product_title}}">
-                                    <input type="hidden"  value="{{offerPrice}}" id="price-{{_id}}">
+                                    <input type="hidden" value="{{offerPrice}}" id="price-{{_id}}">
 
                                     <input type="hidden" id="color-{{_id}}" value="{{product_color}}">
                                     <input type="hidden" id="size-{{_id}}" value="{{product_size}}">
@@ -2726,7 +2736,7 @@
 
 
 <script>
- 
+
 
     const selectOption = (productId) => {
         $('#pro-id-to-cart').val(`${productId}`);
@@ -2735,59 +2745,65 @@
             type: 'GET',
             success: (response) => {
                 console.log(response)
-                // Clear existing options from the size and color selects
-                $("#sizeSelect").empty();
-                $("#colorSelect").empty();
-                const currentColor = document.getElementById(`color-${productId}`).value
-                const currSize = document.getElementById(`size-${productId}`).value
-                const currImage = document.getElementById(`image-${productId}`).value
-                const productName = document.getElementById(`name-${productId}`).value
-                let productPrice = document.getElementById(`price-${productId}`).value
-                productPrice = formatMoney(productPrice)
-                // Set the image source and adjust the height and width
-                $("#productImg").attr("src", currImage).css({ "height": "270px", "width": "210px" });
-                $("#productName").text(`${productName}`)
-                $("#productPrice").text(`${productPrice}`)
-                // Populate available sizes in the size select
-                response.sizes.forEach((size) => {
-                    console.log(size, currSize)
-                    if (size === currSize) {
-                        $("#sizeSelect").append(`<option value="${size}" selected>${size}</option>`);
-                    } else {
-                        $("#sizeSelect").append(`<option value="${size}">${size}</option>`);
-                    }
-                });
+                console.log(response.stock)
+                if (!response.stock) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Out of stock!',
+                        text: 'The requested quantity is not available.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#8B4000',
+                        focusConfirm: '#FF0000',
+                        timer: 3000
+                    })
+                } else {
+                    // Clear existing options from the size and color selects
+                    $("#sizeSelect").empty();
+                    $("#colorSelect").empty();
+                    const currentColor = document.getElementById(`color-${productId}`).value
+                    const currSize = document.getElementById(`size-${productId}`).value
+                    const currImage = document.getElementById(`image-${productId}`).value
+                    const productName = document.getElementById(`name-${productId}`).value
+                    let productPrice = document.getElementById(`price-${productId}`).value
+                    productPrice = formatMoney(productPrice)
+                    // Set the image source and adjust the height and width
+                    $("#productImg").attr("src", currImage).css({ "height": "270px", "width": "210px" });
+                    $("#productName").text(`${productName}`)
+                    $("#productPrice").text(`${productPrice}`)
+                    // Populate available sizes in the size select
+                    response.sizes.forEach((size) => {
+                        console.log(size, currSize)
+                        if (size === currSize) {
+                            $("#sizeSelect").append(`<option value="${size}" selected>${size}</option>`);
+                        } else {
+                            $("#sizeSelect").append(`<option value="${size}">${size}</option>`);
+                        }
+                    });
+                    // Populate available colors in the color select
+                    response.colors.forEach((color) => {
+                        if (color.color === currentColor) {
+                            $("#colorSelect").append(`<option value="${color.id}" selected>${color.color}</option>`);
+                        } else {
+                            $("#colorSelect").append(`<option value="${color.id}">${color.color}</option>`);
+                        }
 
-                // Populate available colors in the color select
-                response.colors.forEach((color) => {
-                    if (color.color === currentColor) {
-                        $("#colorSelect").append(`<option value="${color.id}" selected>${color.color}</option>`);
-                    } else {
-                        $("#colorSelect").append(`<option value="${color.id}">${color.color}</option>`);
-                    }
-                    
-                });
-
-                // Populate available colors in the color filter
-                response.colors.forEach((color) => {
-                    console.log(color)
-                    const clr = color.color.toLowerCase()
-                    console.log(clr)
-                    console.log(color.color === currentColor)
-                    if (color.color === currentColor) {
-                        $("#color-filter").append(`<li><a class="active" data-color="${clr}"><span class="product-color-${clr}"></span></a></li>`);
-                    } else {
-                        $("#color-filter").append(`<li><a data-color="${clr}"><span class="product-color-${clr}"></span></a></li>`);
-                    }
-                });
-
-
-
-                // Show the modal
-                $("#cartModal").modal("show");
+                    });
+                    // Populate available colors in the color filter
+                    response.colors.forEach((color) => {
+                        console.log(color)
+                        const clr = color.color.toLowerCase()
+                        console.log(clr)
+                        console.log(color.color === currentColor)
+                        if (color.color === currentColor) {
+                            $("#color-filter").append(`<li><a class="active" data-color="${clr}"><span class="product-color-${clr}"></span></a></li>`);
+                        } else {
+                            $("#color-filter").append(`<li><a data-color="${clr}"><span class="product-color-${clr}"></span></a></li>`);
+                        }
+                    });
+                    // Show the modal
+                    $("#cartModal").modal("show");
+                }
             }
-
-
         })
     }
 </script>

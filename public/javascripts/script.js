@@ -67,7 +67,8 @@ const changeQuantity = (cartId, productId, userId, count) => {
           text: 'The requested quantity is not available.',
           confirmButtonText: 'OK',
           confirmButtonColor: '#8B4000',
-          focusConfirm: '#FF0000'
+          focusConfirm: '#FF0000',
+          timer: 3000
         })
       } else {
         document.getElementById(productId).innerHTML = quantity + count
