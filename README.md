@@ -2,10 +2,10 @@
 
 This is an e-commerce app built with Node.js, Express, and MongoDB. It allows users to browse and purchase products online.
 
-Installation
+`Installation`
 To run this app locally, follow these steps:
 
-Clone the repository: git clone https://github.com/your-username/e-commerce-app.git
+Clone the repository: git clone https://github.com/abinth11/Ecommerce-app
 Install Node.js and MongoDB if you haven't already.
 Install dependencies: npm install
 Create a .env file in the root directory and set the following environment variables:
