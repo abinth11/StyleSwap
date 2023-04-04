@@ -37,35 +37,32 @@ To use the API, send requests to the appropriate endpoint with the required data
 `Database schema`
 
 This app uses MongoDB to store data. The database schema is as follows(this is a sample schema, this app is built with mongoclient)
-
+```mongodb sample schema
 const productSchema = {
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  description: { type: String, required: true },
-  image: { type: String, required: true },
+name: { type: String, required: true },
+price: { type: Number, required: true },
+description: { type: String, required: true },
+image: { type: String, required: true },
 };
 
 const userSchema = {
-  username: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
+username: { type: String, required: true },
+email: { type: String, required: true },
+password: { type: String, required: true },
 };
 
 const orderSchema = {
-  user: { type: String, required: true },
-  products: [
-    {
-      productId: { type: String, required: true },
-      quantity: { type: Number, required: true },
-    },
-  ],
-  total: { type: Number, required: true },
-  date: { type: Date, required: true, default: Date.now },
+user: { type: String, required: true },
+products: [
+{
+productId: { type: String, required: true },
+quantity: { type: Number, required: true },
+},
+],
+total: { type: Number, required: true },
+date: { type: Date, required: true, default: Date.now },
 };
-
-
-
-
+```
 `Contributing`
 
 Contributions are welcome! If you'd like to contribute to this project, please follow these guidelines:
@@ -73,7 +70,6 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 Fork the repository and create a new branch for your changes.
 Make your changes and test them thoroughly.
 Submit a pull request with a clear description of your changes and why they are necessary.
-
 
 `Contact`
 
