@@ -76,6 +76,42 @@ input[type=number]::-webkit-outer-spin-button {
   border: 2px solid red;
 } */
 
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 99999999;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: none;
+}
+
+.search-suggestions ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.search-suggestions li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.search-suggestions li:last-child {
+  border-bottom: none;
+}
+
+.search-suggestions li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.search-suggestions li a:hover {
+  text-decoration: underline;
+}
+
 .custom-input {
   width: 70px;
   border-radius: 5px;

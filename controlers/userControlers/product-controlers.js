@@ -99,11 +99,11 @@ export const productControler = {
       const {searchValue} = req.params
       const response = await otherHelpers.getProductsWithRedis(searchValue)
       console.log(response)
-      response?.length
+      response?.products  
       ?res.status(200).json(response)
       :res.status(400).json({"Message":"Result not found"})
     } catch (err) {
-      console.log(err)
+      console.log(err)   
       res.status(500).json({Message:"failed to search the product"})
     }
   },
