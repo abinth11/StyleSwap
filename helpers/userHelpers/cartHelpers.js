@@ -2,7 +2,6 @@ import db from "../../config/connection.js"
 import collection from "../../config/collections.js"
 import { ObjectId } from "mongodb"
 export const cartHelpers = {
-    
   addToCart: async (productId, userId) => {
     const product = {
       item: ObjectId(productId),
@@ -75,30 +74,45 @@ export const cartHelpers = {
   changeCartQuantity: async ({ cartId, productId, count, quantity }) => {
     count = parseInt(count)
     quantity = parseInt(quantity)
-  
+
     // Get the product's current stock level
-    const product = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: ObjectId(productId) })
+    const product = await db
+      .get()
+      .collection(collection.PRODUCT_COLLECTION)
+      .findOne({ _id: ObjectId(productId) })
     const currentStockLevel = product.product_quantity
     if (count === -1 && quantity === 1) {
       // Remove the product from the cart
-      await db.get().collection(collection.CART_COLLECTION).updateOne(
-        { _id: ObjectId(cartId) },
-        { $pull: { products: { item: ObjectId(productId) } } }
-      )
+      await db
+        .get()
+        .collection(collection.CART_COLLECTION)
+        .updateOne(
+          { _id: ObjectId(cartId) },
+          { $pull: { products: { item: ObjectId(productId) } } }
+        )
       return { removed: true }
     } else if (count > 0 && quantity >= currentStockLevel) {
       // Set the product's status to "out of stock" and notify the user
-      await db.get().collection(collection.PRODUCT_COLLECTION).updateOne(
-        { _id: ObjectId(productId) },
-        { $set: { status: 'out of stock' } }
-      )
-      return { status: false, message: 'The requested quantity is not available.' }
+      await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .updateOne(
+          { _id: ObjectId(productId) },
+          { $set: { status: "out of stock" } }
+        )
+      return {
+        status: false,
+        message: "The requested quantity is not available.",
+      }
     } else {
       // If the requested quantity is less than or equal to the stock level, update the quantity in the user's cart
-      await db.get().collection(collection.CART_COLLECTION).findOneAndUpdate(
-        { _id: ObjectId(cartId), "products.item": ObjectId(productId) },
-        { $inc: { "products.$.quantity": count } }
-      )
+      await db
+        .get()
+        .collection(collection.CART_COLLECTION)
+        .findOneAndUpdate(
+          { _id: ObjectId(cartId), "products.item": ObjectId(productId) },
+          { $inc: { "products.$.quantity": count } }
+        )
       return { status: true }
     }
   },

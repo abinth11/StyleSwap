@@ -1,21 +1,25 @@
-import userHelpers from "../../helpers/user-helpers.js"
+import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
+import { userProductHelpers } from "../../helpers/userHelpers/userProductHelpers.js"
+import { couponHelpers } from "../../helpers/userHelpers/couponHelperes.js"
 export const userControler = {
   userHome: async (req, res) => {
     try {
       let cartCount
       // userHelpers.resetCouponCount()
       if (req.session.user) {
-        cartCount = await userHelpers.getCartProductsCount(
+        cartCount = await cartHelpers.getCartProductsCount(
           req.session.user._id
         )
       }
       console.log(req.session)
-      const products = await userHelpers.viewProduct()
+      const products = await userProductHelpers.viewProduct()
       res.render("index", { user: req.session.user, products, cartCount })
       req.session.guestUser = null
     } catch (error) {
       console.error(error)
-      res.render("index", { warningMessage: "Internal Server Error Please try again later..."})
+      res.render("index", {
+        warningMessage: "Internal Server Error Please try again later...",
+      })
     }
   },
   dashboard: (req, res) => {
@@ -23,28 +27,34 @@ export const userControler = {
       res.render("users/dashboard", { user: req.session.user })
     } catch (error) {
       console.error(error)
-      res.render("users/dashboard", { warningMessage: "Internal Server Error Please try again later..."})
+      res.render("users/dashboard", {
+        warningMessage: "Internal Server Error Please try again later...",
+      })
     }
   },
   viewCoupons: async (req, res) => {
     try {
-      const coupons = await userHelpers.getUserCoupons(req.session.user._id)
+      const coupons = await couponHelpers.getUserCoupons(req.session.user._id)
       const myCoupons = coupons.reverse()
       res.render("users/view-coupons-user", { myCoupons })
     } catch (error) {
       console.log(error)
-      res.render("users/view-coupons-user", { warningMessage: "Internal Server Error Please try again later..."})
+      res.render("users/view-coupons-user", {
+        warningMessage: "Internal Server Error Please try again later...",
+      })
     }
   },
   applyCouponCode: async (req, res) => {
     try {
       const { couponCode, amount } = req.body
-      const response = await userHelpers.redeemCoupon(couponCode, amount)
+      const response = await couponHelpers.redeemCoupon(couponCode, amount)
       req.session.couponAppliedDetails = response
       res.json(response)
     } catch (error) {
       console.log(error)
-      res.render("users/shop-cart", { warningMessage: "Internal Server Error Please try again later..."})
+      res.render("users/shop-cart", {
+        warningMessage: "Internal Server Error Please try again later...",
+      })
     }
   },
   userLogout: (req, res) => {
@@ -53,8 +63,9 @@ export const userControler = {
       res.redirect("/")
     } catch (error) {
       console.log(error)
-      res.render("index", { warningMessage: "Internal Server Error Please try again later..."})
-
+      res.render("index", {
+        warningMessage: "Internal Server Error Please try again later...",
+      })
     }
   },
 }

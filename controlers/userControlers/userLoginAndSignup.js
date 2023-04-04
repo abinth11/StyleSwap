@@ -1,7 +1,8 @@
-import twilio from "twilio"
 import { validationResult } from "express-validator"
 import userHelpers from "../../helpers/user-helpers.js"
 import { loginAndSignUpHelpers } from "../../helpers/userHelpers/loginAndSignUpHelpers.js"
+import { generateOpt, verifyOtp } from "../../middlewares/twilio.js"
+import { guestHelper } from "../../helpers/userHelpers/guestHelper.js"
 export const userLoginAndSignupControler = {
   userSignUpGet: (req, res) => {
     try {
@@ -92,7 +93,7 @@ export const userLoginAndSignupControler = {
         mobile,
         body: { otp },
       } = req.session
-      const { valid } = await twilio.verifyOtp(mobile, otp)
+      const { valid } = await verifyOtp(mobile, otp)
       if (valid) {
         res.redirect("/")
       } else {
@@ -122,7 +123,7 @@ export const userLoginAndSignupControler = {
       req.session.mobile = mobile
       const response = await loginAndSignUpHelpers.loginWthOTP(req.body)
       if (response.status) {
-        const verify = await twilio.generateOpt(mobile)
+        const verify = await generateOpt(mobile)
         req.session.vid = verify
         req.session.user = response.user
         res.redirect("/otpValidate")
@@ -161,7 +162,7 @@ export const userLoginAndSignupControler = {
           const userId = req.session.user._id
           if (from === "cart") {
             console.log(userId, guestId)
-            await userHelpers.mergeGuestCartIntoUserCart(userId, guestId)
+            await guestHelper.mergeGuestCartIntoUserCart(userId, guestId)
             req.session.guestUser = null
             res.json(successResponse)
           } else {
