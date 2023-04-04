@@ -17,6 +17,8 @@ import CustomError from "../middlewares/errorHandler.js"
 import { schedule } from "node-cron"
 import adminHelpers from "../helpers/admin-helpers.js"
 import { fileURLToPath } from "url"
+import {redisConnect} from "../config/redisCache.js"
+import otherHelpers from "../helpers/otherHelpers.js"
 import { createIndexForAlgolia } from "../config/algoliasearch.js"
 const { json, urlencoded } = pkg
 const serveStatic = express.static
@@ -65,6 +67,13 @@ connect()
   .catch((err) => {
     console.log("Connection failed", err)
   })
+redisConnect()
+   .then(()=> {
+    console.log("Successfull connected to redis")
+   })
+   .catch((err) => {
+    console.log("Error while connecting to redis", err)
+   })
 //? cron library to run queries on 12am
 schedule("0 0 * * *", () => {
 
@@ -74,10 +83,13 @@ schedule("0 0 * * *", () => {
   //todo uncomment when after commenting the function from user home..
   // userHelpers.resetCouponCount()
 
+  //*indexing the data in the product collection for better search perfomance
+
+  otherHelpers.createIndexForProducts()
+
   //* function to index the products from database for searching
   // createIndexForAlgolia()
 })
-
 // catch 404 and forward to error handler
 app.use(function (req, res) {
   res.render("users/page-404")

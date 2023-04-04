@@ -5,6 +5,7 @@ import {
 } from "../../config/algoliasearch.js"
 import { userProductHelpers } from "../../helpers/userHelpers/userProductHelpers.js"
 import { orderHelpers } from "../../helpers/userHelpers/orderHelpers.js"
+import otherHelpers from "../../helpers/otherHelpers.js"
 export const productControler = {
   changeProduct: async (req, res) => {
     try {
@@ -91,6 +92,19 @@ export const productControler = {
       res.render("users/shop-womens", {
         warningMessage: "Internal Server Error Please try again later...",
       })
+    }
+  },
+  serchProductsWithRedis: async (req,res) => {
+    try {
+      const {searchValue} = req.params
+      const response = await otherHelpers.getProductsWithRedis(searchValue)
+      console.log(response)
+      response?.length
+      ?res.status(200).json(response)
+      :res.status(400).json({"Message":"Result not found"})
+    } catch (err) {
+      console.log(err)
+      res.status(500).json({Message:"failed to search the product"})
     }
   },
   indexProducts: async (req, res) => {

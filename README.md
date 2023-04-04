@@ -28,7 +28,8 @@ Checkout by entering your shipping and payment information.
 
 This app includes an API for third-party integration. The API has the following endpoints:
 
-GET /api/products - get a list of all products
+`GET /api/products - get a list of all products`
+
 GET /api/products/:id - get a single product by ID
 POST /api/orders - create a new order
 GET /api/orders/:id - get a single order by ID
