@@ -188,7 +188,7 @@ router.post("/return-products", productControler.returnProducts)
 
 //? ROUTES TO HANDLE PRODUCT SEARCH 
 //for the serch feature
-router.get("/search-products/:searchValue", productControler.serchProductsWithRedis)
+router.get("/search-products", productControler.serchProductsWithRedis)
 // router.get("/index-products", productControler.indexProducts)
 
 //? ROUTES FOR COUPONS 

@@ -6,7 +6,7 @@
             title: 'Oops...',
             text: 'Something went wrong! Please try again later.',
         }).then(() => {
-            window.location.href = '/' // Redirect to home page
+            window.location.href = '/'
         })
         setTimeout(function () {
             window.location.replace('/')
@@ -84,19 +84,15 @@
                                 <option>Shoes</option>
                                 <option>Mother & Kids</option>
                             </select>
-                            <input type="text" placeholder="Search for items..." id="search-input">
+                            <div id="search-input-and-result">
+                                <input type="text" placeholder="Search for items..." id="search-input">
 
-                            <div class="search-suggestions bg-info">
-                                <ul>
-                                    <li><a href="#">Suggestion 1</a></li>
-                                    <li><a href="#">Suggestion 2</a></li>
-                                    <li><a href="#">Suggestion 3</a></li>
-                                    <li><a href="#">Suggestion 4</a></li>
-                                    <li><a href="#">Suggestion 5</a></li>
-                                </ul>
+                                <div class="search-suggestions " id="search-results" style="display: none;">
+                                    <ul>
+
+                                    </ul>
+                                </div>
                             </div>
-
-
                         </form>
                     </div>
                     <div class="header-action-right">

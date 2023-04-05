@@ -8,13 +8,13 @@ const otherHelpers = {
       const suggestionKey = 'suggest-key'
       const searchKey = searchTerm.toLowerCase()
       // Get search suggestions from Redis
-      redisClient.ZINCRBY(suggestionKey, 1, searchKey)
-      const suggestionResult = await redisClient.ZRANGEBYSCORE(suggestionKey, 0, 7,'WITHSCORES')
+      const suggestionResult = await redisClient.ZRANGEBYSCORE(suggestionKey, 0, 5,'WITHSCORES')
        console.log(suggestionResult)
       // Check Redis cache for search results
       const redisResult = await redisClient.GET(searchKey)
       if (redisResult) {
         console.log('Result from Redis cache')
+        redisClient.ZINCRBY(suggestionKey, 1, searchKey)
         return { products: JSON.parse(redisResult), suggestions: suggestionResult }
       }
   
@@ -35,8 +35,7 @@ const otherHelpers = {
       if (result.length) {
         console.log('Results found in MongoDB')
         redisClient.SETEX(searchKey, 3600, JSON.stringify(result))
-  
-        // redisClient.ZINCRBY(suggestionKey, 1, searchKey)
+        redisClient.ZINCRBY(suggestionKey, 1, searchKey)
       }
   
       console.log('Value successfully set in Redis.')

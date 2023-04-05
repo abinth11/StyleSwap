@@ -30,6 +30,7 @@ export const productControler = {
   shopProductRight: async (req, res) => {
     try {
       const { productId, parentId } = req.query
+      console.log(req.query)
       const parent = await userProductHelpers.findParent(parentId)
 
       const product = await userProductHelpers.viewCurrentProduct(productId)
@@ -96,9 +97,12 @@ export const productControler = {
   },
   serchProductsWithRedis: async (req,res) => {
     try {
-      const {searchValue} = req.params
+      const {q:searchValue} = req.query
       const response = await otherHelpers.getProductsWithRedis(searchValue)
       console.log(response)
+      if (response?.products && response.products.length > 7) {    
+        response.products = response.products.slice(0,7)
+      }
       response?.products  
       ?res.status(200).json(response)
       :res.status(400).json({"Message":"Result not found"})
