@@ -2,6 +2,7 @@ import userHelpers from "./user-helpers.js"
 import redisClient from "../config/redisCache.js"
 import collection from "../config/collections.js"
 import db from "../config/connection.js"
+import { couponHelpers } from "./userHelpers/couponHelperes.js"
 const otherHelpers = {
   getProductsWithRedis: async (searchTerm) => {
     try {
@@ -123,7 +124,7 @@ const otherHelpers = {
     try {
       const result = Math.random()
       if (result < probability) {
-        return await userHelpers.createCouponForUsers(userId)
+        return await couponHelpers.createCouponForUsers(userId)
       } else {
         return false
       }

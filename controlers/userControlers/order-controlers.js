@@ -44,6 +44,7 @@ export const orderControler = {
     try {
       const order = await orderHelpers.getOrderStatus(req.params.id)
       const statusDates = await orderHelpers.getStatusDates(req.params.id)
+      console.log(order)
       res.render("users/track-order", { order, statusDates })
     } catch (error) {
       console.log(error)

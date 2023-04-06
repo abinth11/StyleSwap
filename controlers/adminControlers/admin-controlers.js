@@ -273,8 +273,8 @@ const adminControler = {
     })
   },
   viewAllOrders: async (req, res) => {
-    const response = await adminHelpers.getAllUserOrders()
-    res.render("admin/page-orders-1", { orders:response.orders,count:response.count })
+    const response = await adminHelpers.getAllUserOrdersCount()
+    res.render("admin/page-orders-1", {count:response.count })
   },
   viewOrderDetails: async (req, res) => {
     const orderDetails = await adminHelpers.getCurrentProducts(req.params.id)

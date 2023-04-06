@@ -77,6 +77,20 @@ export const paymentHelpers = {
             console.log(response)
           })
       }
+      //?updating the order status as placed in the order status collection
+      const now = new Date()
+      const dateString = now.toDateString() // e.g. "Sun Mar 07 2023"
+      const timeString = now.toLocaleTimeString() // e.g. "2:37:42 PM"
+      const dateTimeString = `${timeString} ${dateString}` // e.g. "Sun Mar 07 2023 2:37:42 PM"
+      const key = `placed`
+      const orderId = resp.insertedId+""
+      const status = { [key]: dateTimeString, orderId }
+      const response = await db
+          .get()
+          .collection(collection.ORDER_SATUS)
+          .insertOne(status )
+          console.log("order status for tracking")
+          console.log(response)
       //? clearing products from the cart
       await db
         .get()

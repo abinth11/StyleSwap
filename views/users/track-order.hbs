@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="/css/main.css">
 <section>
 
-	<div class="container" style="height: 80vh;">
+	<div class="container" style="height: 80vh;overflow: hidden;">
 		{{#if order.pickupDate}}
 		<div class="row">
 			<h4 class="text-center text-success mt-4">Your return request has been approved by the admin please ready
@@ -48,8 +48,27 @@
 			</div>
 		</div>
 		<div class="pt-10 mt-25 d-flex" style="margin-left: 14em; border-radius: 4px;">
+            <button class="btn-help ms-1">Need Help</button>
+            {{#if (eq order.status 'cancelled')}}
+				{{else}}
+				{{#if (eq order.status 'completed')}}
+				{{else}}
+				<button class="btn-cancel me-1 ms-2" onclick="setOrderCancellData('{{order._id}}')" id="cancelBtn"
+				data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+				{{/if}}
+			{{/if}}
+			{{#if (eq order.status 'completed')}}
+			{{#if order.returnStatus}}
+
+			{{else}}
+			<button style="margin-left: 5px;" id="returnBtn" class="btn-cancel" onclick="setReturnData('{{order._id}}')"
+			class="btn btn-danger btn-sm " data-bs-toggle="modal" data-bs-target="#returnModal">Return</button>
+			{{/if}}
+			{{/if}}
 
 
+
+{{!-- 
 			{{#if (eq order.status 'completed')}}
 			{{#if order.returnStatus}}
 			<!-- If returnReason exists, show only the Help button -->
@@ -59,6 +78,8 @@
 			<button id="returnBtn" class="btn-cancel" onclick="setReturnData('{{order._id}}')"
 				class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#returnModal">Return</button>
 			<button class="btn-help ms-1">Need Help</button>
+					<button class="btn-cancel me-1" onclick="setOrderCancellData('{{order._id}}')" id="cancelBtn"
+				data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
 			{{/if}}
 			{{else}}
 			<!-- If status is not completed, show the Cancel and Help buttons -->
@@ -67,11 +88,11 @@
 			<button class="btn-cancel me-1" onclick="setOrderCancellData('{{order._id}}')" id="cancelBtn"
 				data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
 			{{else}}
-
 			{{/if}}
 			{{/notNull}}
+
 			<button class="btn-help ms-1">Need Help</button>
-			{{/if}}
+			{{/if}} --}}
 
 		</div>
 	</div>

@@ -138,6 +138,7 @@ export const orderHelpers = {
     }
   },
   getStatusDates: async (orderId) => {
+    console.log(orderId)
     try {
       const dates = await db
         .get()

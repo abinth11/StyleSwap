@@ -293,17 +293,10 @@ const adminHelpers = {
       throw new Error(error)
     }
   },
-  getAllUserOrders: async () => {
+  getAllUserOrdersCount: async () => {
     try {
-      const orders = await db
-        .get()
-        .collection(collection.ORDER_COLLECTION)
-        .find({})
-        .limit(7)
-        .sort([("date", 1)])
-        .toArray()
       const count = await db.get().collection(collection.ORDER_COLLECTION).countDocuments({})
-      return {orders,count}
+      return { count}
     } catch (error) {
       console.log(error)
       throw new Error(error)
@@ -451,9 +444,10 @@ const adminHelpers = {
               },
               { upsert: true }
             )
-        } else {
-          db.get().collection(collection.ORDER_SATUS).insertOne({ status })
-        }
+        } 
+        // else {
+        //   db.get().collection(collection.ORDER_SATUS).insertOne({ status })
+        // }
         return response
       }
     } catch (error) {
@@ -1402,7 +1396,12 @@ const adminHelpers = {
   paginateUsingLimitAndSkip:async (limit,skip,pageNo) => {
     try {
       pageNo = parseInt(pageNo)
-      const data = await db.get().collection(collection.ORDER_COLLECTION).find({}).limit(limit).skip(skip*(pageNo-1)).toArray()
+      const data = await db.get().collection(collection.ORDER_COLLECTION)
+      .find({})
+      .sort({date: -1})
+      .skip(skip*(pageNo-1))
+      .limit(limit)
+      .toArray()      
       return data
 
     } catch (error) {
