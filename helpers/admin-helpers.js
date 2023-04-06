@@ -299,9 +299,11 @@ const adminHelpers = {
         .get()
         .collection(collection.ORDER_COLLECTION)
         .find({})
+        .limit(7)
         .sort([("date", 1)])
         .toArray()
-      return orders
+      const count = await db.get().collection(collection.ORDER_COLLECTION).countDocuments({})
+      return {orders,count}
     } catch (error) {
       console.log(error)
       throw new Error(error)
@@ -424,7 +426,7 @@ const adminHelpers = {
         .collection(collection.ORDER_COLLECTION)
         .updateOne(
           { _id: objectId(orderId) },
-          {
+          {  
             $set: {
               status: newStatus,
             },
@@ -1395,6 +1397,16 @@ const adminHelpers = {
       return response.value.product_quantity
     } catch (errors) {
       console.log(errors)
+    }
+  },
+  paginateUsingLimitAndSkip:async (limit,skip,pageNo) => {
+    try {
+      pageNo = parseInt(pageNo)
+      const data = await db.get().collection(collection.ORDER_COLLECTION).find({}).limit(limit).skip(skip*(pageNo-1)).toArray()
+      return data
+
+    } catch (error) {
+      console.log(error)
     }
   }
 }

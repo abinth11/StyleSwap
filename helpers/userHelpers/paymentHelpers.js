@@ -26,7 +26,7 @@ export const paymentHelpers = {
       }
       console.log(paymentMethod)
       const paymentStatus = paymentMethod === "cod" ? "done" : "pending"
-      console.log(paymentStatus)
+      const orderStatus = paymentStatus === 'done' ? 'placed' : 'pending'
       const order = {
         userId: ObjectId(userId),
         name,
@@ -41,7 +41,7 @@ export const paymentHelpers = {
         offerTotal,
         priceAfterDiscount: discountPrice,
         paymentStatus,
-        status: "placed",
+        status: orderStatus,
         date: new Date(),
         deliveryDetails: {
           mobile_no: mobile,

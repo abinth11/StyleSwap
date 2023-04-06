@@ -15,6 +15,7 @@
             </div>
         </div>
         <div class="card mb-4">
+            <input type="hidden" value="{{count}}" id="total-pages">
             <header class="card-header">
                 <div class="row gx-3">
                     <div class="col-lg-2 col-md-4 ">
@@ -76,10 +77,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    </th>
+                                </th>
                 </div>
             </div>
-        </div> 
+        </div>
         </th>
         <th>
             <div style="display: inline-flex; align-items: center;">
@@ -102,11 +103,11 @@
         </tr>
         </thead>
         <tbody>
-            {{#each orders}}
+            {{!-- {{#each orders}}
             <tr>
                 <td>0901</td>
                 <td><b>{{name}}</b></td>
-                <td>{{mobile}}</td>
+                <td id="mobile">{{mobile}}</td>
                 <td>{{formatCurrency totalPrice}}</td>
                 <td id="order-date">{{formatDateTwo date}}</td>
                 {{#if (eq status "placed")}}
@@ -143,87 +144,231 @@
                         class="btn btn-md rounded font-sm">Details</a>
                 </td>
             </tr>
-            {{/each}}
+            {{/each}} --}}
         </tbody>
         </table>
         </div> <!-- table-responsive //end -->
         </div> <!-- card-body end// -->
         </div> <!-- card end// -->
+
         <div class="pagination-area mt-15 mb-50">
-  <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-start">
-      <li class="page-item" id="previousPage">
-        <a class="page-link" href="#" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-          <span class="sr-only">Previous</span>
-        </a>
-      </li>
-      <li class="page-item active"><a class="page-link"  data-page="1">1</a></li>
-      <li class="page-item"><a class="page-link"  data-page="2">2</a></li>
-      <li class="page-item"><a class="page-link" href="#" data-page="3">3</a></li>
-      <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-      <li class="page-item"><a class="page-link" href="#" data-page="16">16</a></li>
-      <li class="page-item" id="nextPage">
-        <a class="page-link" href="#" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-          <span class="sr-only">Next</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-</div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start" id="pagination">
+
+                </ul>
+            </nav>
+        </div>
 
 
     </section> <!-- content-main end// -->
     {{>admin-footer}}
 
-<script>
 
 
-{{!-- const table = document.getElementById("userTable");
-    const rowsPerPage = 10;
-    let currentPage = 0;
+    {{!-- For pagination --}}
 
-    function updateTable() {
-        // Hide all rows
-        for (let i = 1; i < table.rows.length; i++) {
-            table.rows[i].style.display = "none";
+    <script>
+      
+
+        // Function to return the appropriate class name based on status
+        function getStatusClass(status) {
+            switch (status) {
+                case 'placed':
+                    return 'badge rounded-pill alert-success';
+                case 'pending':
+                    return 'badge rounded-pill alert-warning';
+                case 'cancelled':
+                    return 'badge rounded-pill alert-danger';
+                case 'confirmed':
+                    return 'badge rounded-pill alert-warning'
+                case 'shipped':
+                    return 'badge rounded-pill alert-primary'
+                case 'delivery':
+                    return 'badge rounded-pill alert-info'
+                case 'completed':
+                    return 'badge rounded-pill alert-secondary'
+                default:
+                    return 'badge rounded-pill';
+            }
+        }
+        var counter = 1
+        const limitAndSkipDocuments = (pageNumber) => {
+            $.ajax({
+                url: `/admin/limit-and-skip-documents?pageNo=${pageNumber}`,
+                method: "GET",
+                success: (response) => {
+
+
+                    var tbody = $('#userTable tbody');
+                    tbody.empty();
+                    // Loop through the data and add rows to the table
+                    
+                    $.each(response, function (index, value) {
+                        // Create a new row and set the content of the cells
+                        var newRow = $('<tr>');
+                        if(counter ==0 )counter=1 
+                        newRow.append($('<td>').text(counter));
+                        counter++;
+                        newRow.append($('<td>').text(value.name));
+                        newRow.append($('<td>').text(value.mobile));
+                        newRow.append($('<td>').text(formatMoneyINR(value.offerTotal)));
+                        newRow.append($('<td>').text(formatDate(value.date)));
+                        // Create a new status span element with a unique id
+                        const statusSpan = $('<span>').attr('id', 'statusSpan_' + value._id).addClass(getStatusClass(value.status)).text(value.status);
+
+                        // Create a new td element with a unique id
+                        const statusTd = $('<td>').attr('id', 'statusTd_' + value._id);
+
+                        // Append the status span to the td element
+                        statusTd.append(statusSpan);
+
+                        // Append the td element to the new row
+                        newRow.append(statusTd);
+                        // Create the select element and options for changing status
+                        var statusSelect = $('<select>').addClass('form-select form-select-sm')
+                            .css({ 'font-size': '13px', 'width': '140px' })
+                            .on('change', function () {
+                                changeOrderStatus(value._id, this.value);
+                            })
+                            .append($('<option>').prop('selected', true).prop('disabled', true).text('Change status'))
+                            .append($('<option>').val('placed').text('Placed'))
+                            .append($('<option>').val('confirmed').text('Confirmed'))
+                            .append($('<option>').val('shipped').text('Shipped'))
+                            .append($('<option>').val('delivery').text('Delivery'))
+                            .append($('<option>').val('completed').text('Completed'));
+
+                        // Append the select element to the cell
+                        newRow.append($('<td>').addClass('status-buttons').append(statusSelect));
+
+                        // Create the details button
+                        var detailsButton = $('<a>').addClass('btn btn-md rounded font-sm')
+                            .prop('href', '/admin/dashboard/admin-view-orders/view-order-details/' + value._id)
+                            .text('Details');
+
+                        // Append the details button to the cell
+                        newRow.append($('<td>').append(detailsButton));
+
+                        // Add the new row to the table
+                        $('#userTable tbody').append(newRow);
+                    });
+                    console.log(response)
+
+                },
+                error: (error) => {
+                    console.log(error)
+                }
+            })
         }
 
-        // Show the rows for the current page
-        const startIndex = currentPage * rowsPerPage + 1;
-        const endIndex = Math.min((currentPage + 1) * rowsPerPage + 1, table.rows.length);
-        for (let i = startIndex; i < endIndex; i++) {
-            table.rows[i].style.display = "table-row";
+        function formatMoneyINR(amount) {
+            // convert to string and split into integer and decimal parts
+            if (!amount) return
+            var parts = amount.toFixed(2).toString().split('.');
+
+            // format the integer part with commas every 3 digits
+            var integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+            // join the integer and decimal parts and add the Indian Rupee symbol
+            var formattedAmount = '₹' + integerPart + '.' + parts[1];
+
+            return formattedAmount;
+        }
+        function formatDate(dateString) {
+            // create a Date object from the input string
+            var date = new Date(dateString);
+
+            // define arrays for month names and AM/PM labels
+            var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            var amPmLabels = ['AM', 'PM'];
+
+            // extract the date and time components from the Date object
+            var year = date.getFullYear();
+            var monthIndex = date.getMonth();
+            var day = date.getDate();
+            var hour = date.getHours() % 12;
+            var minute = date.getMinutes();
+            var amPmIndex = Math.floor(date.getHours() / 12);
+
+            // format the date string using the extracted components and the arrays
+            var formattedDate = monthNames[monthIndex] + ' ' + day + ', ' + year + ', ' + hour + ':' + (minute < 10 ? '0' : '') + minute + ' ' + amPmLabels[amPmIndex];
+
+            return formattedDate;
         }
 
-        // Enable/disable pagination buttons
-        document.getElementById("previousPage").disabled = (currentPage == 0);
-        document.getElementById("nextPage").disabled = (endIndex >= table.rows.length);
-    }
+        var pageIdx=1
+        $(document).ready(function () {
+            const totalPages = Math.ceil($('#total-pages').val() / 7)
+            console.log(totalPages)
+            var $pagination = $('#pagination');
+            $pagination.empty();
 
-    function nextPage() {
-        currentPage++;
-        updateTable();
-    }
+            if (totalPages > 1) {
+                var activePage = 1;
+                var maxPagesToShow = 3;
+                var dotsAfterPage = 3;
 
-    function prevPage() {
-        currentPage--;
-        updateTable();
-    }
+                $pagination.append('<li class="page-item" id="previousPage"><a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>');
+                    for ( var i = 1 ; i <= totalPages; i++) {
 
-    // Initialize table pagination
-    updateTable();
-    document.getElementById("prevPageBtn").addEventListener("click", prevPage);
-    document.getElementById("nextPageBtn").addEventListener("click", nextPage); --}}
-
+                    if (i == activePage) {
+                        $pagination.append('<li class="page-item active" data-page="' + i + '"><a class="page-link page-number">' + i + '</a></li>');
+                    } else if ((i <= maxPagesToShow) || (i > activePage - dotsAfterPage && i < activePage + dotsAfterPage) || (i > totalPages - maxPagesToShow)) {
+                        $pagination.append('<li class="page-item" data-page="' + i + '"><a class="page-link page-number">' + i + '</a></li>');
+                    } else if ($pagination.find('.dot').length == 0) {
+                        $pagination.append('<li class="page-item"><a class="page-link dot">...</a></li>');
+                    }
+                }
     
+             
+                $pagination.append('<li class="page-item" id="nextPage"><a class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>');
 
-</script>
+                $pagination.on('click', '.page-number', function () {
+                    activePage = $(this).parent().data('page');
+                    if(activePage == 1) counter = 0
+                    else counter = activePage*7
+                    console.log(activePage)
+                    limitAndSkipDocuments(activePage);
+                    $pagination.find('.active').removeClass('active');
+                    $(this).parent().addClass('active');
+                });
+
+                $pagination.on('click', '#previousPage', function () {
+                    console.log(activePage+"beforeprev")
+                    if(activePage == 2) counter = 0
+                    else counter = (activePage -1) *7
+                    console.log(counter+"prev")
+                    if (activePage > 1) {
+                        activePage--;
+                        limitAndSkipDocuments(activePage);
+                        console.log(activePage)
+
+                        $pagination.find('.active').removeClass('active');
+                        $pagination.find('li[data-page="' + activePage + '"]').addClass('active');
+                    }
+                });
+
+                $pagination.on('click', '#nextPage', function () {
+                    
+                    if (activePage < totalPages) {
+                        activePage++;
+                        limitAndSkipDocuments(activePage);
+                        console.log(activePage)
+
+                        $pagination.find('.active').removeClass('active');
+                        $pagination.find('li[data-page="' + activePage + '"]').addClass('active');
+                    }
+                });
+            }
+        });
+
+    $(document).ready(() => {
+            limitAndSkipDocuments(1)
+        })
 
 
 
 
+    </script>
 
 
     <script>
@@ -269,8 +414,10 @@
         }
     </script>
     <script>
-        const changeOrderStatus = (orderId, currStatus, newStatus) => {
+        const changeOrderStatus = (orderId, newStatus) => {
+            const currStatus = $('#statusSpan_' + orderId).text()
             console.log(orderId, currStatus, newStatus)
+
             $.ajax({
                 url: "/admin/change-product-status",
                 data: {
@@ -280,7 +427,18 @@
                 },
                 method: 'post',
                 success: (res) => {
-                    location.reload();
+                    console.log(getStatusClass(currStatus))
+                    console.log(getStatusClass(newStatus))
+                    const statusSpan = $('#statusSpan_' + orderId);
+                    statusSpan.removeClass()
+                    console.log(statusSpan)
+
+                    statusSpan.addClass(getStatusClass(newStatus)).text(newStatus);
+
+
+                },
+                error: (error) => {
+
                 }
             })
         }

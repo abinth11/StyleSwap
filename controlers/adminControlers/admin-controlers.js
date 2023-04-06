@@ -273,14 +273,30 @@ const adminControler = {
     })
   },
   viewAllOrders: async (req, res) => {
-    const orders = await adminHelpers.getAllUserOrders()
-    res.render("admin/page-orders-1", { orders })
+    const response = await adminHelpers.getAllUserOrders()
+    res.render("admin/page-orders-1", { orders:response.orders,count:response.count })
   },
   viewOrderDetails: async (req, res) => {
     const orderDetails = await adminHelpers.getCurrentProducts(req.params.id)
     // let orders = adminHelpers.ISO_to_Normal_Date(odr)
     console.log(orderDetails)
     res.render("admin/view-more-orders", { orderDetails })
+  },
+  paginateUsingLimitAndSkip : async (req,res) => {
+    try {
+      const limit =7
+      const skip = 7
+      const {pageNo} = req.query
+      console.log(pageNo)
+      const response = await adminHelpers.paginateUsingLimitAndSkip(limit,skip,pageNo)
+      console.log(response)
+      response?.length
+      ?res.status(200).json(response)
+      :res.status(400).json({"Message":"Response not found"})
+    } catch (err) {
+      console.log(err)
+
+    }
   },
   changeProductStatus: (req, res) => {
     adminHelpers.changeOrderStatus(req.body).then(() => {

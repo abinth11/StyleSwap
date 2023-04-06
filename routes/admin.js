@@ -229,6 +229,9 @@ router.get(
   adminControler.getUserReviews
 )
 
+//? FOR PAGINATION  
+router.get("/limit-and-skip-documents",adminControler.paginateUsingLimitAndSkip)
+
 //? ADMIN LOGOUT
 //Logout admin
 router.get("/logoutAdmin", adminControler.logoutAdmin)
