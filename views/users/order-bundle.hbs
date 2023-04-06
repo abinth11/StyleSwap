@@ -107,7 +107,7 @@
                                             {{/multiply}}
                                         </td>
                                        {{#if (eq ../orderDetails.status "completed")}}
-                                        <td id="rating-button"><a href="/shop-product-right/{{item._id}}#ratings" >Rate Product<span><i class="fa fa-sm fa-star star rating-star"style="color:#ffcc00;" ></i></span></a></td>
+                                        <td id="rating-button"><a href="/shop-product-right/?productId={{item._id}}&parentId={{item.parentId}}#ratings" >Rate Product<span><i class="fa fa-sm fa-star star rating-star"style="color:#ffcc00;" ></i></span></a></td>
                                         {{/if}}
                                     </tr>
                                     

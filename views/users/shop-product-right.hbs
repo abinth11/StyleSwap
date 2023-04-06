@@ -1,6 +1,89 @@
 ﻿{{>head-user}}
 
 
+{{!-- Modal for editing the reiveiw --}}
+<div class="modal fade" id="edit-review-modal" tabindex="-1" role="dialog" aria-labelledby="edit-review-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="edit-review-modal-label">Edit Review</h5>
+                <button style="border: none;background-color: transparent;" type="button" class="close mb-3"
+                    data-bs-dismiss="modal" aria-label="Close">
+                    <i class="las la-times" style="font-size: 16px;"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="d-flex align-items-center justify-content-center ">
+                    <div class="product-rating-edit mb-3">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                    <input type="hidden" id="product-rating-value" name="product-rating-value" value="">
+
+                </div>
+
+                <div class="form-group">
+                    <label for="review-text-input" class="col-form-label">Review:</label>
+                    <textarea style="height: 100px;" class="form-control" id="review-edit-text-input" cols="20"
+                        rows="10"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="edit-review">Save changes</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal success revie update-->
+<div class="modal fade" id="successModal-review" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Review Updated</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Your review has been updated successfully.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="success-close" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal review failure -->
+<div class="modal fade" id="errorModal-review" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">Review Update Failed</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Sorry, there was an error updating your review. Please try again later.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="error-close" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <!-- Quick view -->
 <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel"
@@ -583,6 +666,7 @@
                                             <div class="comment-list ">
 
                                                 {{#each product.ratings}}
+                                                <input type="hidden" value="{{userDetails.userId}}" id="comment-id">
                                                 <div class="single-comment justify-content-between  ">
                                                     <div class="user justify-content-between d-flex">
                                                         <div class="thumb text-center col-md-2 ">
@@ -601,15 +685,32 @@
                                                                     style="color:#DDDDDD ;"></i></span>
                                                             <span><i class="fa fa-sm fa-star star"
                                                                     style="color:#DDDDDD ;"></i></span>
-                                                            <p>{{comment}}</p>
-                                                            <input type="hidden" class="rating-input"
-                                                                value="{{rating}}">
+                                                            {{#if updated}}
+                                                            <span class="ms-2 text-dark">edited<i class="ms-1 las la-check-double"></i></span>
+                                                            {{/if}}
+                                                            <p id="comment-{{_id}}">{{comment}}</p>
+                                                            <input type="hidden" id="rating-{{_id}}"
+                                                                class="rating-input" value="{{rating}}">
                                                             <div class="d-flex justify-content-between">
                                                                 <div class="d-flex align-items-center">
-                                                                    <p class="font-xs mr-30">{{formatDateTwo addedAt}}
+                                                                    {{#if updatedAt}}
+                                                                     <p class="font-xs mr-30">{{formatDateTwo updatedAt}}
                                                                     </p>
-                                                                    <a href="#" class="text-brand btn-reply">Reply<i
-                                                                            class="fi-rs-arrow-right"></i></a>
+                                                                    {{else}}
+                                                                     <p class="font-xs mr-30">{{formatDateTwo addedAt}}
+                                                                    </p>
+                                                                    {{/if}}
+                                                                    {{#if (eq ../userId userDetails.userId)}}
+                                                                    <input type="hidden" id="comment-edit-id" value="{{_id}}">
+                                                                    <button id="edit-button"
+                                                                        onclick="setComment('{{_id}}')"
+                                                                        class="text-brand btn-reply"
+                                                                        style="border: none;" data-bs-toggle="modal"
+                                                                        data-bs-target="#edit-review-modal">Edit <i
+                                                                            class="fas fa-edit"
+                                                                            style="font-size: 16px;"></i></button>
+                                                                    {{/if}}
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -945,6 +1046,7 @@
     </section>
 
 </main>
+
 {{>foot-user}}
 
 <script>
@@ -955,12 +1057,54 @@
             $('html, body').animate({ scrollTop: targetElement.offset().top }, 500);
         }
     });
+
+   $('#success-close').click(function() {
+  location.reload();
+   });
+     $('#error-close').click(function() {
+  location.reload();
+   });
+
+
+
+    const setComment = (commentId) => {
+        const comment = document.getElementById(`comment-${commentId}`).innerText
+        const editTextArea = document.getElementById('review-edit-text-input').innerText = comment
+        const rating = document.getElementById(`rating-${commentId}`).value
+        document.getElementById('product-rating-value').value=rating
+
+        const productRating = document.querySelector('.product-rating-edit');
+        const productRatingValue = document.querySelector('#product-rating-value');
+        let selectedRating = parseInt(productRatingValue.value) || 0;
+
+        // Set the selected stars based on a variable
+        const selectedStars = rating
+        selectedRating = selectedStars;
+        productRatingValue.value = selectedRating;
+        const stars = productRating.querySelectorAll('i');
+        stars.forEach((star, index) => {
+            star.classList.toggle('active', index < selectedStars);
+        });
+
+        productRating.addEventListener('click', event => {
+            const selectedStar = event.target.closest('i');
+
+            if (selectedStar) {
+                const rating = selectedStar.dataset.rating;
+                selectedRating = rating;
+                productRatingValue.value = selectedRating;
+                const stars = productRating.querySelectorAll('i');
+                stars.forEach((star, index) => {
+                    star.classList.toggle('active', index < selectedRating);
+                });
+            }
+        });
+
+    }
 </script>
 
-
-
-
 <script>
+
 
     $('#add-rating').click((e) => {
         e.preventDefault();
@@ -1027,6 +1171,44 @@
             }
         });
     });
+
+    $('#edit-review').click((e) => {
+        const commentId = document.getElementById('comment-edit-id').value
+        const review = document.getElementById('review-edit-text-input').value
+        const rating = document.getElementById('product-rating-value').value
+        $.ajax({
+            url:'/shop-product-right/edit-review',
+            type:'POST',
+            data:{
+                commentId,
+                review,
+                rating
+            },
+            success:(response)=>{
+                if(response.status){
+                $('#edit-review-modal').modal('hide'); 
+                $('#successModal-review').modal('show'); 
+                setTimeout(()=> {
+                $('#successModal-review').modal('hide'); 
+                location.reload()
+                },3000)
+                }else {
+                $('#errorModal-review').modal('show');
+                setTimeout(()=> {
+                $('#errorModal-review').modal('hide');
+                location.reload()
+                },3000)
+                }
+            },
+            error:(err) =>{
+                $('#errorModal-review').modal('show');
+                setTimeout(()=> {
+                $('#errorModal-review').modal('hide');
+                location.reload()
+                },3000)   
+            }
+        })
+    })
 </script>
 <script>
     // get all the sets of stars and hidden input fields
@@ -1094,7 +1276,7 @@
 
     // Call the function when the page finishes loading
 
-  
+
 
 
     const changeProduct = (productId, parentId) => {

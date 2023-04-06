@@ -219,6 +219,11 @@ router.post(
   productControler.addRatingForProducts
 )
 
+router.post(
+  "/shop-product-right/edit-review",
+  productControler.editRating
+)
+
 router.get(
   "/get-available-size-and-color/:productId",
   productControler.getSizeAndColor

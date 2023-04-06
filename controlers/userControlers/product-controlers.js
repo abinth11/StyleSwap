@@ -34,6 +34,10 @@ export const productControler = {
       const parent = await userProductHelpers.findParent(parentId)
 
       const product = await userProductHelpers.viewCurrentProduct(productId)
+      console.log(product)
+      console.log(product.ratings[0].userDetails)
+      const userId = req.session?.user?._id
+      console.log(userId)
       const allowedColors = ["red", "green", "blue", "yellow", "black"]
       const availabeColors = parent.availabeColors
       const availabeSizes = parent.availabeSizes
@@ -49,6 +53,7 @@ export const productControler = {
         availabeColors,
         availabeSizes,
         parentId,
+        userId
       })
     } catch (error) {
       console.error(error)
@@ -135,7 +140,6 @@ export const productControler = {
   },
   addRatingForProducts: async (req, res) => {
     try {
-      console.log(req.body)
       if (req.session?.user?._id) {
         const userInfo = req.session.user
         const response = await userProductHelpers.addRatingForProducts(
@@ -151,6 +155,20 @@ export const productControler = {
       console.log(error)
       res.status(500).json({ message: "Error while adding rating" })
     }
+  },
+  editRating: async (req,res) => {
+    try {
+      console.log(req.body)
+      const userId = req.session.user._id
+      const response = await userProductHelpers.editReviews(req.body,userId)
+      console.log(response)
+      response.acknowledged
+      ?res.status(200).json({status:true,"Message":"Updated comment"})
+      :res.status(403).json({status:false,"Message":"Error while updating comment"})
+    } catch (error) {
+      console.log(error)
+    }
+
   },
   getSizeAndColor: async (req, res) => {
     try {

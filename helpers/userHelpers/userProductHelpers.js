@@ -329,4 +329,28 @@ export const userProductHelpers = {
       console.log(error)
     }
   },
+  editReviews: async ({commentId,review,rating},userId)=>{
+    console.log(commentId,userId)
+    try {
+      const response = await db.get().collection(collection.PRODUCT_RATING).updateOne(
+        {
+          _id: ObjectId(commentId)
+         },
+        {
+          $set: {
+             rating:rating,
+             comment:review,
+             updatedAt:new Date(),
+             updated:true,
+          }
+        },
+        {
+          upsert:true
+        }
+      )
+      return response
+    } catch(error) {
+      console.log(error)
+    }
+  }
 }
