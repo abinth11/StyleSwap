@@ -101,10 +101,10 @@
                             <!-- MAIN SLIDES -->
                             <div class="product-image-slider">
                                 <figure class="border-radius-10">
-                                    <img src="{{product.images.image1}}" id="image-hover" alt="product image">
+                                    <img src="{{product.images.image5}}" id="image-hover" alt="product image">
                                 </figure>
                                 <figure class="border-radius-10">
-                                    <img src="{{product.images.image1}}" id="hover-img" alt="product image">
+                                    <img src="{{product.images.image5}}" id="hover-img" alt="product image">
                                 </figure>
                                 <figure class="border-radius-10">
                                     <img src="/imgs/shop/product-16-3.jpg" alt="product image">
@@ -426,39 +426,31 @@
                                 <div class="detail-gallery">
                                     <span class="zoom-icon"><i class="fi-rs-search"></i></span>
                                     <!-- MAIN SLIDES -->
-                                    <div class="product-image-slider" style="height: 470px;">
+                                    <div class="product-image-slider">
                                         <figure class="border-radius-10">
                                             <img src="{{product.images.image1}}" id="image-one" alt="product image"
                                                 style="object-fit: fill;height: 100%;">
                                         </figure>
                                         <figure class="border-radius-10">
-                                            <img src="{{product.images.image2}}" alt="product image">
+                                            <img src="{{product.images.image2}}" id="image-two" alt="product image">
                                         </figure>
                                         <figure class="border-radius-10">
-                                            <img src="/imgs/shop/product-16-3.jpg" alt="product image">
+                                            <img src="{{product.images.image3}}" id="image-three" alt="product image">
                                         </figure>
                                         <figure class="border-radius-10">
-                                            <img src="/imgs/shop/product-16-4.jpg" alt="product image">
+                                            <img src="{{product.images.image4}}" id="image-four" alt="product image">
                                         </figure>
                                         <figure class="border-radius-10">
-                                            <img src="/imgs/shop/product-16-5.jpg" alt="product image">
-                                        </figure>
-                                        <figure class="border-radius-10">
-                                            <img src="/imgs/shop/product-16-6.jpg" alt="product image">
-                                        </figure>
-                                        <figure class="border-radius-10">
-                                            <img src="/imgs/shop/product-16-7.jpg" alt="product image">
+                                            <img src="{{product.images.image5}}" id="image-five" alt="product image">
                                         </figure>
                                     </div>
                                     <!-- THUMBNAILS -->
                                     <div class="slider-nav-thumbnails pl-15 pr-15">
-                                        <div><img src="/imgs/shop/thumbnail-3.jpg" alt="product image"></div>
-                                        <div><img src="/imgs/shop/thumbnail-4.jpg" alt="product image"></div>
-                                        <div><img src="/imgs/shop/thumbnail-5.jpg" alt="product image"></div>
-                                        <div><img src="/imgs/shop/thumbnail-6.jpg" alt="product image"></div>
-                                        <div><img src="/imgs/shop/thumbnail-7.jpg" alt="product image"></div>
-                                        <div><img src="/imgs/shop/thumbnail-8.jpg" alt="product image"></div>
-                                        <div><img src="/imgs/shop/thumbnail-9.jpg" alt="product image"></div>
+                                        <div ><img id="thumbanil-one" src="{{product.images.image1}}"  alt="product image"></div>
+                                        <div><img id="thumbanil-two" src="{{product.images.image2}}" alt="product image"></div>
+                                        <div><img id="thumbanil-three" src="{{product.images.image3}}" alt="product image"></div>
+                                        <div><img id="thumbanil-four" src="{{product.images.image4}}" alt="product image"></div>
+                                        <div><img id="thumbanil-five" src="{{product.images.image5}}" alt="product image"></div>
                                     </div>
                                 </div>
                                 <!-- End Gallery -->
@@ -1282,22 +1274,68 @@
     // Define a function to retrieve and update the product details
     function updateProductDetails() {
         // Check if product details are stored in localStorage
-         console.log("ssssssssss")
         const storedProductDetails = localStorage.getItem(`productData`);
         if (storedProductDetails) {
             // Parse the JSON data
             const productDetails = JSON.parse(storedProductDetails);
-            console.log("product details aftr parsing")
-            console.log(productDetails)
             // Update the product details on the page
             const productImage = document.querySelector('#image-one');
             const hoverImage = document.querySelector('#image-hover')
             productImage.src = productDetails.images.image1;
             hoverImage.src = productDetails.images.image1;
+                const productImage2 = document.querySelector('#image-two');
+                const productImage3 = document.querySelector('#image-three');
+                const productImage4 = document.querySelector('#image-four');
+                const productImage5 = document.querySelector('#image-five');
+
+                const thumbanilImage = document.querySelector('#thumbanil-one');
+                const thumbanilImage2 = document.querySelector('#thumbanil-two');
+                const thumbanilImage3 = document.querySelector('#thumbanil-three');
+                const thumbanilImage4 = document.querySelector('#thumbanil-four');
+                const thumbanilImage5 = document.querySelector('#thumbanil-five');
+
+
+                productImage2.src = productDetails.images.image2;
+                productImage3.src = productDetails.images.image3
+                productImage4.src = productDetails.images.image4
+                productImage5.src = productDetails.images.image5
+
+                
+                thumbanilImage.src = productDetails.images.image1;
+                thumbanilImage2.src = productDetails.images.image2;
+                thumbanilImage3.src = productDetails.images.image3
+                thumbanilImage4.src = productDetails.images.image4
+                thumbanilImage5.src = productDetails.images.image5
 
             // Update any other elements that depend on the product details
+        } else {
+                const productImage = document.querySelector('#image-one');
+                const productImage2 = document.querySelector('#image-two');
+                const productImage3 = document.querySelector('#image-three');
+                const productImage4 = document.querySelector('#image-four');
+                const productImage5 = document.querySelector('#image-five');
+
+                 const thumbanilImage = document.querySelector('#thumbanil-one');
+                const thumbanilImage2 = document.querySelector('#thumbanil-two');
+                const thumbanilImage3 = document.querySelector('#thumbanil-three');
+                const thumbanilImage4 = document.querySelector('#thumbanil-four');
+                const thumbanilImage5 = document.querySelector('#thumbanil-five');
+
+                const hoverImage = document.querySelector('#image-hover');
+
+                productImage.src = response.product.images.image1;
+                productImage2.src = response.product.images.image2;
+                productImage3.src = response.product.images.image3
+                productImage4.src = response.product.images.image4
+                productImage5.src = response.product.images.image5
+
+                thumbanilImage.src = response.product.images.image1;
+                thumbanilImage2.src = response.product.images.image2;
+                thumbanilImage3.src = response.product.images.image3
+                thumbanilImage4.src = response.product.images.image4
+                thumbanilImage5.src = response.product.images.image5
         }
-    }
+        }
 
 
     // Call the function when the page finishes loading
@@ -1313,17 +1351,9 @@
             data: { productId, parentId },
             success: (response) => {
                 const productId = response?.product._id
-                console.log(productId+"in ajx response")
                 // Store the product data in local storage
-                console.log(response)
                 localStorage.setItem(`productData`, JSON.stringify(response.product));
-
-                // Update the DOM elements with the new product data
-                const productImage = document.querySelector('#image-one');
-                const hoverImage = document.querySelector('#image-hover');
-                productImage.src = response.product.images.image1;
-                hoverImage.src = response.product.images.image1;
-                // Store the updated product details in localStorage
+                updateProductDetails()
                 
             }
         });

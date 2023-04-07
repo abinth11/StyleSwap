@@ -103,16 +103,17 @@ const adminHelpers = {
         .collection(collection.PRODUCT_COLLECTION)
         .insertOne(productData)
       const childId = result.insertedId
-      await db.get().collection(collection.PRODUCT_TEMPLATE).updateOne({_id:objectId(productId)},
-      {
-        $addToSet: {
-           availabeSizes: product_size,
-           availabeColors: {
+      await db.get().collection(collection.PRODUCT_TEMPLATE).updateOne(
+        { _id: objectId(productId) },
+        {
+          $addToSet: { availabeSizes: product_size },
+          $push: {
+            availabeColors: {
               color: product_color,
-              id:objectId(childId)
-           }
+              id: objectId(childId)
+            }
+          }
         }
-     }
       )
       return { ...result, productData }
     } catch (error) {

@@ -12,7 +12,7 @@ export const productControler = {
       const { productId, parentId } = req.body
       const parent = await userProductHelpers.findParent(parentId)
       const product = await userProductHelpers.viewCurrentProduct(productId)
-      const allowedColors = ["red", "green", "blue", "yellow", "black"]
+      const allowedColors = ["red", "green", "blue", "yellow", "black","maroon"]
       const availabeColors = parent.availabeColors
       const availabeSizes = parent.availabeSizes
       console.log(product)
