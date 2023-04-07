@@ -15,6 +15,7 @@ export const productControler = {
       const allowedColors = ["red", "green", "blue", "yellow", "black"]
       const availabeColors = parent.availabeColors
       const availabeSizes = parent.availabeSizes
+      console.log(product)
       res.status(200).json({
         product,
         allowedColors,
@@ -30,14 +31,11 @@ export const productControler = {
   shopProductRight: async (req, res) => {
     try {
       const { productId, parentId } = req.query
-      console.log(req.query)
       const parent = await userProductHelpers.findParent(parentId)
-
       const product = await userProductHelpers.viewCurrentProduct(productId)
       console.log(product)
-      console.log(product.ratings[0].userDetails)
+      console.log(parent)
       const userId = req.session?.user?._id
-      console.log(userId)
       const allowedColors = ["red", "green", "blue", "yellow", "black"]
       const availabeColors = parent.availabeColors
       const availabeSizes = parent.availabeSizes
@@ -53,7 +51,8 @@ export const productControler = {
         availabeColors,
         availabeSizes,
         parentId,
-        userId
+        userId,
+        parent
       })
     } catch (error) {
       console.error(error)

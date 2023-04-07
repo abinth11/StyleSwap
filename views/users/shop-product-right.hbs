@@ -44,43 +44,45 @@
 </div>
 
 <!-- Modal success revie update-->
-<div class="modal fade" id="successModal-review" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="successModalLabel">Review Updated</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Your review has been updated successfully.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="success-close" data-dismiss="modal">Close</button>
-      </div>
+<div class="modal fade" id="successModal-review" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Review Updated</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Your review has been updated successfully.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="success-close" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- Modal review failure -->
-<div class="modal fade" id="errorModal-review" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="errorModalLabel">Review Update Failed</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Sorry, there was an error updating your review. Please try again later.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="error-close" data-dismiss="modal">Close</button>
-      </div>
+<div class="modal fade" id="errorModal-review" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Review Update Failed</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Sorry, there was an error updating your review. Please try again later.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="error-close" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 
@@ -475,8 +477,9 @@
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
+                            <input type="hidden" name="" id="product-id" value="">
                                 <div class="detail-info">
-                                    <h2 class="title-detail">{{product.product_title}}</h2>
+                                    <h2 class="title-detail">{{parent.product_name}}</h2>
                                     <div class="product-detail-rating">
                                         <div class="pro-details-brand">
                                             <span> Brands: <a
@@ -501,8 +504,13 @@
                                             {{/if}}
                                             <ins><span class="old-price font-md ml-15">{{formatCurrency
                                                     product.product_price}}</span></ins>
+                                            {{#if product.offerPercentage}}
                                             <span class="save-price  font-md color3 ml-15">{{product.offerPercentage}}%
                                                 Off</span>
+                                            {{else}}
+                                            <span class="save-price  font-md color3 ml-15">0%
+                                                Off</span>
+                                            {{/if}}
                                         </div>
                                     </div>
                                     <div class="bt-1 border-color-1 mt-15 mb-15"></div>
@@ -584,12 +592,21 @@
                                     </div>
                                     <ul class="product-meta font-xs color-grey mt-50">
                                         <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
-                                        <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#"
-                                                rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li>
+                                        <li class="mb-5">Tags: <a href="#" rel="tag">{{parent.category}}</a>, <a
+                                                href="#" rel="tag">{{parent.sub_category}}</a>, <a href="#"
+                                                rel="tag">{{product.product_brand}}</a> </li>
                                         {{#if product.isActive}}
-                                        <li>Availability:<span
-                                                class="in-stock text-success ml-5">{{product.product_quantity}} Items In
-                                                Stock</span></li>
+                                        <li>Availability:
+                                            {{#gt product.product_quantity 5 }}
+                                            <span class="in-stock text-success ml-5">Item in stock</span>
+                                            {{/gt}}
+                                            {{#lt product.product_quantity 5}}
+                                            <span class="in-stock text-danger ml-5"> Only {{product.product_quantity}}
+                                                left
+                                            </span>
+                                            {{/lt}}
+                                        </li>
+
                                         {{else}}
                                         <li>Availability:<span class="in-stock text-danger ml-5">Out of stock</span>
                                         </li>
@@ -656,6 +673,7 @@
                                         </p>
                                     </div>
                                 </div>
+
                                 <div class="tab-pane fade show active " id="Reviews">
                                     <!--Comments-->
 
@@ -686,7 +704,8 @@
                                                             <span><i class="fa fa-sm fa-star star"
                                                                     style="color:#DDDDDD ;"></i></span>
                                                             {{#if updated}}
-                                                            <span class="ms-2 text-dark">edited<i class="ms-1 las la-check-double"></i></span>
+                                                            <span class="ms-2 text-dark">edited<i
+                                                                    class="ms-1 las la-check-double"></i></span>
                                                             {{/if}}
                                                             <p id="comment-{{_id}}">{{comment}}</p>
                                                             <input type="hidden" id="rating-{{_id}}"
@@ -694,14 +713,15 @@
                                                             <div class="d-flex justify-content-between">
                                                                 <div class="d-flex align-items-center">
                                                                     {{#if updatedAt}}
-                                                                     <p class="font-xs mr-30">{{formatDateTwo updatedAt}}
+                                                                    <p class="font-xs mr-30">{{formatDateTwo updatedAt}}
                                                                     </p>
                                                                     {{else}}
-                                                                     <p class="font-xs mr-30">{{formatDateTwo addedAt}}
+                                                                    <p class="font-xs mr-30">{{formatDateTwo addedAt}}
                                                                     </p>
                                                                     {{/if}}
                                                                     {{#if (eq ../userId userDetails.userId)}}
-                                                                    <input type="hidden" id="comment-edit-id" value="{{_id}}">
+                                                                    <input type="hidden" id="comment-edit-id"
+                                                                        value="{{_id}}">
                                                                     <button id="edit-button"
                                                                         onclick="setComment('{{_id}}')"
                                                                         class="text-brand btn-reply"
@@ -1058,12 +1078,12 @@
         }
     });
 
-   $('#success-close').click(function() {
-  location.reload();
-   });
-     $('#error-close').click(function() {
-  location.reload();
-   });
+    $('#success-close').click(function () {
+        location.reload();
+    });
+    $('#error-close').click(function () {
+        location.reload();
+    });
 
 
 
@@ -1071,7 +1091,7 @@
         const comment = document.getElementById(`comment-${commentId}`).innerText
         const editTextArea = document.getElementById('review-edit-text-input').innerText = comment
         const rating = document.getElementById(`rating-${commentId}`).value
-        document.getElementById('product-rating-value').value=rating
+        document.getElementById('product-rating-value').value = rating
 
         const productRating = document.querySelector('.product-rating-edit');
         const productRatingValue = document.querySelector('#product-rating-value');
@@ -1177,35 +1197,35 @@
         const review = document.getElementById('review-edit-text-input').value
         const rating = document.getElementById('product-rating-value').value
         $.ajax({
-            url:'/shop-product-right/edit-review',
-            type:'POST',
-            data:{
+            url: '/shop-product-right/edit-review',
+            type: 'POST',
+            data: {
                 commentId,
                 review,
                 rating
             },
-            success:(response)=>{
-                if(response.status){
-                $('#edit-review-modal').modal('hide'); 
-                $('#successModal-review').modal('show'); 
-                setTimeout(()=> {
-                $('#successModal-review').modal('hide'); 
-                location.reload()
-                },3000)
-                }else {
-                $('#errorModal-review').modal('show');
-                setTimeout(()=> {
-                $('#errorModal-review').modal('hide');
-                location.reload()
-                },3000)
+            success: (response) => {
+                if (response.status) {
+                    $('#edit-review-modal').modal('hide');
+                    $('#successModal-review').modal('show');
+                    setTimeout(() => {
+                        $('#successModal-review').modal('hide');
+                        location.reload()
+                    }, 3000)
+                } else {
+                    $('#errorModal-review').modal('show');
+                    setTimeout(() => {
+                        $('#errorModal-review').modal('hide');
+                        location.reload()
+                    }, 3000)
                 }
             },
-            error:(err) =>{
+            error: (err) => {
                 $('#errorModal-review').modal('show');
-                setTimeout(()=> {
-                $('#errorModal-review').modal('hide');
-                location.reload()
-                },3000)   
+                setTimeout(() => {
+                    $('#errorModal-review').modal('hide');
+                    location.reload()
+                }, 3000)
             }
         })
     })
@@ -1236,6 +1256,10 @@
 
 <script>
     $(document).ready(function () {
+
+        updateProductDetails()
+
+         
         const comments = $('.single-comment');
         const viewMoreButton = $('#view-more-button');
 
@@ -1249,6 +1273,8 @@
                 return text === 'View More' ? 'View Less' : 'View More';
             });
         });
+
+
     });
 
 
@@ -1256,18 +1282,18 @@
     // Define a function to retrieve and update the product details
     function updateProductDetails() {
         // Check if product details are stored in localStorage
-
-        const storedProductDetails = localStorage.getItem('productDetails');
-
+         console.log("ssssssssss")
+        const storedProductDetails = localStorage.getItem(`productData`);
         if (storedProductDetails) {
             // Parse the JSON data
             const productDetails = JSON.parse(storedProductDetails);
-
+            console.log("product details aftr parsing")
+            console.log(productDetails)
             // Update the product details on the page
             const productImage = document.querySelector('#image-one');
             const hoverImage = document.querySelector('#image-hover')
-            productImage.src = productDetails.product.images.image1;
-            hoverImage.src = productDetails.product.images.image1;
+            productImage.src = productDetails.images.image1;
+            hoverImage.src = productDetails.images.image1;
 
             // Update any other elements that depend on the product details
         }
@@ -1278,23 +1304,27 @@
 
 
 
-
+    
     const changeProduct = (productId, parentId) => {
-        // Make the AJAX request to get the updated product details
+
         $.ajax({
             url: 'shop-product-right',
             type: "POST",
             data: { productId, parentId },
             success: (response) => {
-                const key = 'productDetails'
+                const productId = response?.product._id
+                console.log(productId+"in ajx response")
+                // Store the product data in local storage
+                console.log(response)
+                localStorage.setItem(`productData`, JSON.stringify(response.product));
+
                 // Update the DOM elements with the new product data
                 const productImage = document.querySelector('#image-one');
                 const hoverImage = document.querySelector('#image-hover');
                 productImage.src = response.product.images.image1;
                 hoverImage.src = response.product.images.image1;
-                console.log(response.product.images.image2)
                 // Store the updated product details in localStorage
-                localStorage.setItem('productDetails', JSON.stringify(response));
+                
             }
         });
     }

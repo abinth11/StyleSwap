@@ -4,10 +4,18 @@ export const helpers = {
     const options = { month: "long", day: "numeric", year: "numeric" }
     return date.toLocaleDateString("en-US", options)
   },
-  formatDateTwo: function(dateString) {
+  formatDateTwo: function (dateString) {
     const date = new Date(dateString)
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }
-    return date.toLocaleString('en-US', options)
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: true,
+    }
+    return date.toLocaleString("en-US", options)
   },
   inc: (value) => {
     return parseInt(value) + 1
@@ -22,6 +30,20 @@ export const helpers = {
       return options.inverse(this)
     }
   },
+  gt: function (a, b, options) {
+    if (a > b) {
+      return options.fn(this)
+    } else {
+      return options.inverse(this)
+    }
+  },
+   lt: function (a, b, options) {
+    if (a < b) {
+      return options.fn(this)
+    } else {
+      return options.inverse(this)
+    }
+  } ,
   not: function (value) {
     return !value
   },
@@ -54,20 +76,19 @@ export const helpers = {
     })
     return formatter.format(value)
   },
-  includes:(array, value) => {
+  includes: (array, value) => {
     return array.includes(value)
   },
-  lowerCase: (str)=> {
+  lowerCase: (str) => {
     return str.toLowerCase()
-  }
-  
-  
+  },
+
   // add more helper functions here...
 }
 
 function convertRupeeStringToNumber(rupeeString) {
   // Convert the string to a String object and remove the rupee symbol and any commas
-  const numericString = String(rupeeString).replace(/₹|,/g, '')
+  const numericString = String(rupeeString).replace(/₹|,/g, "")
 
   // Convert the string to a number and return it
   return parseFloat(numericString)

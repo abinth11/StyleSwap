@@ -47,22 +47,30 @@ export const userProductHelpers = {
           },
           {
             $project: {
+              parentId: 1,
+              product_title: 1,
+              product_size: 1,
+              product_color: 1,
+              product_quantity: 1,
+              product_brand: 1,
+              product_description: 1,
+              product_warranty: 1,
+              product_return: 1,
+              delivery: 1,
+              product_price: 1,
+              offerPrice: 1,
+              addedAt: 1,
+              isActive: true,
+              images: 1,
+              status: 1,
               _id: 1,
-              product_name: 1,
               availabeColors: 1,
               availabeSizes: 1,
               regular_price: 1,
-              product_warranty: 1,
-              product_return: 1,
               category: 1,
               sub_category: 1,
-              delivery: 1,
-              offerPrice: 1,
-              isActive: 1,
-              images: 1,
               offerStartDate: 1,
               offerPercentage: 1,
-              addedAt: 1,
               ratings: 1,
               productRating: {
                 $avg: "$ratings.rating",
@@ -329,28 +337,31 @@ export const userProductHelpers = {
       console.log(error)
     }
   },
-  editReviews: async ({commentId,review,rating},userId)=>{
-    console.log(commentId,userId)
+  editReviews: async ({ commentId, review, rating }, userId) => {
+    console.log(commentId, userId)
     try {
-      const response = await db.get().collection(collection.PRODUCT_RATING).updateOne(
-        {
-          _id: ObjectId(commentId)
-         },
-        {
-          $set: {
-             rating:rating,
-             comment:review,
-             updatedAt:new Date(),
-             updated:true,
+      const response = await db
+        .get()
+        .collection(collection.PRODUCT_RATING)
+        .updateOne(
+          {
+            _id: ObjectId(commentId),
+          },
+          {
+            $set: {
+              rating: rating,
+              comment: review,
+              updatedAt: new Date(),
+              updated: true,
+            },
+          },
+          {
+            upsert: true,
           }
-        },
-        {
-          upsert:true
-        }
-      )
+        )
       return response
-    } catch(error) {
+    } catch (error) {
       console.log(error)
     }
-  }
+  },
 }

@@ -10,7 +10,9 @@ const addToCart = () => {
     method: 'get',
     success: (response) => {
       if (response.status) {
-        Swal.fire({
+        $("#cartModal").modal("hide") // close the modal
+        $(".modal-backdrop").fadeOut() // fade out the overlay
+                Swal.fire({
           icon: 'success',
           title: 'Item added to cart!',
           showConfirmButton: true,
