@@ -1275,32 +1275,55 @@ const adminHelpers = {
       console.log(error)
     }
   },
-  mostSellingProducts: async () => {
+  mostSellingProducts: async (startDate,endDate) => {
     try {
-      const mostSelling = await db
-        .get()
-        .collection(collection.ORDER_COLLECTION)
-        .aggregate([
-          { $unwind: "$products" },
-          {
-            $group: {
-              _id: "$products.item",
-              sold: { $sum: "$products.quantity" },
-            },
-          },
-          { $sort: { sold: -1 } },
-          { $limit: 5 },
-          {
-            $lookup: {
-              from: "products",
-              localField: "_id",
-              foreignField: "_id",
-              as: "product_details",
-            },
-          },
-        ])
-        .toArray()
-      return mostSelling
+      console.log(startDate,endDate)
+        
+const mostSelling = await db
+  .get()
+  .collection(collection.ORDER_COLLECTION)
+  .aggregate([
+    {
+      $match: {
+        date: {
+          $gte: new Date(
+            startDate+"T00:00:00.000Z"
+          ),
+          $lt: new Date(
+           endDate+"T23:59:59.999Z"
+          ),
+        },
+      },
+    },
+    { $unwind: "$products" },
+    {
+      $group: {
+        _id: "$products.item",
+        sold: { $sum: "$products.quantity" },
+      },
+    },
+    { $sort: { sold: -1 } },
+    { $limit: 5 },
+    {
+      $lookup: {
+        from: collection.PRODUCT_COLLECTION,
+        localField: "_id",
+        foreignField: "_id",
+        as: "product_details",
+      },
+    },
+ 
+  ])
+  .toArray()
+      return mostSelling.map((product)=>{
+        return {
+          name: product.product_details[0].product_title,
+          price:product.product_details[0].product_price,
+          offerPrice:product.product_details[0].offerPrice,
+          sold: product.sold,
+          revenue:product.product_details[0].offerPrice*product.sold
+        }  
+      })
     } catch (error) {
       console.log(error)
     }

@@ -22,24 +22,30 @@
                         <header class="border-bottom mb-3 pb-3">
                             <form id="filter-report">
                                 <div class="row ">
-                             <div class="col-lg-3 col-4  d-flex">
-  <label for="from-date" class="mt-2">From:</label>
-  <input type="date" name="from" id="from-date" class="ms-2 form-control" required>
-</div>
-<div class="col-lg-3 col-4 ms-3 d-flex">
-  <label for="to-date" class="mt-2">To:</label>
-  <input type="date" name="to" id="to-date" class=" ms-2 form-control" disabled required>
-</div>
-<div class="col-lg-3 col-4 ms-3">
-  <button type="submit" class="btn text-white" style="background-color: #046963;">Filter</button>
-</div>
+                                    <div class="col-lg-3 col-4  d-flex">
+                                        <label for="from-date" class="mt-2">From:</label>
+                                        <input type="date" name="from" id="from-date" class="ms-2 form-control"
+                                            required>
+                                    </div>
+                                    <div class="col-lg-3 col-4 ms-3 d-flex">
+                                        <label for="to-date" class="mt-2">To:</label>
+                                        <input type="date" name="to" id="to-date" class=" ms-2 form-control" disabled
+                                            required>
+                                    </div>
+                                    <div class="col-lg-3 col-4 ms-3">
+                                        <button type="submit" class="btn text-white"
+                                            style="background-color: #046963;">Filter</button>
+                                    </div>
 
 
                                 </div>
                             </form>
 
                         </header> <!-- card-header end// -->
-                        <div class="table-responsive">
+                          <div class="row  " style="padding-top:15px;">
+                            <h4> Complete Sales Overiview</h4>
+                        </div>
+                        <div class="table-responsive mt-3">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -56,7 +62,7 @@
                                         <td><b>1</b></td>
                                         <td>Total Revenue</td>
                                         <td id="total-revenue">
-                                            {{ formatCurrency response.totalRevenue}}
+                                            {{ formatCurrency response.totalRevenue.value}}
                                         </td>
                                         <td>
                                             <a href="#" class="btn btn-sm btn-light font-sm rounded">Details</a>
@@ -66,7 +72,7 @@
                                         <td><b>2</b></td>
                                         <td>Average Order Value</td>
                                         <td id="avereage-order-value">
-                                            {{ formatCurrency response.averageOrderValue}}
+                                            {{ formatCurrency response.averageOrderValue.value}}
                                         </td>
                                         <td>
                                             <a href="#" class="btn btn-sm btn-light font-sm rounded">Details</a>
@@ -76,7 +82,7 @@
                                         <td><b>3</b></td>
                                         <td>Monthly Eearnings</td>
                                         <td id="monthly-earnings">
-                                            {{ formatCurrency response.monthlyEarnings}}
+                                            {{ formatCurrency response.monthlyEarnings.value}}
                                         </td>
                                         <td>
                                             <a href="#" class="btn btn-sm btn-light font-sm rounded">Details</a>
@@ -86,7 +92,7 @@
                                         <td><b>4</b></td>
                                         <td>Total orders</td>
                                         <td id="total-orders">
-                                            {{response.totalOrders}}
+                                            {{response.totalOrders.value}}
                                         </td>
                                         <td>
                                             <a href="#" class="btn btn-sm btn-light font-sm rounded">Details</a>
@@ -96,7 +102,7 @@
                                         <td><b>5</b></td>
                                         <td>Number of products availabe</td>
                                         <td id="number-of-products">
-                                            {{response.totalProducts}}
+                                            {{response.totalProducts.value}}
                                         </td>
                                         <td>
                                             <a href="#" class="btn btn-sm btn-light font-sm rounded">Details</a>
@@ -107,6 +113,109 @@
                                 </tbody>
                             </table>
                         </div> <!-- table-responsive.// -->
+                        <div class="row  " style="padding-top:60px;">
+                            <h4>Most selling Products</h4>
+                        </div>
+                        <div class="table-responsive mt-4">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th> Sold </th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each response.mostSold.value}}
+                                    <tr>
+                                        <input type="hidden" name="from" id="from" value="">
+                                        <input type="hidden" name="from" id="to" value="">
+                                        <td><b>{{inc @index}}</b></td>
+                                        <td id="product_name">{{name}}</td>
+                                        <td id="product_size">{{formatCurrency price}}
+                                        </td>
+                                        <td id="sold-count">{{sold}}</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-light font-sm rounded">Details</a>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+
+
+                                </tbody>
+                            </table>
+                        </div> <!-- table-responsive.// -->
+
+                        <div class="row  " style="padding-top:60px;">
+                            <h4>Sales Based on Month</h4>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="table-responsive mt-4">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>January</td>
+                                            <td>₹{{response.monthlySales.[0]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>February</td>
+                                            <td>₹{{response.monthlySales.[1]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>March</td>
+                                            <td>₹{{response.monthlySales.[2]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>April</td>
+                                            <td>₹{{response.monthlySales.[3]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>May</td>
+                                            <td>₹{{response.monthlySales.[4]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>June</td>
+                                            <td>₹{{response.monthlySales.[5]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>July</td>
+                                            <td>₹{{response.monthlySales.[6]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>August</td>
+                                            <td>₹{{response.monthlySales.[7]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>September</td>
+                                            <td>₹{{response.monthlySales.[8]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>October</td>
+                                            <td>₹{{response.monthlySales.[9]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>November</td>
+                                            <td>₹{{response.monthlySales.[10]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>December</td>
+                                            <td>₹{{response.monthlySales.[11]}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div> <!-- table-responsive.// -->
+
+                        </div>
+
+
                     </div> <!-- col end// -->
 
                 </div> <!-- row end// -->
@@ -148,6 +257,68 @@
             return formattedAmount;
         }
 
+        function formatCurrency(amount) {
+            // Convert the amount to a number if necessary
+            amount = parseFloat(amount);
+
+            // Use the toLocaleString() method to format the currency
+            return amount.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+
+        // Assuming that the AJAX response is in the form of an array of objects
+        function displayData(response) {
+            // Get a reference to the table body
+            const tableBody = document.querySelector('tbody');
+
+            // Clear the table body first
+            tableBody.innerHTML = '';
+
+            // Loop through the data array
+            response.forEach((item, index) => {
+                // Create a new table row
+                const row = document.createElement('tr');
+
+                // Set the row index
+                const indexCell = document.createElement('td');
+                indexCell.innerHTML = index + 1;
+                row.appendChild(indexCell);
+
+                // Set the product name
+                const nameCell = document.createElement('td');
+                nameCell.innerHTML = item.name;
+                row.appendChild(nameCell);
+
+                // Set the product price
+                const priceCell = document.createElement('td');
+                priceCell.innerHTML = formatCurrency(item.price);
+                row.appendChild(priceCell);
+
+                // Set the sold count
+                const soldCell = document.createElement('td');
+                soldCell.innerHTML = item.sold;
+                row.appendChild(soldCell);
+
+                // Add a details button
+                const detailsCell = document.createElement('td');
+                const detailsButton = document.createElement('a');
+                detailsButton.href = '#';
+                detailsButton.classList.add('btn', 'btn-sm', 'btn-light', 'font-sm', 'rounded');
+                detailsButton.innerHTML = 'Details';
+                detailsCell.appendChild(detailsButton);
+                row.appendChild(detailsCell);
+
+                // Append the table row to the table body
+                tableBody.appendChild(row);
+            });
+        }
+
+
 
         $('#filter-report').submit((e) => {
             e.preventDefault()
@@ -181,6 +352,7 @@
                 type: 'POST',
                 success: (response) => {
                     console.log(response)
+                    console.log(response.mostSold)
                     const totalRevenueTd = document.getElementById('total-revenue')
                     const averageOrderValueTd = document.getElementById('avereage-order-value')
                     const monthlyEarningsTd = document.getElementById('monthly-earnings')
@@ -193,6 +365,8 @@
                     totalOrdersTd.innerHTML = response.totalOrders
                     monthlyEarningsTd.innerHTML = formatMoney(response.monthlyEarnings)
                     numberOfProductsTd.innerHTML = response.totalProducts
+
+
 
 
                 }

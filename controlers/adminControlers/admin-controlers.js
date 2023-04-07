@@ -2,7 +2,7 @@ import adminHelpers from "../../helpers/admin-helpers.js"
 import { validationResult } from "express-validator"
 import generateReport from "../../middlewares/salesReport.js"
 import fs from "fs"
-import { uploadSingle,uploadImages } from "../../config/cloudinary.js"
+import { uploadSingle, uploadImages } from "../../config/cloudinary.js"
 const adminControler = {
   adminLoginGet: (req, res) => {
     const { admin, loginError } = req.session
@@ -55,48 +55,54 @@ const adminControler = {
       res.render("error", { message: "Error fetching dashboard data" })
     }
   },
-  addProductTemplateGet: async (req,res) => {
-    try{
+  addProductTemplateGet: async (req, res) => {
+    try {
       const categoires = await adminHelpers.getAllCategories()
       const subcategories = await adminHelpers.getAllSubCategories()
-      res.render('admin/add-product-template', {categoires,subcategories})
-    } catch (error){
+      res.render("admin/add-product-template", { categoires, subcategories })
+    } catch (error) {
       console.log(error)
-      res.status(500).json({Message:"Internal Server Error"})
+      res.status(500).json({ Message: "Internal Server Error" })
     }
   },
-  addProductTemplatePost: async (req,res) => {
-    try{
-      const {file,body} = req
+  addProductTemplatePost: async (req, res) => {
+    try {
+      const { file, body } = req
       console.log(file)
       uploadSingle(file)
-      .then(async (image) => {
-        console.log(image)
-        const response = await adminHelpers.addProductTemplate(body,image)
-        response.acknowledged 
-        ?res.status(200).json({status:true,Message:"Successfully added new product"})
-        :res.status(500).json({status:false,Message:"Failed to add new product"})
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    } catch (error){     
+        .then(async (image) => {
+          console.log(image)
+          const response = await adminHelpers.addProductTemplate(body, image)
+          response.acknowledged
+            ? res
+                .status(200)
+                .json({
+                  status: true,
+                  Message: "Successfully added new product",
+                })
+            : res
+                .status(500)
+                .json({ status: false, Message: "Failed to add new product" })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    } catch (error) {
       console.log(error)
-      res.status(500).json({Message:"Internal Server Error"})
+      res.status(500).json({ Message: "Internal Server Error" })
     }
   },
-  viewProductTemplages: async (req,res)=> {
+  viewProductTemplages: async (req, res) => {
     try {
       const productTemplates = await adminHelpers.getProductTemplates()
-      res.render('admin/view-product-template',{ productTemplates})
-    }catch (error) {
+      res.render("admin/view-product-template", { productTemplates })
+    } catch (error) {
       console.log(error)
     }
-
   },
   addProducts3Get: async (req, res) => {
     try {
-      const {productId} = req.params
+      const { productId } = req.params
       const category = await adminHelpers.getAllCategories()
       const sizes = await adminHelpers.getAllSize()
       const colors = await adminHelpers.getAllColor()
@@ -104,7 +110,7 @@ const adminControler = {
         category,
         sizes,
         colors,
-        productId
+        productId,
       })
     } catch (error) {
       console.error(error)
@@ -117,23 +123,33 @@ const adminControler = {
     console.log(files)
     const { errors } = validationResult(req)
     try {
-      if(errors.length) {
+      if (errors.length) {
         console.log(errors)
-        res.json({Msg:errors,error:true})
+        res.json({ Msg: errors, error: true })
       } else {
         uploadImages(files)
-            .then(async (urls) => {
-              // Store the URLs in your database here
-              console.log(urls)
-              const response = await adminHelpers.addProducts(body, urls)
-              console.log(response)
-              response.acknowledged 
-                ?res.status(200).json({status:true,Message:"Successfully added new product"})
-                :res.status(500).json({status:false,Message:"Failed to add new product"})
-            })
-            .catch((error) => {
-              console.log(error)
-            })
+          .then(async (urls) => {
+            // Store the URLs in your database here
+            console.log(urls)
+            const response = await adminHelpers.addProducts(body, urls)
+            console.log(response)
+            response.acknowledged
+              ? res
+                  .status(200)
+                  .json({
+                    status: true,
+                    Message: "Successfully added new product",
+                  })
+              : res
+                  .status(500)
+                  .json({
+                    status: false,
+                    Message: "Failed to add new product",
+                  })
+          })
+          .catch((error) => {
+            console.log(error)
+          })
       }
     } catch (err) {
       console.error(err)
@@ -145,7 +161,7 @@ const adminControler = {
     }
   },
   viewProductList: (req, res) => {
-    const {parentId} = req.params
+    const { parentId } = req.params
     adminHelpers.viewProduct(parentId).then((products) => {
       console.log(products)
       res.render("admin/view-product-list", { products })
@@ -274,7 +290,7 @@ const adminControler = {
   },
   viewAllOrders: async (req, res) => {
     const response = await adminHelpers.getAllUserOrdersCount()
-    res.render("admin/page-orders-1", {count:response.count })
+    res.render("admin/page-orders-1", { count: response.count })
   },
   viewOrderDetails: async (req, res) => {
     const orderDetails = await adminHelpers.getCurrentProducts(req.params.id)
@@ -282,20 +298,23 @@ const adminControler = {
     console.log(orderDetails)
     res.render("admin/view-more-orders", { orderDetails })
   },
-  paginateUsingLimitAndSkip : async (req,res) => {
+  paginateUsingLimitAndSkip: async (req, res) => {
     try {
-      const limit =7
+      const limit = 7
       const skip = 7
-      const {pageNo} = req.query
+      const { pageNo } = req.query
       console.log(pageNo)
-      const response = await adminHelpers.paginateUsingLimitAndSkip(limit,skip,pageNo)
+      const response = await adminHelpers.paginateUsingLimitAndSkip(
+        limit,
+        skip,
+        pageNo
+      )
       console.log(response)
       response?.length
-      ?res.status(200).json(response)
-      :res.status(400).json({"Message":"Response not found"})
+        ? res.status(200).json(response)
+        : res.status(400).json({ Message: "Response not found" })
     } catch (err) {
       console.log(err)
-
     }
   },
   changeProductStatus: (req, res) => {
@@ -356,31 +375,47 @@ const adminControler = {
       )
       // Format the date as YYYY-MM-DD string
       let formattedFirstDay = firstDayOfMonth.toISOString().slice(0, 10) // "YYYY-MM-DD"
-
-      const totalRevenue = await adminHelpers.calculateTotalRevenueByDate(
-        formattedFirstDay,
-        formattedCurrDay
-      )
-      const totalProducts =
-        await adminHelpers.calculateTotalNumberOfProductsByDate(
+      const [
+        totalProducts,
+        totalRevenue,
+        totalOrders,
+        averageOrderValue,
+        monthlyEarnings,
+        mostSold,
+        monthlySales
+      ] = await Promise.allSettled([
+        adminHelpers.calculateTotalNumberOfProductsByDate(
           formattedFirstDay,
           formattedCurrDay
-        )
-      const totalOrders = await adminHelpers.calculateTotalOrdersByDate(
-        formattedFirstDay,
-        formattedCurrDay
-      )
-      const averageOrderValue = await adminHelpers.calculateAverageOrderValue(
-        formattedFirstDay,
-        formattedCurrDay
-      )
-      const monthlyEarnings = await adminHelpers.calculateMonthlyEarnings()
+        ),
+        adminHelpers.calculateTotalRevenueByDate(
+          formattedFirstDay,
+          formattedCurrDay
+        ),
+        adminHelpers.calculateTotalOrdersByDate(
+          formattedFirstDay,
+          formattedCurrDay
+        ),
+        adminHelpers.calculateAverageOrderValue(
+          formattedFirstDay,
+          formattedCurrDay
+        ),
+        adminHelpers.calculateMonthlyEarnings(
+          formattedFirstDay,
+          formattedCurrDay
+        ),
+        adminHelpers.mostSellingProducts(formattedFirstDay,formattedCurrDay),
+        adminHelpers.calculateMonthlySalesForGraph()
+      ])
+      console.log(monthlySales)
       const response = {
         totalRevenue,
         totalProducts,
         totalOrders,
         averageOrderValue,
         monthlyEarnings,
+        mostSold,
+        monthlySales:monthlySales.value
       }
       res.render("admin/create-report", { response })
     } catch (err) {
@@ -391,42 +426,36 @@ const adminControler = {
     try {
       //todo stopped here.. you dumb ...!
       const { from, to } = req.body
-      // const [
-      //   totalRevenue,
-      //   totalOrders,
-      //   totalProducts,
-      //   monthlyEarnings
-      // ] = Promise.allSettled([
-      //   await adminHelpers.calculateTotalRevenue(from, to),
-      //   await adminHelpers.calculateTotalOrders(from, to),
-      //   await adminHelpers.calculateTotalNumberOfProducts(from, to),
-      //   await adminHelpers.calculateMonthlyEarnings()
-      // ])
-      const totalRevenue = await adminHelpers.calculateTotalRevenueByDate(
-        from,
-        to
-      )
-      const totalProducts =
-        await adminHelpers.calculateTotalNumberOfProductsByDate(from, to)
-      const totalOrders = await adminHelpers.calculateTotalOrdersByDate(
-        from,
-        to
-      )
-      const averageOrderValue = await adminHelpers.calculateAverageOrderValue(
-        from,
-        to
-      )
-      const monthlyEarnings = await adminHelpers.calculateMonthlyEarnings()
+      const [
+        totalRevenue,
+        totalOrders,
+        totalProducts,
+        monthlyEarnings,
+        averageOrderValue,
+        mostSold
+      ] =await Promise.allSettled([
+        adminHelpers.calculateTotalRevenue(from, to),
+        adminHelpers.calculateTotalOrders(from, to),
+        adminHelpers.calculateTotalNumberOfProducts(from, to),
+        adminHelpers.calculateMonthlyEarnings(),
+        adminHelpers.calculateAverageOrderValue(),
+        adminHelpers.mostSellingProducts(from,to)
+      ]).then((results) =>
+      results
+        .filter((result) => result.status === "fulfilled")
+        .map((result) => result.value)
+    )
+     console.log(mostSold)
       const response = {
         totalRevenue,
         totalProducts,
         totalOrders,
         averageOrderValue,
         monthlyEarnings,
+        mostSold,
         from,
         to,
       }
-      console.log(response)
       res.json(response)
     } catch (error) {
       console.log(error)
@@ -435,7 +464,7 @@ const adminControler = {
   },
   makeReport: async (req, res) => {
     console.log(req.body)
-    const {
+    let {
       format,
       totalRevenue,
       averageOrderValue,
@@ -450,17 +479,40 @@ const adminControler = {
       return res.status(400).send("Format field is required")
     }
     // Generate the sales report using your e-commerce data
+ 
+    console.log(from.trim().length == 0)
+    if(from.trim().length == 0 ) {
+      // Get the current date
+      let currentDate = new Date()
+      // Format the date as YYYY-MM-DD string
+      let formattedCurrDay = currentDate.toISOString().slice(0, 10) // "YYYY-MM-DD"
+      // Set the date to the first day of the month
+      let firstDayOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+      )
+      // Format the date as YYYY-MM-DD string
+      let formattedFirstDay = firstDayOfMonth.toISOString().slice(0, 10) // "YYYY-MM-DD"
+      from = formattedFirstDay
+      to = formattedCurrDay
+    }
+    const mostSold = await adminHelpers.mostSellingProducts(from,to)
+    const salesBasedOnMonth = await adminHelpers.calculateMonthlySalesForGraph()
     const salesData = {
       totalRevenue,
       averageOrderValue,
       monthlyEarnings,
       totalOrders,
       numberOfProducts,
+      mostSold,
+      salesBasedOnMonth
     }
     const date = {
       from,
       to,
     }
+    
     try {
       // Convert the report into the selected file format and get the name of the generated file
       const reportFile = await generateReport(format, salesData, date).catch(
@@ -526,7 +578,7 @@ const adminControler = {
       const colors = await adminHelpers.getAllColor()
       console.log(sizes)
       console.log(colors)
-      res.render("admin/product-variants", {sizes,colors})
+      res.render("admin/product-variants", { sizes, colors })
     } catch (error) {
       console.log(error)
     }
@@ -582,7 +634,6 @@ const adminControler = {
         .catch((error) => {
           console.log(error)
         })
-      
     } catch (error) {
       console.log(error)
     }
@@ -597,13 +648,20 @@ const adminControler = {
   },
   getChartData: async (req, res) => {
     try {
-      const mostSellingProducts = await adminHelpers.mostSellingProducts()
-      const chartData = mostSellingProducts.slice(0, 5).map((product) => {
-        return {
-          name: product.product_details[0].product_title,
-          sold: product.sold,
-        }
-      })
+        // Get the current date
+        let currentDate = new Date()
+        // Format the date as YYYY-MM-DD string
+        let formattedCurrDay = currentDate.toISOString().slice(0, 10) // "YYYY-MM-DD"
+        // Set the date to the first day of the month
+        let firstDayOfMonth = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          1
+        )
+        // Format the date as YYYY-MM-DD string
+        let formattedFirstDay = firstDayOfMonth.toISOString().slice(0, 10) // "YYYY-MM-DD"
+        const chartData = await adminHelpers.mostSellingProducts(formattedFirstDay,formattedCurrDay)
+    
       res.json({ chartData })
     } catch (error) {
       console.log(error)
@@ -650,8 +708,10 @@ const adminControler = {
       console.log(req.body)
       const response = await adminHelpers.addColor(req.body)
       response.acknowledged
-        ? res.status(200).json({ Message: "Successfully adde Color",status:true})
-        : res.status(500).json({ Message: "Insertion Failed",status:false})
+        ? res
+            .status(200)
+            .json({ Message: "Successfully adde Color", status: true })
+        : res.status(500).json({ Message: "Insertion Failed", status: false })
     } catch (error) {
       console.log(error)
       res.status(500).json({ Message: "Internal Server Error" })
@@ -662,34 +722,43 @@ const adminControler = {
       console.log(req.body)
       const response = await adminHelpers.addSize(req.body)
       response.acknowledged
-      ? res.status(200).json({ Message: "Successfully adde Size",status:true})
-      : res.status(500).json({ Message: "Insertion Failed",status:false })
+        ? res
+            .status(200)
+            .json({ Message: "Successfully adde Size", status: true })
+        : res.status(500).json({ Message: "Insertion Failed", status: false })
     } catch (error) {
       console.log(error)
       res.status(500).json({ Message: "Internal Server Error" })
     }
   },
-  stockManagement:async (req,res) => {
+  stockManagement: async (req, res) => {
     try {
       const allProducts = await adminHelpers.getAllProductsAndOutofStock()
-      res.render('admin/stock-management', {allProducts})
-    } catch (error){
+      res.render("admin/stock-management", { allProducts })
+    } catch (error) {
       console.log(error)
-      res.status(500).json({Message:"Internal Server Error"})
+      res.status(500).json({ Message: "Internal Server Error" })
     }
   },
-  changeProductStock: async(req, res) => {
+  changeProductStock: async (req, res) => {
     try {
       console.log(req.body)
-      const { productId, quantity} = req.body
-      const response = await adminHelpers.updateProductStock(productId,quantity)
+      const { productId, quantity } = req.body
+      const response = await adminHelpers.updateProductStock(
+        productId,
+        quantity
+      )
       console.log(response)
-     response
-     ?res.status(200).json({response,Message:"Updated successfully"})
-     :res.status(500).json({Message:"Something went wrong while updating the document.."})
-    } catch(error) {
+      response
+        ? res.status(200).json({ response, Message: "Updated successfully" })
+        : res
+            .status(500)
+            .json({
+              Message: "Something went wrong while updating the document..",
+            })
+    } catch (error) {
       console.log(error)
-      res.status(500).json({Message:"Internal server Error"})
+      res.status(500).json({ Message: "Internal server Error" })
     }
   },
   logoutAdmin: (req, res) => {

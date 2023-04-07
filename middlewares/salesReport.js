@@ -11,13 +11,45 @@ async function generateReport(reportType, data, date) {
       const writeStream = fs.createWriteStream(filename)
       doc.pipe(writeStream)
 
-      // Define the table headers
+      //* Date period
+      const fromDate = date.from
+      const toDate = date.to
+
+      // Set the font size and style for the date
+      doc.font("Helvetica").fontSize(10)
+
+      // Add the date to the top left of the document
+      doc.text(`Report Period: ${fromDate} to ${toDate}`, 40, 40)
+
+      // Add some space between the date and the title
+      doc.moveDown(2)
+
+      // Set the font size and style for the title
+      doc.font("Helvetica-Bold").fontSize(16)
+
+      // Draw the title centered in the document
+      doc.text("Sales Report", { align: "center" })
+
+      // Add some space between the title and the table
+      doc.moveDown(1)
+
+      //* First Table
+
+      // Set the font size and style for the title
+      doc.font("Helvetica-Bold").fontSize(12)
+
+      // Draw the title centered in the document
+      doc.text("Complete Sales Overview")
+
+      // Add some space between the title and the table
+
+      // Set the table header style
+      doc.font("Helvetica-Bold").fontSize(12)
       const headers = [
         "Total Revenue",
         "Average Order Value",
         "Monthly Earnings",
         "Total Orders",
-        "Products Added",
       ]
 
       // Define the table rows
@@ -27,66 +59,198 @@ async function generateReport(reportType, data, date) {
           data.averageOrderValue,
           data.monthlyEarnings,
           data.totalOrders,
-          data.numberOfProducts,
         ],
       ]
 
-      // Set the table cell padding
-      const cellPadding = 10
+      // Calculate the position of the top left corner of the table
+      const tableTop = doc.y + 20
+      const tableLeft = 20
 
-      // Set the table cell width
-      const cellWidth = 112
+      // Calculate the table cell dimensions
+      const cellPadding = 7
+      const cellWidth = (doc.page.width - 2 * tableLeft) / headers.length
+      const cellHeight = 20
 
-      // Set the table header style
-      doc.font("Helvetica-Bold").fontSize(14)
-
-      // Draw the main title
-      doc.text("Sales Report", { align: "center" })
-
-      // Set the table header style
-      doc.font("Helvetica-Bold").fontSize(10)
-
-      // Draw the table headers with border
+      // Draw the table headers
       headers.forEach((header, index) => {
-        doc.rect(cellPadding + index * cellWidth, 120, cellWidth, 20).stroke()
-        doc.text(header, cellPadding + index * cellWidth + 5, 125)
+        doc
+          .rect(tableLeft + index * cellWidth, tableTop, cellWidth, cellHeight)
+          .stroke()
+        doc.text(
+          header,
+          tableLeft + index * cellWidth + cellPadding,
+          tableTop + cellPadding
+        )
       })
 
-      // Set the table row style
-      doc.font("Helvetica").fontSize(10)
-
-      // Draw the table rows with border
+      // Draw the table rows
       rows.forEach((row, rowIndex) => {
         row.forEach((cell, cellIndex) => {
           doc
             .rect(
-              cellPadding + cellIndex * cellWidth,
-              140 + rowIndex * 20,
+              tableLeft + cellIndex * cellWidth,
+              tableTop + (rowIndex + 1) * cellHeight,
               cellWidth,
-              20
+              cellHeight
             )
             .stroke()
           doc.text(
-            cell,
-            cellPadding + cellIndex * cellWidth + 5,
-            145 + rowIndex * 20
+            cell.toString(),
+            tableLeft + cellIndex * cellWidth + cellPadding,
+            tableTop + (rowIndex + 1) * cellHeight + cellPadding
           )
         })
       })
 
-      // Add footer
-      const fromDate = date.from
-      const toDate = date.to
+      //* Second Table
+      // Move the cursor down below the first table
+      doc.moveDown()
 
-      // Move down by 20 points
-      doc.moveDown(20)
+      // Set the font size and style for the second table's title
+      doc.font("Helvetica-Bold").fontSize(12)
 
-      // Add some more text to the PDF
-      doc.text(``, doc.x - 30, doc.y)
-      doc.moveDown(20)
-      doc.fontSize(10).text(`Report Period:`, doc.x - 30, doc.y)
-      doc.moveDown(2)
-      doc.fontSize(10).text(`${fromDate} to ${toDate}`, doc.x - 30, doc.y)
+      // Calculate the position of the second table's title
+      const titleLeft = 50
+      const titleTop = doc.y + 30
+      const titleWidth = doc.page.width - 2 * titleLeft
+
+      // Draw the second table's title with an offset
+      doc.text("Most Selling Products", titleLeft + cellPadding, titleTop, {
+        width: titleWidth,
+      })
+
+      // Define the headers and rows for the second table
+      const headers2 = ["Product Name", "Units Sold", "Revenue"]
+      const rows2 = data.mostSold?.map((item) => [
+        item.name,
+        item.sold,
+        `₹${item.revenue}`,
+      ])
+
+      // Calculate the position and dimensions of the second table's cells
+      const table2Top = doc.y + 20
+      const table2Left = 20
+      const cell2Padding = 7
+      const cell2Width = (doc.page.width - 2 * table2Left) / headers2.length
+      const cell2Height = 20
+
+      // Draw the second table's headers
+      headers2.forEach((header, index) => {
+        doc
+          .rect(
+            table2Left + index * cell2Width,
+            table2Top,
+            cell2Width,
+            cell2Height
+          )
+          .stroke()
+        doc.text(
+          header,
+          table2Left + index * cell2Width + cell2Padding,
+          table2Top + cell2Padding
+        )
+      })
+
+      // Draw the second table's rows
+      rows2.forEach((row, rowIndex) => {
+        row.forEach((cell, cellIndex) => {
+          doc
+            .rect(
+              table2Left + cellIndex * cell2Width,
+              table2Top + (rowIndex + 1) * cell2Height,
+              cell2Width,
+              cell2Height
+            )
+            .stroke()
+          doc.text(
+            cell.toString(),
+            table2Left + cellIndex * cell2Width + cell2Padding,
+            table2Top + (rowIndex + 1) * cell2Height + cell2Padding
+          )
+        })
+      })
+
+      //* Third Table
+      // Move the cursor down below the second table
+      doc.moveDown()
+
+      // Set the font size and style for the third table's title
+      doc.font("Helvetica-Bold").fontSize(12)
+
+      // Calculate the position of the third table's title
+      const title3Left = 50
+      const title3Top = doc.y + 30
+      const title3Width = doc.page.width - 2 * title3Left
+
+      // Draw the third table's title with an offset
+      doc.text("Sales by Month", title3Left + cellPadding, title3Top, {
+        width: title3Width,
+      })
+
+      // Define the headers and rows for the third table
+      const headers3 = ["Month", "Revenue"]
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ]
+      
+      // Map the sales data to an array of rows
+      const rows3 = data.salesBasedOnMonth?.map((revenue, index) => {
+        return [months[index], `₹${revenue}`]
+      })
+      // Calculate the position and dimensions of the third table's cells
+      const table3Top = doc.y + 10
+      const table3Left = 20
+      const cell3Padding = 7
+      const cell3Width = (doc.page.width - 2 * table3Left) / headers3.length
+      const cell3Height = 20
+
+      // Draw the third table's headers
+      headers3.forEach((header, index) => {
+        doc
+          .rect(
+            table3Left + index * cell3Width,
+            table3Top,
+            cell3Width,
+            cell3Height
+          )
+          .stroke()
+        doc.text(
+          header,
+          table3Left + index * cell3Width + cell3Padding,
+          table3Top + cell3Padding
+        )
+      })
+
+      // Draw the third table's rows
+      rows3.forEach((row, rowIndex) => {
+        row.forEach((cell, cellIndex) => {
+          doc
+            .rect(
+              table3Left + cellIndex * cell3Width,
+              table3Top + (rowIndex + 1) * cell3Height,
+              cell3Width,
+              cell3Height
+            )
+            .stroke()
+          doc.text(
+            cell.toString(),
+            table3Left + cellIndex * cell3Width + cell3Padding,
+            table3Top + (rowIndex + 1) * cell3Height + cell3Padding
+          )
+        })
+      })
+
       // Finalize the PDF document
       doc.end()
       await new Promise((resolve, reject) => {
