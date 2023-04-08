@@ -37,6 +37,7 @@
                             <input class="form-control" placeholder="Username or email" type="text" name="mobile"
                                 id="mobile">
                             <input type="hidden" value="{{from}}" name="from">
+                            <input type="hidden" value="{{productId}}" name="productId">
                             <small class="text-danger error-msg ms-1 pt-2"></small>
                         </div> <!-- form-group// -->
                         <div class="mb-3">
@@ -209,6 +210,8 @@
                         location.href = '/userCart'
                     } else if (response.from === 'home') {
                         location.href = '/'
+                    } else if (response.from === 'buyNow'){
+                        location.href = '/proceed-to-checkout'
                     }
                     else {
                         location.href = '/userLogin';

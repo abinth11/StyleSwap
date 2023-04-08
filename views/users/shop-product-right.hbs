@@ -1308,8 +1308,26 @@
                 thumbanilImage5.src = productDetails.images.image5
 
             // Update any other elements that depend on the product details
-        } else {
-                const productImage = document.querySelector('#image-one');
+        }
+        }
+
+
+    // Call the function when the page finishes loading
+
+
+
+    
+    const changeProduct = (productId, parentId) => {
+
+        $.ajax({
+            url: '/shop-product-right/change-product',
+            type: "POST",
+            data: { productId, parentId },
+            success: (response) => {
+                const productId = response?.product._id
+                // Store the product data in local storage
+                localStorage.setItem(`productData`, JSON.stringify(response.product));
+                 const productImage = document.querySelector('#image-one');
                 const productImage2 = document.querySelector('#image-two');
                 const productImage3 = document.querySelector('#image-three');
                 const productImage4 = document.querySelector('#image-four');
@@ -1334,29 +1352,32 @@
                 thumbanilImage3.src = response.product.images.image3
                 thumbanilImage4.src = response.product.images.image4
                 thumbanilImage5.src = response.product.images.image5
-        }
-        }
-
-
-    // Call the function when the page finishes loading
-
-
-
-    
-    const changeProduct = (productId, parentId) => {
-
-        $.ajax({
-            url: 'shop-product-right',
-            type: "POST",
-            data: { productId, parentId },
-            success: (response) => {
-                const productId = response?.product._id
-                // Store the product data in local storage
-                localStorage.setItem(`productData`, JSON.stringify(response.product));
-                updateProductDetails()
                 
             }
         });
+    }
+
+    const buyNow = (productId) => {
+        console.log(productId)
+        $.ajax({
+            url:"/shop-product-right/buyNow",
+            type:"POST",
+            data:{productId},
+            success:(response)=>{
+                console.log(response)
+                if(response.status){
+                    location.href= '/proceed-to-checkout'
+
+                } else {
+                    location.href = `/userLogin?from=buyNow&productId=${productId}`
+                }
+            },
+            error:(err)=>{
+                console.log(err)
+
+            }
+        })
+
     }
 
 

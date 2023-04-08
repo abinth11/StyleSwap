@@ -92,10 +92,10 @@ router.post("/verify-payment", paymentControlers.verifyRazorpayPayment)
 router.get("/shop-product-right", productControler.shopProductRight)
 
 //changer prouduct colors
-router.post("/shop-product-right", productControler.changeProduct)
+router.post("/shop-product-right/change-product", productControler.changeProduct)
 
 // buy now for each products
-router.get("/buyNow", paymentControlers.proceedToCheckOutGet)
+router.post("/shop-product-right/buyNow", paymentControlers.buyNow)
 
 
 

@@ -47,12 +47,12 @@ export const cartControlers = {
     try {
       const guestUser = {}
       guestUser.id = uuidv4()
-      if (!req.session.guestUser) {
+      if (!req.session?.guestUser) {
         req.session.guestUser = guestUser
       }
       const { id: productId } = req.params
       const userId = req.session.user?._id
-      const guestUserId = req.session.guestUser.id
+      const guestUserId = req.session?.guestUser?.id
       userId && (await cartHelpers.addToCart(productId, userId, guestUserId))
       guestUserId &&
         (await guestHelper.createGuestUser(guestUserId, productId))

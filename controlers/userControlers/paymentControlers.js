@@ -3,6 +3,7 @@ import { paymentHelpers } from "../../helpers/userHelpers/paymentHelpers.js"
 import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
 import { walletHelpers } from "../../helpers/userHelpers/walletHelpers.js"
 import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
+import { cartControlers } from "./cartControlers.js"
 export const paymentControlers = {
   proceedToCheckOutGet: async (req, res) => {
     try {
@@ -160,4 +161,23 @@ export const paymentControlers = {
       res.status(500).json({ status: false, errorMsg: "Something went wrong" })
     }
   },
+  buyNow: async (req,res) =>{ 
+    try {
+      const {productId} = req.body
+      const userId = req.session.user?._id
+      console.log(req.query)
+      if(req.session?.user?._id){
+        const response = cartHelpers.addToCart(productId,userId)
+        console.log(response) 
+        response 
+        ?res.status(200).json({status:true,Message:"Success"})
+        :res.status(500).json({status:true,Message:"Something went wrong"})
+      } else {
+        res.status(200).json({status:false, Message:"User is not logined"})
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(500).jsoN({error:true,errorMsg:"Something went wrong please try again later"})
+    }
+  }
 }

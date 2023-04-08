@@ -3,6 +3,7 @@ import userHelpers from "../../helpers/user-helpers.js"
 import { loginAndSignUpHelpers } from "../../helpers/userHelpers/loginAndSignUpHelpers.js"
 import { generateOpt, verifyOtp } from "../../middlewares/twilio.js"
 import { guestHelper } from "../../helpers/userHelpers/guestHelper.js"
+import {cartHelpers} from '../../helpers/userHelpers/cartHelpers.js'
 export const userLoginAndSignupControler = {
   userSignUpGet: (req, res) => {
     try {
@@ -53,13 +54,14 @@ export const userLoginAndSignupControler = {
   },
   userLoginGet: (req, res) => {
     try {
+      console.log(req.query)
       let from
+      const {productId} = req.query
       req.query.from ? (from = req.query.from) : (from = "home")
-      console.log(from)
       if (req.session.user) {
         res.redirect("/")
       } else {
-        res.render("users/login", { loginErr: req.session.loginError, from })
+        res.render("users/login", { loginErr: req.session.loginError, from, productId})
         req.session.loginError = null
       }
     } catch (error) {
@@ -143,7 +145,8 @@ export const userLoginAndSignupControler = {
   },
   userLoginPost: async (req, res) => {
     try {
-      const { from } = req.body
+      const { from,productId} = req.body
+      console.log(req.body)
       const errors = validationResult(req)
       const successResponse = {
         from,
@@ -165,7 +168,14 @@ export const userLoginAndSignupControler = {
             await guestHelper.mergeGuestCartIntoUserCart(userId, guestId)
             req.session.guestUser = null
             res.json(successResponse)
-          } else {
+          }else if (from === 'buyNow') {
+            console.log('from buy now')
+            const response = await cartHelpers.addToCart(productId,userId)
+            console.log(response)
+            response
+            ?res.status(200).json(successResponse)
+            :res.status(200).json({status:false,"Message":"Internal serser error"})
+           }else {
             res.json(successResponse)
           }
         } else {

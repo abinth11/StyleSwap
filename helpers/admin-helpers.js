@@ -1410,8 +1410,10 @@ const mostSelling = await db
   updateProductStock:async(productId,quantity) => {
     try {
       quantity = parseInt(quantity)
+      console.log(quantity)
       const response = await db.get().collection(collection.PRODUCT_COLLECTION)
-      .findOneAndUpdate({ _id: objectId(productId) }, { $inc: { product_quantity: quantity } }) 
+      .findOneAndUpdate({ _id: objectId(productId) }, { $inc: { product_quantity: quantity } })
+      console.log(response) 
       return response.value.product_quantity
     } catch (errors) {
       console.log(errors)
