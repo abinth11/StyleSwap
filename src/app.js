@@ -19,10 +19,21 @@ import adminHelpers from "../helpers/admin-helpers.js"
 import { fileURLToPath } from "url"
 import {redisConnect} from "../config/redisCache.js"
 import otherHelpers from "../helpers/otherHelpers.js"
-import { createIndexForAlgolia } from "../config/algoliasearch.js"
+import cors from 'cors'
+import passport from "passport"
 const { json, urlencoded } = pkg
 const serveStatic = express.static
 const app = express()
+// const corsOptions = {
+//   origin: 'http://localhost:3000',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
+
+// app.use(cors(corsOptions))
+
+
 dotenv.config()
 EventEmitter.defaultMaxListeners = 20
 
@@ -57,7 +68,8 @@ app.use(
   })
 )
 app.use(nocache())
-
+app.use(passport.initialize())
+app.use(passport.session())
 app.use("/", usersRouter)
 app.use("/admin", adminRouter)
 connect()

@@ -11,12 +11,10 @@ export const userControler = {
           req.session.user._id
         )
       }
-      console.log(req.session)
       const products = await userProductHelpers.viewProduct()
       res.render("index", { user: req.session.user, products, cartCount })
       req.session.guestUser = null
     } catch (error) {
-      console.error(error)
       res.render("index", {
         warningMessage: "Internal Server Error Please try again later...",
       })

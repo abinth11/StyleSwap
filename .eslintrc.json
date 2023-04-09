@@ -14,8 +14,18 @@
     "import/default": "error",
     "import/namespace": "error",
     "no-multi-spaces": ["error"],
-    "semi": ["error", "never", { "beforeStatementContinuationChars": "always" }]
-
+    "semi": ["error", "never", { "beforeStatementContinuationChars": "always" }],
+    "no-console": "error", // disallow console.log() statements
+    "no-debugger": "error", // disallow debugger statements
+    "no-eval": "error", // disallow eval()
+    "no-implied-eval": "error", // disallow implied eval() via setTimeout() and setInterval()
+    "no-alert": "error", // disallow alert()
+    "no-new-func": "error", // disallow the Function constructor
+    "no-param-reassign": "error", // disallow reassigning function parameters
+    "no-return-await": "error", // disallow unnecessary use of await in return statements
+    "no-throw-literal": "error", // disallow throwing non-Error objects
+    "no-var": "error", // disallow var keyword, use let or const instead
+    "prefer-const": "error" // require const declarations for variables that are never reassigned
   },
   "plugins": [
     "import"

@@ -18,7 +18,6 @@ export const userLoginAndSignupControler = {
         req.session.err = null
       }
     } catch (error) {
-      console.error(error)
       res.render("users/signup", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -48,13 +47,11 @@ export const userLoginAndSignupControler = {
         res.json({ status: false })
       }
     } catch (error) {
-      console.error(error)
       res.status(500).json("Internal Server Error")
     }
   },
   userLoginGet: (req, res) => {
     try {
-      console.log(req.query)
       let from
       const {productId} = req.query
       req.query.from ? (from = req.query.from) : (from = "home")
@@ -65,7 +62,6 @@ export const userLoginAndSignupControler = {
         req.session.loginError = null
       }
     } catch (error) {
-      console.error(error)
       res.render("users/login", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -83,7 +79,6 @@ export const userLoginAndSignupControler = {
         res.redirect("/")
       }
     } catch (error) {
-      console.error(error)
       res.render("users/otp-enter", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -103,7 +98,6 @@ export const userLoginAndSignupControler = {
         res.redirect("/otpValidate", { otpError: otpErr, mobile })
       }
     } catch (error) {
-      console.error(error)
       res.render("users/otp-enter", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -113,7 +107,6 @@ export const userLoginAndSignupControler = {
     try {
       res.render("users/otp-login")
     } catch (error) {
-      console.error(error)
       res.render("users/otp-login", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -137,7 +130,6 @@ export const userLoginAndSignupControler = {
         res.redirect("/userLogin")
       }
     } catch (error) {
-      console.error(error)
       res.render("users/otp-login", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -146,7 +138,6 @@ export const userLoginAndSignupControler = {
   userLoginPost: async (req, res) => {
     try {
       const { from,productId} = req.body
-      console.log(req.body)
       const errors = validationResult(req)
       const successResponse = {
         from,
@@ -164,14 +155,11 @@ export const userLoginAndSignupControler = {
           req.session.user = response.user
           const userId = req.session.user._id
           if (from === "cart") {
-            console.log(userId, guestId)
             await guestHelper.mergeGuestCartIntoUserCart(userId, guestId)
             req.session.guestUser = null
-            res.json(successResponse)
+            res.json(successResponse)   
           }else if (from === 'buyNow') {
-            console.log('from buy now')
             const response = await cartHelpers.addToCart(productId,userId)
-            console.log(response)
             response
             ?res.status(200).json(successResponse)
             :res.status(200).json({status:false,"Message":"Internal serser error"})
@@ -184,8 +172,17 @@ export const userLoginAndSignupControler = {
         }
       }
     } catch (error) {
-      console.error(error)
       res.status(500).json("Internal Server Error", { status: false })
     }
   },
+  loginWithGoogleRedirect:async (req,res) =>{
+    loginAndSignUpHelpers.registerUserGoogle(req.user)
+    .then((response) => {
+      req.session.user = response.user
+      res.redirect('/')
+    })
+    .catch((error) => {
+      res.redirect('/')
+    })
+  }
 }

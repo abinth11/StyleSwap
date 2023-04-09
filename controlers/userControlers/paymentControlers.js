@@ -161,23 +161,30 @@ export const paymentControlers = {
       res.status(500).json({ status: false, errorMsg: "Something went wrong" })
     }
   },
-  buyNow: async (req,res) =>{ 
+  buyNow: async (req, res) => {
     try {
-      const {productId} = req.body
+      const { productId } = req.body
       const userId = req.session.user?._id
       console.log(req.query)
-      if(req.session?.user?._id){
-        const response = cartHelpers.addToCart(productId,userId)
-        console.log(response) 
-        response 
-        ?res.status(200).json({status:true,Message:"Success"})
-        :res.status(500).json({status:true,Message:"Something went wrong"})
+      if (req.session?.user?._id) {
+        const response = cartHelpers.addToCart(productId, userId)
+        console.log(response)
+        response
+          ? res.status(200).json({ status: true, Message: "Success" })
+          : res
+              .status(500)
+              .json({ status: true, Message: "Something went wrong" })
       } else {
-        res.status(200).json({status:false, Message:"User is not logined"})
+        res.status(200).json({ status: false, Message: "User is not logined" })
       }
     } catch (error) {
       console.log(error)
-      res.status(500).jsoN({error:true,errorMsg:"Something went wrong please try again later"})
+      res
+        .status(500)
+        .jsoN({
+          error: true,
+          errorMsg: "Something went wrong please try again later",
+        })
     }
-  }
+  },
 }

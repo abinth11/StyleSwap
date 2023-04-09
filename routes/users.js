@@ -9,6 +9,8 @@ import { cartControlers } from "../controlers/userControlers/cartControlers.js"
 import { paymentControlers } from "../controlers/userControlers/paymentControlers.js"
 import { orderControler } from "../controlers/userControlers/order-controlers.js"
 import { profileControlers } from "../controlers/userControlers/profileControlers.js"
+import * as googleAuth from "../config/googleauth.js"
+
 // import { trackVisitors } from '../middlewares/trackusers.js'
 
 /* GET home page. */
@@ -32,6 +34,17 @@ router
     userValidation.userLoginValidate,
     userLoginAndSignupControler.userLoginPost
   )
+
+//* login with google account
+router.get('/userLogin/login-with-google', 
+  // Authenticate the user using the Google OAuth2.0 strategy
+  googleAuth.passport.authenticate('google', { scope: ['profile', 'email'] })
+)
+
+router.get('/userLogin/login-with-google/callback',
+googleAuth.passport.authenticate('google',{failureRedirect:'/userLogin'}),
+userLoginAndSignupControler.loginWithGoogleRedirect
+)
 
 // *login with otp
 router
@@ -87,17 +100,18 @@ router.post("/wallet-payment", paymentControlers.walletPayment)
 // for verifying the payment
 router.post("/verify-payment", paymentControlers.verifyRazorpayPayment)
 
-//? ROUTES FOR USER SIDE PRODUCTS 
+//? ROUTES FOR USER SIDE PRODUCTS
 // view more for each product in home page
 router.get("/shop-product-right", productControler.shopProductRight)
 
 //changer prouduct colors
-router.post("/shop-product-right/change-product", productControler.changeProduct)
+router.post(
+  "/shop-product-right/change-product",
+  productControler.changeProduct
+)
 
 // buy now for each products
 router.post("/shop-product-right/buyNow", paymentControlers.buyNow)
-
-
 
 //? ROUTES FOR ORDERS
 router.get(
@@ -186,12 +200,12 @@ router.get("/track-order/:id", orderControler.trackOrders)
 // return order
 router.post("/return-products", productControler.returnProducts)
 
-//? ROUTES TO HANDLE PRODUCT SEARCH 
+//? ROUTES TO HANDLE PRODUCT SEARCH
 //for the serch feature
 router.get("/search-products", productControler.serchProductsWithRedis)
 // router.get("/index-products", productControler.indexProducts)
 
-//? ROUTES FOR COUPONS 
+//? ROUTES FOR COUPONS
 //view coupons
 router.get(
   "/view-coupons",
@@ -219,10 +233,7 @@ router.post(
   productControler.addRatingForProducts
 )
 
-router.post(
-  "/shop-product-right/edit-review",
-  productControler.editRating
-)
+router.post("/shop-product-right/edit-review", productControler.editRating)
 
 router.get(
   "/get-available-size-and-color/:productId",

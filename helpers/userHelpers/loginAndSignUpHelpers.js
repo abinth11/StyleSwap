@@ -81,4 +81,44 @@ export const loginAndSignUpHelpers = {
       console.log(error)
     }
   },
+  registerUserGoogle: (userInfo) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = {
+          name: userInfo.displayName,
+          email: userInfo.emails[0].value,
+          registeredWithGoogle: true,
+          active: true,
+        }
+        const userExist = await db
+          .get()
+          .collection(collection.USER_COLLECTION)
+          .findOne({ email: userInfo.emails[0].value })
+        if (userExist) {
+          resolve({
+            user: userExist,
+            Message: "User already registered with google",
+          })
+        } else {
+          const response = await db
+            .get()
+            .collection(collection.USER_COLLECTION)
+            .insertOne(user)
+          const userForSession = {
+            _id: response.insertedId,
+            name: userInfo.displayName,
+            email: userInfo.emails[0].value,
+            registeredWithGoogle: true,
+            active: true,
+          }
+          resolve({
+            user: userForSession,
+            Message: "New user created",
+          })
+        }
+      } catch (error) {
+        reject("Cannot register user with google")
+      }
+    })
+  },
 }
