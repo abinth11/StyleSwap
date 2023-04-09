@@ -24,7 +24,6 @@ export const userControler = {
     try {
       res.render("users/dashboard", { user: req.session.user })
     } catch (error) {
-      console.error(error)
       res.render("users/dashboard", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -36,7 +35,6 @@ export const userControler = {
       const myCoupons = coupons.reverse()
       res.render("users/view-coupons-user", { myCoupons })
     } catch (error) {
-      console.log(error)
       res.render("users/view-coupons-user", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -49,7 +47,6 @@ export const userControler = {
       req.session.couponAppliedDetails = response
       res.json(response)
     } catch (error) {
-      console.log(error)
       res.render("users/shop-cart", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -60,7 +57,6 @@ export const userControler = {
       req.session.user = null
       res.redirect("/")
     } catch (error) {
-      console.log(error)
       res.render("index", {
         warningMessage: "Internal Server Error Please try again later...",
       })

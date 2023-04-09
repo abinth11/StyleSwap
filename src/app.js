@@ -15,24 +15,14 @@ import adminRouter from "../routes/admin.js"
 import { MulterError } from "multer"
 import CustomError from "../middlewares/errorHandler.js"
 import { schedule } from "node-cron"
-import adminHelpers from "../helpers/admin-helpers.js"
 import { fileURLToPath } from "url"
 import {redisConnect} from "../config/redisCache.js"
 import otherHelpers from "../helpers/otherHelpers.js"
-import cors from 'cors'
 import passport from "passport"
+import { offerHelpers } from "../helpers/adminHelpers/offerHelpers.js"
 const { json, urlencoded } = pkg
 const serveStatic = express.static
 const app = express()
-// const corsOptions = {
-//   origin: 'http://localhost:3000',
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-// }
-
-// app.use(cors(corsOptions))
-
 
 dotenv.config()
 EventEmitter.defaultMaxListeners = 20
@@ -90,7 +80,7 @@ redisConnect()
 schedule("0 0 * * *", () => {
 
   //* For deleting the expired offers
-  adminHelpers.checkOfferExpiration()
+  offerHelpers.checkOfferExpiration()
 
   //todo uncomment when after commenting the function from user home..
   // userHelpers.resetCouponCount()

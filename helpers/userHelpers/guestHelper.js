@@ -14,17 +14,14 @@ export const guestHelper = {
       quantity: 1,
     }
     try {
-      console.log(guestId, productId)
       const guestCart = await db
         .get()
         .collection(collection.GUEST_USERS)
         .findOne({ guestId })
-      console.log(guestCart?.products)
       if (guestCart) {
         const isProductExist = guestCart.products.findIndex((product) => {
           return product.item.equals(ObjectId(productId))
         })
-        console.log(isProductExist)
         if (isProductExist !== -1) {
           await db
             .get()
@@ -36,9 +33,6 @@ export const guestHelper = {
                 $set: { updatedAt: dateTimeString },
               }
             )
-            .then((response) => {
-              console.log(response)
-            })
         } else {
           await db
             .get()
@@ -54,7 +48,6 @@ export const guestHelper = {
             )
         }
       } else {
-        console.log("new guest cart created")
         const guestDocument = {
           guestId,
           products: [product],
@@ -68,7 +61,6 @@ export const guestHelper = {
       }
       return true
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to create guest user")
     }
   },
@@ -160,18 +152,14 @@ export const guestHelper = {
         .toArray()
       return cartItems[0]
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to get cart products of guest user.")
     }
   },
   mergeGuestCartIntoUserCart: async (userId, guestId) => {
-    console.log(userId, guestId)
-    console.log("from guest merge")
     const guestUser = await db
       .get()
       .collection(collection.GUEST_USERS)
       .findOne({ guestId })
-    console.log(guestUser)
     const result = await db
       .get()
       .collection(collection.CART_COLLECTION)
@@ -210,7 +198,6 @@ export const guestHelper = {
         )
     }
     await db.get().collection(collection.GUEST_USERS).deleteOne({ guestId })
-    console.log(result)
     return result
   },
 }

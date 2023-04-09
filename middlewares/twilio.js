@@ -1,11 +1,3 @@
-// this informations are sensitive and stored in .env file
-
-// // eslint-disable-next-line no-undef
-// const accountSid = process.env.TWILIO_ACCOUNT_SID // Your Account SID from www.twilio.com/console
-// // eslint-disable-next-line no-undef
-// const authToken = process.env.TWILIO_AUTH_TOKEN // Your Auth Token from www.twilio.com/console
-// // eslint-disable-next-line no-undef
-// const serviceSid = process.env.TWILIO_SERVICE_SID // My Service SID from www.twilio.com/console
 
 const accountSid = 'AC02493af62c7cc91c254269eaf53155e1'
 const authToken = '4f16585ddbe260d5203785f4a673e48f'
@@ -33,8 +25,6 @@ export const generateOpt = (mobileNo) => {
 
 // api for verifying the otp recived by the user
 export const verifyOtp = (mobileNo, otp) => {
-  console.log("mobile and otp")
-  console.log(mobileNo, otp)
   return new Promise((resolve, reject) => { // Add a "reject" parameter to the Promise callback
     client.verify
       .services(serviceSid)

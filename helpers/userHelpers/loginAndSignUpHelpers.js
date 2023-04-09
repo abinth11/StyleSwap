@@ -27,7 +27,6 @@ export const loginAndSignUpHelpers = {
         return { status: true, userData: result.insertedId }
       }
     } catch (error) {
-      console.log(error)
       return error
     }
   },
@@ -56,7 +55,7 @@ export const loginAndSignUpHelpers = {
         return { loginError: false }
       }
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   loginWthOTP: async (userData) => {
@@ -78,7 +77,7 @@ export const loginAndSignUpHelpers = {
       }
       return { loginError: false }
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   registerUserGoogle: (userInfo) => {

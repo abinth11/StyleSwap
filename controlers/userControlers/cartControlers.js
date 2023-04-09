@@ -11,7 +11,6 @@ export const cartControlers = {
         const cartItems = await cartHelpers.getcartProducts(
           req.session.user._id
         )
-        console.log(cartItems)
         const totalAmout = await cartHelpers.findTotalAmout(
           req.session.user._id
         )
@@ -28,16 +27,12 @@ export const cartControlers = {
           saved,
         })
       } else if (guestUser) {
-        // console.log(guestUser)
-        console.log("guest user cart")
         const cartItems = await guestHelper.getGuestUserCartProducts(
           req.session.guestUser.id
         )
-        console.log(cartItems)
         res.render("users/shop-cart", { cartItems, guestUser })
       }
     } catch (error) {
-      console.error(error)
       res.render("users/shop-cart", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -58,7 +53,6 @@ export const cartControlers = {
         (await guestHelper.createGuestUser(guestUserId, productId))
       res.json({ status: true })
     } catch (error) {
-      console.error(error)
       res.status(500).json({ Message: "Internal server error" })
     }
   },
@@ -66,13 +60,11 @@ export const cartControlers = {
     try {
       const { userId } = req.body
       const response = await cartHelpers.changeCartQuantity(req.body)
-      console.log(response)
       response.total = await cartHelpers.findTotalAmout(userId)
       const subtotal = await cartHelpers.findSubTotal(userId)
       response.subtotal = subtotal
       res.json(response)
     } catch (error) {
-      console.error(error)
       res.status(500).json("Internal Server Error")
     }
   },
@@ -81,7 +73,6 @@ export const cartControlers = {
       const response = await cartHelpers.removeCartProducts(req.body)
       res.json(response)
     } catch (error) {
-      console.error(error)
       res.status(500).json("Internal Server Error")
     }
   },

@@ -44,17 +44,14 @@ export const cartHelpers = {
           return response
         }
       } else {
-        console.log("new cart created")
         const cart = {
           userId: ObjectId(userId),
           products: [product],
         }
         await db.get().collection(collection.CART_COLLECTION).insertOne(cart)
-        console.log("added product into the cart")
       }
       return true
     } catch (error) {
-      console.log(error)
       return false
     }
   },
@@ -67,13 +64,12 @@ export const cartHelpers = {
       const count = userCart?.products.length
       return count
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to edit address.")
     }
   },
-  changeCartQuantity: async ({ cartId, productId, count, quantity }) => {
-    count = parseInt(count)
-    quantity = parseInt(quantity)
+  changeCartQuantity: async ({ cartId, productId, countArg, quantityArg }) => {
+    const count = parseInt(countArg)
+    const quantity = parseInt(quantityArg)
 
     // Get the product's current stock level
     const product = await db
@@ -127,7 +123,6 @@ export const cartHelpers = {
         )
       return { removed: true }
     } catch (error) {
-      console.log(error)
       return { removed: false }
     }
   },
@@ -194,7 +189,6 @@ export const cartHelpers = {
         .toArray()
       return totalAmout[0]
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to find total amount.")
     }
   },
@@ -251,7 +245,6 @@ export const cartHelpers = {
 
       return subtotal
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to find sub total amount.")
     }
   },
@@ -343,7 +336,6 @@ export const cartHelpers = {
         .toArray()
       return cartItems[0]
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to get cart products.")
     }
   },
@@ -395,7 +387,6 @@ export const cartHelpers = {
         .toArray()
       return cart
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to get user cart.")
     }
   },

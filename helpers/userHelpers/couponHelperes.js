@@ -13,7 +13,6 @@ export const couponHelpers = {
     const randomIndex = Math.floor(Math.random() * couponTemplates.length)
 
     const selectedCouponTemplate = couponTemplates[randomIndex]
-    console.log(selectedCouponTemplate)
 
     //? calculate the expiry date for the new coupon
     const MIN_EXPIRY_DAYS = 15
@@ -51,7 +50,6 @@ export const couponHelpers = {
       numberOfUses: 1,
       used: false,
     }
-    console.log(newCoupon)
     // todo inserting the creted coupon into the database
     const response = await db
       .get()
@@ -70,7 +68,7 @@ export const couponHelpers = {
         .toArray()
       return coupon
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   redeemCoupon: async (couponCode, amount) => {
@@ -104,9 +102,7 @@ export const couponHelpers = {
       const discountPercentage = Math.floor(
         Math.random() * (max - min + 1) + min
       )
-      console.log(discountPercentage)
       const discountAmount = Math.floor((amount / 100) * discountPercentage)
-      console.log(discountAmount)
       if (coupon.numberOfUses >= 1) {
         await db
           .get()
@@ -126,30 +122,21 @@ export const couponHelpers = {
       }
       return responseObject
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   resetCouponCount: async () => {
     try {
       const currentTime = new Date()
-      // const resetThreshold = new Date(currentTime - 24 * 60 * 60 * 1000); // 24 hours ago
       const resetThreshold = new Date("2023-04-23T05:26:00.864Z")
-      // console.log(resetThreshold);
-
-      // Query the couponResetHistory collection for coupons that were last reset more than 24 hours ago
       const couponsToReset = await db
         .get()
         .collection(collection.COUPONS)
         .find({ lastApplied: { $lt: resetThreshold }, used: false })
         .toArray()
-      // console.log(couponsToReset);
-
-      // Get an array of coupon codes to update
       const couponCodesToReset = couponsToReset.map(
         (coupon) => coupon.couponCode
       )
-
-      // Update the numberOfUses field for the selected coupons
       await db
         .get()
         .collection(collection.COUPONS)
@@ -157,8 +144,6 @@ export const couponHelpers = {
           { couponCode: { $in: couponCodesToReset } },
           { $set: { numberOfUses: 1 } }
         )
-
-      // Update the couponResetHistory collection with the new reset time for the updated coupons
       await db
         .get()
         .collection(collection.COUPON_RESET_HISTORY)
@@ -167,7 +152,7 @@ export const couponHelpers = {
           { $set: { lastResetTime: currentTime } }
         )
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
 }

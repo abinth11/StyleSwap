@@ -3,7 +3,6 @@ import { paymentHelpers } from "../../helpers/userHelpers/paymentHelpers.js"
 import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
 import { walletHelpers } from "../../helpers/userHelpers/walletHelpers.js"
 import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
-import { cartControlers } from "./cartControlers.js"
 export const paymentControlers = {
   proceedToCheckOutGet: async (req, res) => {
     try {
@@ -22,7 +21,6 @@ export const paymentControlers = {
         couponAppliedTotal,
       })
     } catch (error) {
-      console.error(error)
       res.render("users/shop-checkout", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -69,7 +67,6 @@ export const paymentControlers = {
           insertedOrderId,
           total
         )
-        console.log(paypalResponse)
         res.json(paypalResponse)
       } else if (paymentMethod === "wallet") {
         const walletDetails = await walletHelpers.getWalletData(
@@ -83,7 +80,6 @@ export const paymentControlers = {
         res.json({ status: false })
       }
     } catch (error) {
-      console.log(error)
       res.status(500).json({ message: "Internal server error" })
     }
   },
@@ -92,7 +88,6 @@ export const paymentControlers = {
       res.render("users/order-placed-landing")
       req.session.couponAppliedDetails = null
     } catch (error) {
-      console.log(error)
       res.render("users/order-placed-landing", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -103,8 +98,7 @@ export const paymentControlers = {
       const userId = req.session.user._id
       paymentHelpers
         .verifyRazorpayPayments(req.body)
-        .then((response) => {
-          console.log(response)
+        .then(() => {
           paymentHelpers
             .changePaymentStatus(req.body["payment[receipt]"])
             .then(async () => {
@@ -112,16 +106,13 @@ export const paymentControlers = {
                 0.5,
                 userId
               )
-              console.log("Payment is success")
               res.json({ status: true, coupon })
             })
         })
         .catch((err) => {
-          console.log(err)
           res.json({ status: false, errorMsg: err })
         })
     } catch (error) {
-      console.log(error)
       res.status(500).json({ message: "Internal server error" })
     }
   },
@@ -131,10 +122,8 @@ export const paymentControlers = {
         req.session.user._id
       )
       walletData.transactions = walletData.transactions.reverse()
-      console.log(walletData)
       res.render("users/wallet", { walletData })
     } catch (error) {
-      console.log(error)
       res.render("users/wallet", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -142,12 +131,9 @@ export const paymentControlers = {
   },
   walletPayment: async (req, res) => {
     try {
-      console.log(req.body)
       const insertedOrderId = req.session.orderId
       const userId = req.session.user._id
       const { total } = req.body
-      console.log(total)
-      console.log(userId)
       const response = await walletHelpers.getUserWallet(
         insertedOrderId,
         parseInt(total),
@@ -157,7 +143,6 @@ export const paymentControlers = {
       response.coupon = coupon
       res.json(response)
     } catch (error) {
-      console.log(error)
       res.status(500).json({ status: false, errorMsg: "Something went wrong" })
     }
   },
@@ -165,10 +150,8 @@ export const paymentControlers = {
     try {
       const { productId } = req.body
       const userId = req.session.user?._id
-      console.log(req.query)
       if (req.session?.user?._id) {
         const response = cartHelpers.addToCart(productId, userId)
-        console.log(response)
         response
           ? res.status(200).json({ status: true, Message: "Success" })
           : res
@@ -178,7 +161,6 @@ export const paymentControlers = {
         res.status(200).json({ status: false, Message: "User is not logined" })
       }
     } catch (error) {
-      console.log(error)
       res
         .status(500)
         .jsoN({

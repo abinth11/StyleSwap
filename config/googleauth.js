@@ -1,9 +1,5 @@
 import passport from "passport"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
-const GOOGLE_CLIENT_ID = '775881117552-knghgg3qqck2pj14plm9b1ft5fnhosf6.apps.googleusercontent.com'
-const GOOGLE_CLIENT_SECRET= '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'
-const GOOGLE_CALLBACK_URL = 'http://localhost:3000'
-
 passport.serializeUser((user,done)=>{
 done(null,user)
 })

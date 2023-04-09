@@ -1,9 +1,9 @@
 import { validationResult } from "express-validator"
-import userHelpers from "../../helpers/user-helpers.js"
 import { loginAndSignUpHelpers } from "../../helpers/userHelpers/loginAndSignUpHelpers.js"
 import { generateOpt, verifyOtp } from "../../middlewares/twilio.js"
 import { guestHelper } from "../../helpers/userHelpers/guestHelper.js"
 import {cartHelpers} from '../../helpers/userHelpers/cartHelpers.js'
+import {walletHelpers} from '../../helpers/userHelpers/walletHelpers.js'
 export const userLoginAndSignupControler = {
   userSignUpGet: (req, res) => {
     try {
@@ -40,7 +40,7 @@ export const userLoginAndSignupControler = {
           req.session.loggedIn = true
           req.session.user = response.userData
           const user = req.session.user
-          userHelpers.createWallet(req.body, user)
+          walletHelpers.createWallet(req.body, user)
           res.json({ status: true })
         }
       } else {
@@ -181,7 +181,7 @@ export const userLoginAndSignupControler = {
       req.session.user = response.user
       res.redirect('/')
     })
-    .catch((error) => {
+    .catch(() => {
       res.redirect('/')
     })
   }

@@ -11,7 +11,6 @@ export const profileHelpers = {
         .findOne({ _id: ObjectId(userId) })
       return user
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to fetch logined user")
     }
   },
@@ -33,7 +32,6 @@ export const profileHelpers = {
         )
       return response
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to edit profile")
     }
   },
@@ -45,7 +43,6 @@ export const profileHelpers = {
         .insertOne(address)
       return data
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to add address")
     }
   },
@@ -58,7 +55,6 @@ export const profileHelpers = {
         .toArray()
       return addresses
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to fetch address")
     }
   },
@@ -70,7 +66,6 @@ export const profileHelpers = {
         .findOne({ _id: ObjectId(addressId) })
       return address
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to fetch current address")
     }
   },
@@ -81,7 +76,6 @@ export const profileHelpers = {
         .deleteOne({ _id: ObjectId(addressId) })
       return
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to delete address")
     }
   },
@@ -119,7 +113,6 @@ export const profileHelpers = {
         )
       return response
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to edit address.")
     }
   },
@@ -131,7 +124,6 @@ export const profileHelpers = {
         .findOne({ _id: ObjectId(userId) })
       return userInfo
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to fetch user details")
     }
   },
@@ -156,7 +148,6 @@ export const profileHelpers = {
           })
       })
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to update user details")
     }
   },
@@ -191,7 +182,6 @@ export const profileHelpers = {
         )
       return { success: true }
     } catch (error) {
-      console.error(error)
       return { error: true }
     }
   },
@@ -204,7 +194,6 @@ export const profileHelpers = {
         .toArray()
       return addresses
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to fetch all orders of the user")
     }
   },

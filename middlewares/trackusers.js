@@ -9,7 +9,6 @@ export const trackVisitors = (req, res, next) => {
   // Find visitor document for this month and IP
   db.get().collection(collection.VISITORS).findOne({ ip, month }, (err, doc) => {
     if (err) {
-      console.error(err)
       return next()
     }
     if (doc) {
@@ -19,7 +18,7 @@ export const trackVisitors = (req, res, next) => {
         { $set: { updatedAt: nowISO } },
         (err) => {
           if (err) {
-            console.error(err)
+            throw new Error(err)
           }
           next()
         }
@@ -30,7 +29,7 @@ export const trackVisitors = (req, res, next) => {
         { ip, month, createdAt: nowISO, updatedAt: nowISO },
         (err) => {
           if (err) {
-            console.error(err)
+            throw new Error(err)
           }
           next()
         }

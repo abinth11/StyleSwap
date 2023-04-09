@@ -2,8 +2,6 @@ import PDFDocument from "pdfkit"
 import ExcelJS from "exceljs"
 import fs from "fs"
 async function generateReport(reportType, data, date) {
-  console.log(reportType)
-  console.log(data)
   try {
     if (reportType === "pdf") {
       const doc = new PDFDocument()
@@ -255,11 +253,9 @@ async function generateReport(reportType, data, date) {
       doc.end()
       await new Promise((resolve, reject) => {
         writeStream.on("finish", () => {
-          console.log(`PDF report saved to ${filename}`)
           resolve(filename)
         })
         writeStream.on("error", (error) => {
-          console.error(`Error saving PDF report: ${error}`)
           reject(error)
         })
       })
@@ -288,14 +284,12 @@ async function generateReport(reportType, data, date) {
 
       const filename = "sales-report.xlsx"
       await workbook.xlsx.writeFile(filename)
-      console.log(`Excel report saved to ${filename}`)
       return filename
     } else {
       throw new Error(`Invalid report type: ${reportType}`)
     }
   } catch (error) {
-    console.error(`Error generating ${reportType} report: ${error}`)
-    throw error
+    throw new Error(error)
   }
 }
 export default generateReport

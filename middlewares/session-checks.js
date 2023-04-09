@@ -3,7 +3,6 @@ const sessionCheck = {
     try {
       req.session.admin ? next() : res.redirect('/admin')
     } catch (error) {
-      console.log(error)
       res.send(500).json({ message: 'session error while login' })
     }
   },
@@ -11,7 +10,6 @@ const sessionCheck = {
     try {
       req.session.user ? next() : res.redirect('/')
     } catch (error) {
-      console.log(error)
       res.send(500).json({ message: 'session error while login' })
     }
   },
@@ -23,7 +21,6 @@ const sessionCheck = {
         res.redirect('/')
       }
     } catch (error) {
-      console.log(error)
       throw new Error('session handling error for user and guest')
     }
   }

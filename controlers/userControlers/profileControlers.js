@@ -1,7 +1,6 @@
 import { validationResult } from "express-validator"
-import adminHelpers from "../../helpers/admin-helpers.js"
 import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
-import { orderHelpers } from "../../helpers/userHelpers/orderHelpers.js"
+import { orderHelpers } from "../../helpers/adminHelpers/orderHelpers.js"
 export const profileControlers = {
   editUserProfile: async (req, res) => {
     try {
@@ -14,7 +13,6 @@ export const profileControlers = {
         address,
       })
     } catch (error) {
-      console.log(error)
       res.render("users/edit-profile", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -27,7 +25,6 @@ export const profileControlers = {
         res.redirect("/edit-profile")
       })
     } catch (error) {
-      console.log(error)
       res.render("users-", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -45,7 +42,6 @@ export const profileControlers = {
         res.json(jsonResponse)
       })
     } catch (error) {
-      console.log(error)
       res
         .status(500)
         .json({ error: true, message: "Error occurred while adding address" })
@@ -59,7 +55,6 @@ export const profileControlers = {
       )
       res.render("users/user-profile/edit-address", { currentAddress, from })
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/edit-address", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -75,7 +70,6 @@ export const profileControlers = {
           : res.redirect("/proceed-to-checkout")
       })
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/edit-address", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -90,7 +84,6 @@ export const profileControlers = {
           : res.redirect("/proceed-to-checkout")
       })
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/edit-address", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -102,7 +95,6 @@ export const profileControlers = {
         user: req.session.user,
       })
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/user-dashboard", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -111,10 +103,9 @@ export const profileControlers = {
   userProfileOrders: async (req, res) => {
     try {
       const odr = await orderHelpers.getOrdersProfile(req.session.user._id)
-      const orders = adminHelpers.ISO_to_Normal_Date(odr)
+      const orders = orderHelpers.ISO_to_Normal_Date(odr)
       res.render("users/user-profile/user-orders", { orders })
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/user-orders", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -124,7 +115,6 @@ export const profileControlers = {
     try {
       res.render("users/user-profile/user-track-orders")
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/user-track-orders", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -137,7 +127,6 @@ export const profileControlers = {
       res.render("users/user-profile/user-address", { address, updateMsg })
       req.session.updatedAddr = null
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/user-address", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -152,7 +141,6 @@ export const profileControlers = {
       res.render("users/user-profile/user-account", { userDetails })
       // req.session.profile_update_status=null;
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/user-account", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -166,7 +154,6 @@ export const profileControlers = {
       })
       // req.session.profile_update_status=response;
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/user-account", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -185,7 +172,6 @@ export const profileControlers = {
       req.session.password_change_stat = null
       req.session.updatePasswd_err = null
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/user-change-password", {
         warningMessage: "Internal Server Error Please try again later...",
       })
@@ -206,7 +192,6 @@ export const profileControlers = {
         res.redirect("/profile-change-password")
       }
     } catch (error) {
-      console.log(error)
       res.render("users/user-profile/user-change-password", {
         warningMessage: "Internal Server Error Please try again later...",
       })

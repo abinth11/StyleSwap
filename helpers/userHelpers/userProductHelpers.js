@@ -11,7 +11,6 @@ export const userProductHelpers = {
         .toArray()
       return products
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to fetch products")
     }
   },
@@ -23,7 +22,7 @@ export const userProductHelpers = {
         .findOne({ _id: ObjectId(parentId) })
       return parent
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   viewCurrentProduct: async (productId) => {
@@ -212,7 +211,6 @@ export const userProductHelpers = {
         .toArray()
       return product[0]
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to fetch current product")
     }
   },
@@ -225,7 +223,7 @@ export const userProductHelpers = {
         .toArray()
       return products
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   getMensProducts: async () => {
@@ -237,7 +235,7 @@ export const userProductHelpers = {
         .toArray()
       return products
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   getWomensProducts: async () => {
@@ -249,7 +247,7 @@ export const userProductHelpers = {
         .toArray()
       return products
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   getKidsProducts: async () => {
@@ -261,7 +259,7 @@ export const userProductHelpers = {
         .toArray()
       return products
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   addRatingForProducts: async (ratingInfo, userInfos) => {
@@ -275,16 +273,16 @@ export const userProductHelpers = {
         .aggregate([
           {
             $match: {
-              userId: ObjectId(userId), // Replace with the user ID you want to check
-              status: "completed", // Only take orders with completed status
+              userId: ObjectId(userId), 
+              status: "completed", 
             },
           },
           {
-            $unwind: "$products", // Unwind the products array
+            $unwind: "$products", 
           },
           {
             $match: {
-              "products.item": ObjectId(productId), // Replace with the product ID you want to check
+              "products.item": ObjectId(productId), 
             },
           },
           {
@@ -309,7 +307,6 @@ export const userProductHelpers = {
           productId: ObjectId(productId),
           "userDetails.userId": userId,
         })
-      console.log(alreadyPosted)
       if (alreadyPosted) {
         return {
           Message: "Review already posted",
@@ -334,11 +331,10 @@ export const userProductHelpers = {
         .insertOne(ratingSchema)
       return { Message: "Added your review", status: true, response }
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
-  editReviews: async ({ commentId, review, rating }, userId) => {
-    console.log(commentId, userId)
+  editReviews: async ({ commentId, review, rating }) => {
     try {
       const response = await db
         .get()
@@ -361,7 +357,7 @@ export const userProductHelpers = {
         )
       return response
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
 }

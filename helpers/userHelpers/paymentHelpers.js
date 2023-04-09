@@ -6,7 +6,8 @@ import Razorpay from "razorpay"
 import paypal from "paypal-rest-sdk"
 import crypto from "crypto"
 export const paymentHelpers = {
-  placeOrders: async (orderInfo, products, totalPrice, couponObj) => {
+  placeOrders: async (orderInfo, products, totalPrice, couponObjArg) => {
+    let couponObj = couponObjArg
     try {
       if (!couponObj) {
         couponObj = {}
@@ -24,7 +25,6 @@ export const paymentHelpers = {
       if (discountAmount) {
         offerTotal = offerTotal - discountAmount
       }
-      console.log(paymentMethod)
       const paymentStatus = paymentMethod === "cod" ? "done" : "pending"
       const orderStatus = paymentStatus === 'done' ? 'placed' : 'pending'
       const order = {
@@ -67,15 +67,11 @@ export const paymentHelpers = {
           ))
       //? updating the stock after order placed
       for (const product of products[0].products) {
-        console.log(product)
         const { item, quantity } = product
         await db
           .get()
           .collection(collection.PRODUCT_COLLECTION)
           .updateOne({ _id: item }, { $inc: { product_quantity: -quantity } })
-          .then((response) => {
-            console.log(response)
-          })
       }
       //?updating the order status as placed in the order status collection
       const now = new Date()
@@ -85,12 +81,10 @@ export const paymentHelpers = {
       const key = `placed`
       const orderId = resp.insertedId+""
       const status = { [key]: dateTimeString, orderId }
-      const response = await db
+     await db
           .get()
           .collection(collection.ORDER_SATUS)
           .insertOne(status )
-          console.log("order status for tracking")
-          console.log(response)
       //? clearing products from the cart
       await db
         .get()
@@ -98,13 +92,12 @@ export const paymentHelpers = {
         .deleteOne({ userId: ObjectId(orderInfo.userId) })
       return resp
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to place the order")
     }
   },
   createStatusCollection: (orderId) => {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const key = "placed"
         const now = new Date()
         const { toDateString: dateString } = now // destructuring here
@@ -117,7 +110,6 @@ export const paymentHelpers = {
           })
       })
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to update the order status")
     }
   },
@@ -138,15 +130,13 @@ export const paymentHelpers = {
         }
         razorpay.orders.create(options, function (err, order) {
           if (err) {
-            console.log(err)
+            throw new Error(err)
           } else {
-            console.log(order)
             resolve(order)
           }
         })
       })
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to get razorpay")
     }
   },
@@ -167,7 +157,6 @@ export const paymentHelpers = {
         }
       })
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to verify razorpay payments")
     }
   },
@@ -176,7 +165,6 @@ export const paymentHelpers = {
       if (!sotoredAmount) {
         sotoredAmount = totalAmout
       }
-      console.log(sotoredAmount)
       return new Promise((resolve) => {
         paypal.configure({
           mode: "sandbox", // sandbox or live
@@ -217,9 +205,8 @@ export const paymentHelpers = {
         }
         paypal.payment.create(createPaymentJson, function (error, payment) {
           if (error) {
-            console.log(error)
+            throw new Error(error)
           } else {
-            console.log(payment)
             const paypalResponse = { paypal: true }
             for (let i = 0; i < payment.links.length; i++) {
               if (payment.links[i].rel === "approval_url") {
@@ -232,13 +219,12 @@ export const paymentHelpers = {
         })
       })
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to get paypal")
     }
   },
   verifyPaypal: () => {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const executePaymentJson = {
           payer_id: "Appended to redirect url",
           transactions: [
@@ -256,24 +242,20 @@ export const paymentHelpers = {
           executePaymentJson,
           function (error, payment) {
             if (error) {
-              console.log(error.response)
-              throw error
+              throw new Error(error)
             } else {
-              console.log("Get Payment Response")
-              console.log(JSON.stringify(payment))
               resolve(payment)
             }
           }
         )
       })
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to verify paypal")
     }
   },
   changePaymentStatus: (orderId) => {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         db.get()
           .collection(collection.ORDER_COLLECTION)
           .updateOne(
@@ -284,13 +266,11 @@ export const paymentHelpers = {
               },
             }
           )
-          .then((response) => {
-            console.log("response of payment status razorpay" + response)
+          .then(() => {
             resolve()
           })
       })
     } catch (error) {
-      console.log(error)
       throw new Error("Failed while changing payment status")
     }
   },

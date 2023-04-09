@@ -84,7 +84,6 @@ export const orderHelpers = {
         .toArray()
       return order[0]
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to fetch current user orders")
     }
   },
@@ -108,7 +107,6 @@ export const orderHelpers = {
           })
       })
     } catch (error) {
-      console.log(error)
       throw new Error("Failed to cancel order")
     }
   },
@@ -120,8 +118,8 @@ export const orderHelpers = {
         .find({ userId: ObjectId(userId) })
         .toArray()
       return orders
-    } catch (errors) {
-      console.log(errors)
+    } catch (error) {
+      throw new Error(error)
     }
   },
   getOrderStatus: async (orderId) => {
@@ -133,12 +131,10 @@ export const orderHelpers = {
         .toArray()
       return orders[0]
     } catch (error) {
-      console.log(error)
       throw new Error(error)
     }
   },
   getStatusDates: async (orderId) => {
-    console.log(orderId)
     try {
       const dates = await db
         .get()
@@ -146,7 +142,6 @@ export const orderHelpers = {
         .findOne({ orderId })
       return dates
     } catch (error) {
-      console.log(error)
       throw new Error(error)
     }
   },
@@ -169,33 +164,10 @@ export const orderHelpers = {
               foreignField: "_id",
               as: "address",
             },
-          },
-          // {
-          //   $unwind: '$address'
-          // },
-          // {
-          //   $project: {
-          //     name: 1,
-          //     mobile: 1,
-          //     address: {
-          //       $concat: [
-          //         '$address.address',
-          //         ', ',
-          //         '$address.locality',
-          //         ', ',
-          //         '$address.city',
-          //         ', ',
-          //         '$address.state',
-          //         ', ',
-          //         '$address.pincode'
-          //       ]
-          //     }
-          //   }
-          // }
+          }
         ])
         .toArray()
     } catch (error) {
-      console.log(error)
       throw new Error(error)
     }
   },
@@ -208,7 +180,6 @@ export const orderHelpers = {
         .toArray()
       return orders
     } catch (error) {
-      console.log(error)
       throw new Error(error)
     }
   },
@@ -251,7 +222,6 @@ export const orderHelpers = {
         .toArray()
       return products
     } catch (error) {
-      console.log(error)
       throw new Error(error)
     }
   },
@@ -275,7 +245,6 @@ export const orderHelpers = {
           })
       })
     } catch (error) {
-      console.log(error)
       throw new Error(error)
     }
   },

@@ -23,7 +23,7 @@ export const walletHelpers = {
         try {
           db.get().collection(collection.WALLET).insertOne(wallet)
         } catch (error) {
-          console.error(error)
+          throw new Error(error)
         }
       },
       getWalletData: async (userId) => {
@@ -34,7 +34,7 @@ export const walletHelpers = {
             .findOne({ userid: ObjectId(userId) })
           return wallet
         } catch (error) {
-          console.error(error)
+          throw new Error(error)
         }
       },
       getUserWallet: async (orderId, total, userId) => {
@@ -97,7 +97,6 @@ export const walletHelpers = {
           )
           return { paid: false }
         } catch (error) {
-          console.log(error)
           throw new Error("Error getting user wallet.")
         }
       },
