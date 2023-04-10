@@ -174,6 +174,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12">
+                          {{#if wishItems}}
                         <div class="table-responsive">
                             <table class="table shopping-summery text-center">
                                 <thead>
@@ -186,6 +187,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                  
                                     {{#each wishItems}}
                                     <tr>
                                         <td class="image product-thumbnail"><img src="{{images.image1}}" alt="#"></td>
@@ -215,6 +217,11 @@
                                         <td class="action" data-title="Remove"><button style="background-color: transparent;border: transparent;" onclick="showDeleteConfirmation('{{_id}}')"><i class="fi-rs-trash text-danger"></i></button></td>
                                     </tr>
                                     {{/each}}
+                                    {{else}}
+                                    <div class="mt-4 mb-4" style="padding-top: 50px; padding-bottom: 130px;">
+                                        <h3 class="text-center">Onnum illallo patticho nammale... <span style="font-size: 48px;">😭</span></h3>
+                                    </div>
+                                    {{/if}}
                                 </tbody>
                             </table>
                         </div>

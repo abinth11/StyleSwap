@@ -105,6 +105,8 @@
                                     <img class="svgInject" alt="Evara" src="/imgs/theme/icons/icon-heart.svg">
                                     {{#if wishCount}}
                                     <span class="pro-count blue" id="wish-count">{{wishCount}}</span>
+                                    {{else}}
+                                    <span class="pro-count blue" id="wish-count">0</span>
                                     {{/if}}
                                 </a>
                             </div>
@@ -113,6 +115,8 @@
                                     <img alt="image" src="/imgs/theme/icons/icon-cart.svg">
                                     {{#if cartCount}}
                                     <span class="pro-count blue" id="cartCount">{{cartCount}}</span>
+                                    {{else}}
+                                <span class="pro-count blue" id="cartCount">0</span>
                                     {{/if}}
                                 </a>
                                 <div class="cart-dropdown-wrap cart-dropdown-hm2">

@@ -13,8 +13,30 @@ const addToCart = (from,proId) => {
     url: `/add-to-cart?productId=${productId}&from=${from}`,
     method: 'get',
     success: (response) => {
-      console.log(from)
-      if (response.status) {
+      console.log(response)
+      if(!response.status){
+        Swal.fire({
+          text:"Oops! Something went wrong..!",
+          showConfirmButton:true
+        })
+      }
+      if(response.from == 'wishlist') {
+        Swal.fire({
+          icon: 'success',
+          title: 'Successfully moved your item into cart...!',
+          showConfirmButton: true,
+          confirmButtonColor: 'red',
+          confirmButtonText: 'OK',
+          customClass: {
+            icon: 'custom-icon-class'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            location.reload()
+          }
+        })
+        
+      }else {
         $("#cartModal").modal("hide") // close the modal
         $(".modal-backdrop").fadeOut() // fade out the overlay
                 Swal.fire({
