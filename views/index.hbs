@@ -230,7 +230,7 @@
                                     <button type="submit" class="button button-add-to-cart">Add to cart</button>
                                     <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                         href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                    <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
+                                    <a aria-label="Compare" class="action-btn hover-up" href="#"><i
                                             class="fi-rs-shuffle"></i></a>
                                 </div>
                             </div>
@@ -329,7 +329,7 @@
                                 <li><a href="shop-wishlist.html">Shop – Wishlist</a></li>
                                 <li><a href="shop-cart.html">Shop – Cart</a></li>
                                 <li><a href="shop-checkout.html">Shop – Checkout</a></li>
-                                <li><a href="shop-compare.html">Shop – Compare</a></li>
+                                <li><a href="#">Shop – Compare</a></li>
                             </ul>
                         </li>
                         <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Mega menu</a>
@@ -567,6 +567,7 @@
             <div class="tab-content wow fadeIn animated" id="myTabContent">
                 <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
                     <div class="row product-grid-4">
+                        <input type="hidden" id="user-wishlist" value="{{wishListItems}}">
                         {{#each products}}
                         <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                             <div class="product-cart-wrap mb-30">
@@ -578,25 +579,26 @@
                                             <img class="hover-img" src="{{image}}" alt="">
                                         </a>
                                     </div>
-                                    <div class="product-action-1">
+                                    <div class="product-action-1" id="product-list">
                                         <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal"
                                             data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                        <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                            href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
+                                        <button aria-label="Add To Wishlist" class="action-btn hover-up"
+                                            onclick="addToWishList('{{_id}}')"><i style="font-size: 20px;"
+                                                class="las la-heart-broken " id="{{_id}}"></i></button>
+                                        <a aria-label="Compare" class="action-btn hover-up" href="#"><i
                                                 class="fi-rs-shuffle"></i></a>
                                     </div>
 
                                     {{#if isActive}}
                                     {{#if (eq product_quantity 0)}}
-                                     <div class="product-badges product-badges-position product-badges-mrg ">
+                                    <div class="product-badges product-badges-position product-badges-mrg ">
                                         <span class="hot bg-danger">Out of Stock</span>
                                     </div>
                                     {{else}}
-                                     <div class="product-badges product-badges-position product-badges-mrg">
+                                    <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">Hot</span>
                                     </div>
-                                   
+
                                     {{/if}}
                                     {{else}}
                                     <div class="product-badges product-badges-position product-badges-mrg ">
@@ -663,10 +665,10 @@
                                             <a aria-label="Quick view" class="action-btn hover-up"
                                                 data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
                                                     class="fi-rs-eye"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-heart"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot">Hot</span>
@@ -708,8 +710,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="new">New</span>
@@ -751,8 +753,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="best">Best Sell</span>
@@ -794,8 +796,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="sale">Sale</span>
@@ -837,8 +839,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot">-30%</span>
@@ -880,8 +882,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot">-22%</span>
@@ -923,8 +925,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="new">New</span>
@@ -965,8 +967,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                     </div>
                                     <div class="product-content-wrap">
@@ -1011,8 +1013,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot">Hot</span>
@@ -1054,8 +1056,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="new">New</span>
@@ -1097,8 +1099,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="best">Best Sell</span>
@@ -1140,8 +1142,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="sale">Sale</span>
@@ -1183,8 +1185,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot">-30%</span>
@@ -1226,8 +1228,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot">-22%</span>
@@ -1269,8 +1271,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="new">New</span>
@@ -1311,8 +1313,8 @@
                                                     class="fi-rs-eye"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i
+                                                    class="fi-rs-shuffle"></i></a>
                                         </div>
                                     </div>
                                     <div class="product-content-wrap">
@@ -1471,8 +1473,8 @@
                                     <i class="fi-rs-eye"></i></a>
                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                     href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"
-                                    tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                <a aria-label="Compare" class="action-btn small hover-up" href="#" tabindex="0"><i
+                                        class="fi-rs-shuffle"></i></a>
                             </div>
                             <div class="product-badges product-badges-position product-badges-mrg">
                                 <span class="hot">Hot</span>
@@ -1505,8 +1507,8 @@
                                     <i class="fi-rs-eye"></i></a>
                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                     href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"
-                                    tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                <a aria-label="Compare" class="action-btn small hover-up" href="#" tabindex="0"><i
+                                        class="fi-rs-shuffle"></i></a>
                             </div>
                             <div class="product-badges product-badges-position product-badges-mrg">
                                 <span class="new">New</span>
@@ -1539,8 +1541,8 @@
                                     <i class="fi-rs-eye"></i></a>
                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                     href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"
-                                    tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                <a aria-label="Compare" class="action-btn small hover-up" href="#" tabindex="0"><i
+                                        class="fi-rs-shuffle"></i></a>
                             </div>
                             <div class="product-badges product-badges-position product-badges-mrg">
                                 <span class="sale">Sale</span>
@@ -1573,8 +1575,8 @@
                                     <i class="fi-rs-eye"></i></a>
                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                     href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"
-                                    tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                <a aria-label="Compare" class="action-btn small hover-up" href="#" tabindex="0"><i
+                                        class="fi-rs-shuffle"></i></a>
                             </div>
                             <div class="product-badges product-badges-position product-badges-mrg">
                                 <span class="hot">.33%</span>
@@ -1607,8 +1609,8 @@
                                     <i class="fi-rs-eye"></i></a>
                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                     href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"
-                                    tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                <a aria-label="Compare" class="action-btn small hover-up" href="#" tabindex="0"><i
+                                        class="fi-rs-shuffle"></i></a>
                             </div>
                             <div class="product-badges product-badges-position product-badges-mrg">
                                 <span class="hot">-25%</span>
@@ -1641,8 +1643,8 @@
                                     <i class="fi-rs-eye"></i></a>
                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                     href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"
-                                    tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                <a aria-label="Compare" class="action-btn small hover-up" href="#" tabindex="0"><i
+                                        class="fi-rs-shuffle"></i></a>
                             </div>
                             <div class="product-badges product-badges-position product-badges-mrg">
                                 <span class="new">New</span>
@@ -1675,8 +1677,8 @@
                                     <i class="fi-rs-eye"></i></a>
                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                     href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"
-                                    tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                <a aria-label="Compare" class="action-btn small hover-up" href="#" tabindex="0"><i
+                                        class="fi-rs-shuffle"></i></a>
                             </div>
                         </div>
                         <div class="product-content-wrap">
@@ -1835,8 +1837,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">Hot</span>
@@ -1876,8 +1878,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="new">New</span>
@@ -1917,8 +1919,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="best">Best Sell</span>
@@ -1958,8 +1960,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">-12%</span>
@@ -1999,8 +2001,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="sale">Sale</span>
@@ -2049,8 +2051,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">Hot</span>
@@ -2090,8 +2092,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="new">New</span>
@@ -2131,8 +2133,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="best">Best Sell</span>
@@ -2172,8 +2174,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">-12%</span>
@@ -2213,8 +2215,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="sale">Sale</span>
@@ -2262,8 +2264,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">Hot</span>
@@ -2303,8 +2305,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="new">New</span>
@@ -2344,8 +2346,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="best">Best Sell</span>
@@ -2385,8 +2387,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">-12%</span>
@@ -2426,8 +2428,8 @@
                                                     <i class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn small hover-up"
                                                     href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Compare" class="action-btn small hover-up" href="#"><i
+                                                        class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="sale">Sale</span>
@@ -2736,8 +2738,55 @@
 
 
 <script>
-    $(document).ready(()=>{
+    $(document).ready(() => {
         localStorage.clear()
+        const heartIcons = $('#product-list .la-heart-broken');
+        let wishlistItems = document.getElementById('user-wishlist').value
+        if (wishlistItems) {
+            wishlistItems = JSON.parse(wishlistItems)
+            heartIcons.each(function () {
+                const productId = $(this).attr('id');
+
+                if (wishlistItems.includes(productId)) {
+                    // Product is already in wishlist
+                    $(this).removeClass('las la-heart-broken');
+                    $(this).addClass('red-heart las la-heart');
+                    $(this).parent().addClass('parent-color-red-wishlist')
+                    $(this).parent().attr('aria-label', 'Remove from Wishlist')
+
+
+                }
+            });
+
+            // Add click event listener to heart icons
+            heartIcons.click(function () {
+                const productId = $(this).attr('id');
+
+                if (wishlistItems.includes(productId)) {
+                    // Product is already in wishlist
+                    wishlistItems.splice(wishlistItems.indexOf(productId), 1);
+                    $(this).removeClass('red-heart');
+                    $(this).addClass('las la-heart-broken');
+                    $(this).parent().attr('aria-label', 'Add To Wishlist')
+
+
+
+                } else {
+                    // Product is not in wishlist
+                    wishlistItems.push(productId);
+                    $(this).removeClass('las la-heart-broken');
+                    $(this).addClass('red-heart las la-heart');
+                    $(this).parent().attr('aria-label', 'Remove from Wishlist')
+
+
+                }
+
+            });
+
+        }
+
+
+
     })
 
 

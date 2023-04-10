@@ -2,13 +2,18 @@
 /* eslint-disable no-undef */
 
 // eslint-disable-next-line no-unused-vars
-const addToCart = () => {
-  const productId = document.getElementById('colorSelect').value
+const addToCart = (from,proId) => {
+  let productId = document.getElementById('colorSelect')?.value
+  if(productId== undefined){
+    productId = proId
+  }
   // eslint-disable-next-line no-undef
+  console.log(productId)
   $.ajax({
-    url: '/add-to-cart/' + productId,
+    url: `/add-to-cart?productId=${productId}&from=${from}`,
     method: 'get',
     success: (response) => {
+      console.log(from)
       if (response.status) {
         $("#cartModal").modal("hide") // close the modal
         $(".modal-backdrop").fadeOut() // fade out the overlay
@@ -22,9 +27,9 @@ const addToCart = () => {
             icon: 'custom-icon-class'
           }
         })  
-       let count = $('#cartCount').html()
-        count = parseInt(count) + 1
-        $('#cartCount').html(count)
+        let cartCount = document.getElementById('cartCount')?.innerText
+        cartCount = parseInt(cartCount)
+        document.getElementById('cartCount').innerHTML = cartCount + 1
       }
     },
     error: function(xhr, status, error) {
@@ -40,6 +45,79 @@ const addToCart = () => {
     }
   })
 }
+
+
+const addToWishList = (productId) => {
+  // eslint-disable-next-line no-undef
+  $.ajax({
+    url: '/add-to-wishlist/' + productId,
+    method: 'get',
+    success: (response) => {
+      console.log(response)
+      if(!response.status){
+        location.href= '/userLogin'
+      }else {
+        let currCount = document.getElementById('wish-count').innerText
+        currCount = parseInt(currCount)
+        response.removed
+        ?document.getElementById('wish-count').innerHTML = currCount-1
+        : document.getElementById('wish-count').innerHTML = currCount+1
+      }
+    },
+    error: function(xhr, status, error) {
+      if (xhr.status === 500) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Internal server error: ' + xhr.responseJSON.Message
+        })
+       } else {
+        alert('Error: ' + error)
+      }
+    }
+  })
+}
+
+showDeleteConfirmation = (productId) =>{
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You are about to remove this item from your wishlist.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, remove it!',
+    cancelButtonText: 'Cancel'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      deleteFromWishlist(productId)
+    }
+  })
+}
+const deleteFromWishlist = (productId) =>{
+  $.ajax({
+    url:"/user-wishlist/remove-item/"+productId,
+    type:"DELETE",
+    success:(response) =>{
+      if(response.acknowledged){
+        location.reload()
+      } else {
+        Swal.fire({
+          text:"Oops! Something went wrong",
+          showConfirmButton:true,
+        })
+      }
+    },
+    error:(response) =>{
+      Swal.fire({
+        text:"Oops! Something went wrong",
+        showConfirmButton:true,
+      })
+    }
+  })
+}
+
+
+
+
 
 const changeQuantity = (cartId, productId, userId, count) => {
   const quantity = parseInt(document.getElementById(productId).innerHTML)

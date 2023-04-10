@@ -1,18 +1,26 @@
 import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
 import { userProductHelpers } from "../../helpers/userHelpers/userProductHelpers.js"
 import { couponHelpers } from "../../helpers/userHelpers/couponHelperes.js"
+import { wishListHelper } from "../../helpers/userHelpers/wishListHelpers.js"
+import { json } from "express"
 export const userControler = {
   userHome: async (req, res) => {
     try {
-      let cartCount
+      let cartCount,cartItems,wishListItems,wishCount
       // userHelpers.resetCouponCount()
       if (req.session.user) {
+        const userId = req.session.user._id
         cartCount = await cartHelpers.getCartProductsCount(
-          req.session.user._id
-        )
-      }
+          userId )
+         cartItems = await cartHelpers.getcartProducts(
+          userId )
+          wishListItems = await wishListHelper.getAllItemsInWishlist(userId)
+          wishListItems = JSON.stringify(wishListItems?.products)
+          wishCount = await wishListHelper.getWishedCount(userId)
+      }  
+      console.log(wishCount)
       const products = await userProductHelpers.viewProduct()
-      res.render("index", { user: req.session.user, products, cartCount })
+      res.render("index", { user: req.session.user, products, cartCount,cartItems,wishListItems,wishCount })
       req.session.guestUser = null
     } catch (error) {
       res.render("index", {

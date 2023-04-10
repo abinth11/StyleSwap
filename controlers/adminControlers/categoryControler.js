@@ -63,8 +63,8 @@ export const categoryControler = {
           res.status(500).send("Internal Server Error")
         }
       },
-      editSubCategory: (req) => {
-        console.log(req.body)
+      editSubCategory: () => {
+        // console.log(req.body)
       },
       deleteSubCategory: async (req, res) => {
         try {
@@ -89,7 +89,7 @@ export const categoryControler = {
           response.acknowledged
             ? res
                 .status(200)
-                .json({ Message: "Successfully adde Color", status: true })
+                .json({ Message: "Successfully add Color", status: true })
             : res.status(500).json({ Message: "Insertion Failed", status: false })
         } catch (error) {
           res.status(500).json({ Message: "Internal Server Error" })
@@ -101,7 +101,7 @@ export const categoryControler = {
           response.acknowledged
             ? res
                 .status(200)
-                .json({ Message: "Successfully adde Size", status: true })
+                .json({ Message: "Successfully add Size", status: true })
             : res.status(500).json({ Message: "Insertion Failed", status: false })
         } catch (error) {
           res.status(500).json({ Message: "Internal Server Error" })

@@ -45,13 +45,13 @@ export const cartControlers = {
       if (!req.session?.guestUser) {
         req.session.guestUser = guestUser
       }
-      const { id: productId } = req.params
+      const {productId , from } = req.query
       const userId = req.session.user?._id
       const guestUserId = req.session?.guestUser?.id
-      userId && (await cartHelpers.addToCart(productId, userId, guestUserId))
+      userId && (await cartHelpers.addToCart(productId, userId,from))
       guestUserId &&
         (await guestHelper.createGuestUser(guestUserId, productId))
-      res.json({ status: true })
+      res.json({ status: true,from })
     } catch (error) {
       res.status(500).json({ Message: "Internal server error" })
     }

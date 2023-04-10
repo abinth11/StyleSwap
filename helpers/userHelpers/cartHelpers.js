@@ -1,8 +1,9 @@
 import db from "../../config/connection.js"
 import collection from "../../config/collections.js"
 import { ObjectId } from "mongodb"
+import { wishListHelper } from "./wishListHelpers.js"
 export const cartHelpers = {
-  addToCart: async (productId, userId) => {
+  addToCart: async (productId, userId,from) => {
     const product = {
       item: ObjectId(productId),
       quantity: 1,
@@ -29,6 +30,7 @@ export const cartHelpers = {
                 $inc: { "products.$.quantity": 1 },
               }
             )
+            from == 'wishlist' && await wishListHelper.removeProducts(productId,userId)
         } else {
           const response = await db
             .get()
@@ -41,6 +43,7 @@ export const cartHelpers = {
                 },
               }
             )
+            from == 'wishlist' && await wishListHelper.removeProducts(productId,userId)
           return response
         }
       } else {
@@ -49,6 +52,7 @@ export const cartHelpers = {
           products: [product],
         }
         await db.get().collection(collection.CART_COLLECTION).insertOne(cart)
+        from == 'wishlist' && await wishListHelper.removeProducts(productId,userId)
       }
       return true
     } catch (error) {

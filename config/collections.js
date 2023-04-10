@@ -6,6 +6,7 @@ const collection = {
   CATEGORY_COLLECTION: 'categories',
   ADDRESS_COLLECTION: 'address',
   CART_COLLECTION: 'cart',
+  WISHLIST:'wishlist',
   ORDER_COLLECTION: 'orders',
   ORDER_SATUS: 'orderStatus',
   WALLET: 'wallet',

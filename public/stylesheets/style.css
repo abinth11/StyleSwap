@@ -76,6 +76,16 @@ input[type=number]::-webkit-outer-spin-button {
   border: 2px solid red;
 } */
 
+.red-heart {
+  color: red;
+}
+.parent-color-red-wishlist {
+  background-color: red;
+}
+.parent-color-red-wishlist:hover{
+  background-color: red;
+}
+
 .product-rating-edit {
   display: flex;
   justify-content: flex-start;

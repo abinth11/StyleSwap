@@ -10,6 +10,7 @@ import { paymentControlers } from "../controlers/userControlers/paymentControler
 import { orderControler } from "../controlers/userControlers/order-controlers.js"
 import { profileControlers } from "../controlers/userControlers/profileControlers.js"
 import * as googleAuth from "../config/googleauth.js"
+import { wishListController } from "../controlers/userControlers/wishlistController.js"
 
 // import { trackVisitors } from '../middlewares/trackusers.js'
 
@@ -67,7 +68,7 @@ router.get(
 )
 
 // add to the cart
-router.get("/add-to-cart/:id", cartControlers.addToCartGet)
+router.get("/add-to-cart", cartControlers.addToCartGet)
 
 // change product quantity in the cart
 router.post("/change-quantity", cartControlers.changeCartProductQuantity)
@@ -75,8 +76,13 @@ router.post("/change-quantity", cartControlers.changeCartProductQuantity)
 // remove products from the cart
 router.put("/remove-cart-product", cartControlers.removeProducts)
 
+//? ROUTES FOR WISHLIST 
+router.get('/user-wishlist',sessionChecker.isUserExist,wishListController.userWishlistGet)
+router.get('/add-to-wishlist/:productId',wishListController.addToWishList)
+router.delete('/user-wishlist/remove-item/:productId',wishListController.removeProducts)
+
 //? ROUTES FOR PAYMENT AND OTHER PAYMENT RELATED FUCNTIONS
-// proceed to chekout
+// proceed to checkout
 router
   .route("/proceed-to-checkout")
   .get(sessionChecker.isUserExist, paymentControlers.proceedToCheckOutGet)
