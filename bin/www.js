@@ -13,7 +13,7 @@ const debug = debugImport('ecommercewebsite:server')
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '3000')
+const port = normalizePort(process.env.PORT || '8001')
 app.set('port', port)
 
 /**
