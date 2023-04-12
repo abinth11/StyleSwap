@@ -34,16 +34,17 @@ export const profileControlers = {
     try {
       const userId = req.session.user?._id
       const { addressFromCheckOut } = req.body
-      req.body.userId = userId
+      req.body.userId = userId 
       profileHelpers.addNewAddress(req.body).then(() => {
         const jsonResponse = addressFromCheckOut
-          ? { addressFromCheckOut: true }
-          : { addressFromProfile: true }
-        res.json(jsonResponse)
-      })
+          ? { addressFromCheckOut: true }  
+          : { addressFromProfile: true } 
+        res.json(jsonResponse) 
+
+      })            
     } catch (error) {
       res
-        .status(500)
+        .status(500) 
         .json({ error: true, message: "Error occurred while adding address" })
     }
   },

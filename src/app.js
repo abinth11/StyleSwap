@@ -65,6 +65,7 @@ app.use("/admin", adminRouter)
 connect()
   .then(() => {
     console.log("Successfully connected to the database")
+    // otherHelpers.createIndexForProducts()
   })
   .catch((err) => {
     console.log("Connection failed", err)

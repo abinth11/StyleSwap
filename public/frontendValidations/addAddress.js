@@ -1,13 +1,13 @@
-const nameEl = document.querySelector('#name')
-const mobileEl = document.querySelector('#mobile')
-const pincodeEl = document.querySelector('#pincode')
-const localityEl = document.querySelector('#locality')
-const addressEl = document.querySelector('#address')
-const cityEl = document.querySelector('#city')
-const stateEl = document.querySelector('#state')
-const landmarkEl = document.querySelector('#landmark')
+const nameEl = document.querySelector("#name")
+const mobileEl = document.querySelector("#mobile")
+const pincodeEl = document.querySelector("#pincode")
+const localityEl = document.querySelector("#locality")
+const addressEl = document.querySelector("#address")
+const cityEl = document.querySelector("#city")
+const stateEl = document.querySelector("#state")
+const landmarkEl = document.querySelector("#landmark")
 
-const form = document.querySelector('#add_address')
+const form = document.querySelector("#add_address")
 
 const checkName = () => {
   let valid = false
@@ -18,7 +18,7 @@ const checkName = () => {
   const name = nameEl.value.trim()
 
   if (!isRequired(name)) {
-    showError(nameEl, 'name cannot be blank.')
+    showError(nameEl, "name cannot be blank.")
   } else if (!isBetween(name.length, min, max)) {
     showError(nameEl, `name must be between ${min} and ${max} characters.`)
   } else {
@@ -30,12 +30,13 @@ const checkName = () => {
 
 const checkPincode = () => {
   let valid = false
-  const min = 6; const max = 6
+  const min = 6
+  const max = 6
   const pincode = pincodeEl.value.trim()
   if (!isRequired(pincode)) {
-    showError(pincodeEl, 'Pincode cannot be blank.')
+    showError(pincodeEl, "Pincode cannot be blank.")
   } else if (!isBetween(pincode.length, min, max)) {
-    showError(pincodeEl, 'Pincode is not valid.')
+    showError(pincodeEl, "Pincode is not valid.")
   } else {
     showSuccess(pincodeEl)
     valid = true
@@ -47,9 +48,9 @@ const checkMobile = () => {
   let valid = false
   const mobile = mobileEl.value.trim()
   if (!isRequired(mobile)) {
-    showError(mobileEl, 'Phone number cannot be blank.')
+    showError(mobileEl, "Phone number cannot be blank.")
   } else if (!isMobileValid(mobile)) {
-    showError(mobileEl, 'Mobile is not valid.')
+    showError(mobileEl, "Mobile is not valid.")
   } else {
     showSuccess(mobileEl)
     valid = true
@@ -59,10 +60,11 @@ const checkMobile = () => {
 
 const checkLocality = () => {
   let valid = false
-  const min = 3; const max = 20
+  const min = 3
+  const max = 20
   const locality = localityEl.value.trim()
   if (!isRequired(locality)) {
-    showError(localityEl, 'Locality cannot be blank.')
+    showError(localityEl, "Locality cannot be blank.")
   } else if (!isBetween(locality.length, min, max)) {
     showError(localityEl, `locality must between ${min}and ${max} `)
   } else {
@@ -73,10 +75,11 @@ const checkLocality = () => {
 }
 const checkAddress = () => {
   let valid = false
-  const min = 10; const max = 50
+  const min = 10
+  const max = 50
   const address = addressEl.value.trim()
   if (!isRequired(address)) {
-    showError(addressEl, 'Address cannot be blank.')
+    showError(addressEl, "Address cannot be blank.")
   } else if (!isBetween(address.length, min, max)) {
     showError(addressEl, `Address must between ${min}and ${max} `)
   } else {
@@ -87,10 +90,11 @@ const checkAddress = () => {
 }
 const checkCity = () => {
   let valid = false
-  const min = 3; const max = 20
+  const min = 3
+  const max = 20
   const city = cityEl.value.trim()
   if (!isRequired(city)) {
-    showError(cityEl, 'City cannot be blank.')
+    showError(cityEl, "City cannot be blank.")
   } else if (!isBetween(city.length, min, max)) {
     showError(cityEl, `City must between ${min}and ${max} `)
   } else {
@@ -101,10 +105,11 @@ const checkCity = () => {
 }
 const checkState = () => {
   let valid = false
-  const min = 3; const max = 20
+  const min = 3
+  const max = 20
   const state = stateEl.value.trim()
   if (!isRequired(state)) {
-    showError(stateEl, 'state cannot be blank.')
+    showError(stateEl, "state cannot be blank.")
   } else if (!isBetween(state.length, min, max)) {
     showError(stateEl, `state must between ${min}and ${max} `)
   } else {
@@ -115,10 +120,11 @@ const checkState = () => {
 }
 const checkLandmark = () => {
   let valid = false
-  const min = 3; const max = 20
+  const min = 3
+  const max = 20
   const landmark = landmarkEl.value.trim()
   if (!isRequired(landmark)) {
-    showError(landmarkEl, 'Landmark cannot be blank.')
+    showError(landmarkEl, "Landmark cannot be blank.")
   } else if (!isBetween(landmark.length, min, max)) {
     showError(landmarkEl, `landmark must between ${min}and ${max} `)
   } else {
@@ -133,18 +139,18 @@ const isMobileValid = (mobile) => {
   return re.test(mobile)
 }
 
-const isRequired = value => value !== ''
+const isRequired = (value) => value !== ""
 const isBetween = (length, min, max) => !(length < min || length > max)
 
 const showError = (input, message) => {
   // get the form-field element
   const formField = input.parentElement
   // add the error class
-  formField.classList.remove('success')
-  formField.classList.add('error')
+  formField.classList.remove("success")
+  formField.classList.add("error")
 
   // show the error message
-  const error = formField.querySelector('small')
+  const error = formField.querySelector("small")
   error.textContent = message
 }
 
@@ -153,18 +159,18 @@ const showSuccess = (input) => {
   const formField = input.parentElement
 
   // remove the error class
-  formField.classList.remove('error')
-  formField.classList.add('success')
+  formField.classList.remove("error")
+  formField.classList.add("success")
 
   // hide the error message
-  const error = formField.querySelector('small')
-  error.textContent = ''
+  const error = formField.querySelector("small")
+  error.textContent = ""
 }
 
-form.addEventListener('submit', function (e) {
-  // prevent the form from submitting
+$("#add_address").submit((e) => {
   e.preventDefault()
-
+  // Disable submit button to prevent multiple submissions
+  $("#add_address").find(":submit").prop("disabled", true)
   // validate fields
   const isNameValid = checkName()
   const isMobileNoValid = checkMobile()
@@ -175,25 +181,29 @@ form.addEventListener('submit', function (e) {
   const isStateValid = checkCity()
   const isLandMarkValid = checkLandmark()
 
-  const isFormValid = isNameValid &&
-        isMobileNoValid && isPincodeValid &&
-        isLocalityVAlid && isAddressValid &&
-        isCityValid && isStateValid && isLandMarkValid
+  const isFormValid =
+    isNameValid &&
+    isMobileNoValid &&
+    isPincodeValid &&
+    isLocalityVAlid &&
+    isAddressValid &&
+    isCityValid &&
+    isStateValid &&
+    isLandMarkValid
 
   // submit to the server if the form is valid
   if (isFormValid) {
-    console.log('form is valid')
     $.ajax({
-      type: 'POST',
-      url: '/addressManageMent',
-      data: $('#add_address').serialize(),
+      type: "POST",
+      url: "/addressManageMent",
+      data: $("#add_address").serialize(),
       success: (response) => {
         if (response.addressFromCheckOut) {
-          location.href = '/proceed-to-checkout'
+          location.href = "/proceed-to-checkout"
         } else if (response.addressFromProfile) {
-          location.href = '/profile-address'
+          location.href = "/profile-address"
         }
-      }
+      },
     })
   }
 })
@@ -212,31 +222,34 @@ const debounce = (fn, delay = 500) => {
   }
 }
 
-form.addEventListener('input', debounce(function (e) {
-  switch (e.target.id) {
-    case 'name':
-      checkName()
-      break
-    case 'mobile':
-      checkMobile()
-      break
-    case 'pincode':
-      checkPincode()
-      break
-    case 'locality':
-      checkLocality()
-      break
-    case 'address':
-      checkAddress()
-      break
-    case 'city':
-      checkCity()
-      break
-    case 'state':
-      checkState()
-      break
-    case 'landmark':
-      checkLandmark()
-      break
-  }
-}))
+form.addEventListener(
+  "input",
+  debounce(function (e) {
+    switch (e.target.id) {
+      case "name":
+        checkName()
+        break
+      case "mobile":
+        checkMobile()
+        break
+      case "pincode":
+        checkPincode()
+        break
+      case "locality":
+        checkLocality()
+        break
+      case "address":
+        checkAddress()
+        break
+      case "city":
+        checkCity()
+        break
+      case "state":
+        checkState()
+        break
+      case "landmark":
+        checkLandmark()
+        break
+    }
+  })
+)

@@ -8,12 +8,10 @@ const addToCart = (from,proId) => {
     productId = proId
   }
   // eslint-disable-next-line no-undef
-  console.log(productId)
   $.ajax({
     url: `/add-to-cart?productId=${productId}&from=${from}`,
     method: 'get',
     success: (response) => {
-      console.log(response)
       if(!response.status){
         Swal.fire({
           text:"Oops! Something went wrong..!",
@@ -75,7 +73,6 @@ const addToWishList = (productId) => {
     url: '/add-to-wishlist/' + productId,
     method: 'get',
     success: (response) => {
-      console.log(response)
       if(!response.status){
         location.href= '/userLogin'
       }else {
@@ -189,7 +186,6 @@ const changeQuantity = (cartId, productId, userId, count) => {
     },
     error: function (data) {
       alert(data)
-      console.log(JSON.stringify(data))
     }
   })
 }
@@ -238,12 +234,10 @@ const setOrderCancellData = (orderId) => {
 const cancellOrderModal = () => {
   const orderId = document.getElementById('orderId').value
   const reason = document.getElementById('reason').value
-  console.log(orderId,reason)
   cancellOrder(orderId, reason)
 }
 
 const cancellOrder = (orderId, reason) => {
-  console.log(reason)
   $.ajax({
     url: '/cancell-order',
     data: {
@@ -265,33 +259,3 @@ function formatMoney(amount) {
   })
   return formatter.format(amount)
 }
-
-
-// // Example of adding funds to the wallet
-// $('.modal-body form').submit(function (event) {
-//   event.preventDefault()
-//   const amount = parseFloat($('#amount').val())
-//   const currentBalance = parseFloat($('.balance h3').text().replace('$', ''))
-//   if (isNaN(amount)) {
-//     alert('Please enter a valid amount.')
-//     return
-//   }
-//   const newBalance = currentBalance + amount
-//   $('.balance h3').text('$' + newBalance.toFixed(2))
-//   $('#amount').val('')
-//   alert('Funds added successfully.')
-// })
-
-// // get a reference to the search input field
-// const searchInput = document.getElementById('search-input')
-
-// // listen for the user to submit the search form
-// document.getElementById('search-form').addEventListener('submit', (event) => {
-//   event.preventDefault() // prevent the form from submitting normally
-//   const searchQuery = searchInput.value.trim() // get the user's search query
-//   if (searchQuery.length > 0) {
-//     // construct the search URL with the search query as a parameter
-//     const searchUrl = `/search-products?q=${encodeURIComponent(searchQuery)}`
-//     window.location.href = searchUrl // redirect the user to the search results page
-//   }
-// })
