@@ -11,12 +11,11 @@ import { orderControler } from "../controlers/userControlers/order-controlers.js
 import { profileControlers } from "../controlers/userControlers/profileControlers.js"
 import * as googleAuth from "../config/googleauth.js"
 import { wishListController } from "../controlers/userControlers/wishlistController.js"
-
-// import { trackVisitors } from '../middlewares/trackusers.js'
+import { trackVisitors } from '../middlewares/trackusers.js'
 
 /* GET home page. */
 //todo track visitors MDDLEWARE turned off coz of errors possibilities
-router.get("/", userControler.userHome)
+router.get("/",trackVisitors, userControler.userHome)
 
 //? ROUTES FOR HANDLING SIGNUP AND LOGIN
 router

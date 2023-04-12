@@ -2,7 +2,6 @@ import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
 import { userProductHelpers } from "../../helpers/userHelpers/userProductHelpers.js"
 import { couponHelpers } from "../../helpers/userHelpers/couponHelperes.js"
 import { wishListHelper } from "../../helpers/userHelpers/wishListHelpers.js"
-import { json } from "express"
 export const userControler = {
   userHome: async (req, res) => {
     try {
