@@ -115,7 +115,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 #search-input {
-  width: 510px;
+  width: 400px;
 }
 
 .no-search-results {
@@ -150,7 +150,7 @@ input[type=number]::-webkit-outer-spin-button {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 999;
   max-height: 300px;
-  width: 645px;
+  width: 536px;
   overflow-y: scroll;
 }
 

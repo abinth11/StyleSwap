@@ -5,11 +5,12 @@ const state = {
 }
 
  export const connect = async () => {
-  const url = 'mongodb://localhost:27017'
-  const dbname = 'shoppingCart'
+ 
+  const url = process.env.DB_URL
+  const dbName = process.env.DB_NAME
   return MongoClient.connect(url)
     .then((client) => {
-      state.db = client.db(dbname)
+      state.db = client.db(dbName)
       return state.db
     })
     .catch((err) => {

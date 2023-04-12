@@ -1,0 +1,218 @@
+[33mcommit a23887789e10c1342f84f927102fc8a35f3f5874[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Apr 11 01:51:37 2023 +0530
+
+    wishlist completed
+
+[33mcommit b1849ba681a3dd22fa07d8f919e5b349a38b3ef6[m
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Apr 11 01:20:19 2023 +0530
+
+    wishlist almost finished
+
+[33mcommit 41e7afbdec78205067c97e8562a5c4e061d88037[m
+Author: Abin <abinth250@gmail.com>
+Date:   Mon Apr 10 00:46:35 2023 +0530
+
+    code cleanedup and admin part seperated
+
+[33mcommit 81c69f091a4444c35b3febf1fb2bfb16b7e500ce[m
+Author: Abin <abinth250@gmail.com>
+Date:   Sun Apr 9 17:08:31 2023 +0530
+
+    google auth added
+
+[33mcommit cad01ca572988c87ec9dfc90a74e285d292cee0a[m
+Author: Abin <abinth250@gmail.com>
+Date:   Sat Apr 8 15:14:32 2023 +0530
+
+    added buy now:select size and color pending while buy now
+
+[33mcommit 8873d0de4ac122433b388692c28ba62c6a9eeda3[m
+Author: Abin <abinth250@gmail.com>
+Date:   Sat Apr 8 00:04:15 2023 +0530
+
+    bug fix while updating product color in template
+
+[33mcommit 66742c55e745114f73b63930265f771248f97d02[m
+Author: Abin <abinth250@gmail.com>
+Date:   Fri Apr 7 19:06:13 2023 +0530
+
+    image issue fixed when refreshing
+
+[33mcommit cab585c326168ae7e4c729e8e47841b0f561c983[m
+Author: Abin <abinth250@gmail.com>
+Date:   Fri Apr 7 15:11:59 2023 +0530
+
+    more data added to the pdf
+
+[33mcommit 7a447dd69c720dfc443c19aa639dff59c21788d6[m
+Author: Abin <abinth250@gmail.com>
+Date:   Fri Apr 7 01:37:55 2023 +0530
+
+    changes made on readme
+
+[33mcommit 3d0a0625c2e8b3da5f2c66fa649666543f2f244e[m
+Author: Abin <abinth250@gmail.com>
+Date:   Fri Apr 7 01:15:34 2023 +0530
+
+    review edit option added for products
+
+[33mcommit abd896cf395d0f107c1cb441d09d3c49a95a5f3d[m
+Author: Abin <abinth250@gmail.com>
+Date:   Thu Apr 6 16:23:38 2023 +0530
+
+    bug fix in order tracking page
+
+[33mcommit 8a531f6f3c336669c1c2dcdfe829c885d76eefa6[m
+Author: Abin <abinth250@gmail.com>
+Date:   Thu Apr 6 12:43:07 2023 +0530
+
+    pagination added:page number increment need to fix
+
+[33mcommit ae15df9d3c8da10452fd8d57af82faa989c7e982[m
+Author: Abin <abinth250@gmail.com>
+Date:   Wed Apr 5 13:36:43 2023 +0530
+
+    search almost completed:typo tolerece previous search,suggestions,search history pending
+
+[33mcommit e08df2accadaa29961997a8f22b949f1e7255f9f[m
+Author: Abin <abinth250@gmail.com>
+Date:   Wed Apr 5 01:35:43 2023 +0530
+
+    recent search stored in redis
+
+[33mcommit ffda0caa8a3981b7bf8900baf1b01cba95987ad7[m
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Apr 4 20:25:04 2023 +0530
+
+    indexed product collection and integrated redis
+
+[33mcommit 70cdb28f97be2bf0488f951088109ea52cae7ad0[m
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Apr 4 11:47:20 2023 +0530
+
+    readme edit
+
+[33mcommit f470b27b9a79e028de7a3aed2acafded79fde2bd[m
+Merge: 4b4a599 795ce41
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Apr 4 11:37:05 2023 +0530
+
+    Merge branch 'master' of https://github.com/abinth11/Ecommerce_app
+
+[33mcommit 4b4a599d7845d21ce6a901333972e2b3662b728a[m
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Apr 4 11:28:17 2023 +0530
+
+    seperated user helpers
+
+[33mcommit 795ce41c85eb40bb2aac11ce4c4d809999d96530[m
+Author: abinth <112471611+abinth11@users.noreply.github.com>
+Date:   Tue Apr 4 10:16:07 2023 +0530
+
+    Update README.md
+
+[33mcommit 0306056ada96143b8a67d880b0ca6d91dbd89d38[m
+Author: abinth <112471611+abinth11@users.noreply.github.com>
+Date:   Tue Apr 4 02:41:42 2023 +0530
+
+    Update README.md
+
+[33mcommit 1b6adbb0670a5c9cab7742b9bdef2fefa2150c04[m
+Author: abinth <112471611+abinth11@users.noreply.github.com>
+Date:   Tue Apr 4 02:38:49 2023 +0530
+
+    Update README.md
+
+[33mcommit 8d5e6da6bdf3790b52dbd426857bed48bf58c2da[m
+Author: abinth <112471611+abinth11@users.noreply.github.com>
+Date:   Tue Apr 4 02:38:28 2023 +0530
+
+    Update README.md
+
+[33mcommit 178737ba18b173a95a127e90f21ef5af34719374[m
+Author: abinth <112471611+abinth11@users.noreply.github.com>
+Date:   Tue Apr 4 02:37:23 2023 +0530
+
+    Update README.md
+
+[33mcommit 780acab4cb0a85399831370ce35f2ff17ac57e4d[m
+Author: abinth <112471611+abinth11@users.noreply.github.com>
+Date:   Tue Apr 4 02:35:07 2023 +0530
+
+    Update README.md
+
+[33mcommit 825680e69188d83762cab08b0b2d9c27e43f0852[m
+Author: abinth <112471611+abinth11@users.noreply.github.com>
+Date:   Tue Apr 4 02:29:58 2023 +0530
+
+    Create README.md
+    
+    Read me file added
+
+[33mcommit a35f38fe81b602b33fa0915f447b2d54d6bbee88[m
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Apr 4 02:26:44 2023 +0530
+
+     user helpers seperation half completed
+
+[33mcommit 8935f3444249450b37ad7ac6b95534f6e8200f35[m
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Apr 4 01:20:46 2023 +0530
+
+    handled server side errors in usercontrolers
+
+[33mcommit 03e5de8c8b9f04e84c407ee565cdf8efd5c7fb4d[m
+Author: Abin <abinth250@gmail.com>
+Date:   Mon Apr 3 22:51:15 2023 +0530
+
+    controlers seperated
+
+[33mcommit a6b9366d7a4714a3498849d6b03af3ea68e8cbee[m
+Author: Abin <abinth250@gmail.com>
+Date:   Mon Apr 3 00:21:00 2023 +0530
+
+    out of stock checked
+
+[33mcommit 03b9b642f22ed0c858e4262b903ade780b224ac5[m
+Author: Abin <abinth250@gmail.com>
+Date:   Sun Apr 2 23:22:06 2023 +0530
+
+    cart amount fixed
+
+[33mcommit 5e96b8064849bef17d9cdd2040ccfe9201065c4f[m
+Author: Abin <abinth250@gmail.com>
+Date:   Sun Apr 2 22:54:40 2023 +0530
+
+    add to cart size&color select added
+
+[33mcommit 31a32c1e1afa5cc3d773974dd95eafb31da9398e[m
+Author: Abin <abinth250@gmail.com>
+Date:   Sun Apr 2 00:37:54 2023 +0530
+
+    product fixing
+
+[33mcommit ec90223fd717e09bec5ad220ba2bbfa51827ae3e[m
+Author: Abin <abinth250@gmail.com>
+Date:   Thu Mar 30 18:48:31 2023 +0530
+
+    product rating added
+
+[33mcommit 8f5c6a670ec8aa246da1c835197604e0a107a89c[m
+Author: Abin <abinth250@gmail.com>
+Date:   Tue Mar 28 15:04:47 2023 +0530
+
+    report filter by date added
+
+[33mcommit 654718f2124ec60541e3b2d6e6543b24a9edb1d6[m
+Author: Abin <abinth250@gmail.com>
+Date:   Mon Mar 27 18:21:50 2023 +0530
+
+    graphs and charts added
+
+[33mcommit d1998464b38e45aad0ea3681369448a6bdc48a6a[m
+Author: Abin <abinth250@gmail.com>
+Date:   Sun Mar 26 18:12:58 2023 +0530
+
+    coupon section completed
