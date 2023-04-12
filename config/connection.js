@@ -5,9 +5,10 @@ const state = {
 }
 
  export const connect = async () => {
- 
+ console.log(process.env.DB_URL)
   const url = process.env.DB_URL ?? 'mongodb+srv://abinth250:nYLxpl4cJ8e4iIs6@cluster0.ml4r8cb.mongodb.net/test'
   const dbName = process.env.DB_NAME
+  console.log(url)
   return MongoClient.connect(url)
     .then((client) => {
       state.db = client.db(dbName)
