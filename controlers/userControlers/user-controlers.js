@@ -64,7 +64,6 @@ export const userControler = {
     try {
       const user = req.session.user
       const response = await walletHelpers.activateWallet(user)
-      console.log(response)
       response.acknowledged
       ?res.status(200).json(response)
       :res.status(403).json(response)

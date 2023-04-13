@@ -167,7 +167,7 @@ export const paymentControlers = {
     } catch (error) {
       res
         .status(500)
-        .jsoN({
+        .json({
           error: true,
           errorMsg: "Something went wrong please try again later",
         })

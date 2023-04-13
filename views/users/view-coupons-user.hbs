@@ -2,40 +2,47 @@
 {{>user-header}}
 <section class="content-main">
     <div class="container" style="padding-top: 5em;">
+        {{#if myCoupons}}
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row gx-3">
+                    {{#each myCoupons}}
+                    <div class="col-xl-3 col-lg-4 col-md-5 col-7" style="margin-top: 2em;">
+                        <figure class="card border-1">
+                            <div class="card-header bg-white text-center">
+                                <img height="50" src="{{image}}" class="img-fluid" alt="Logo"
+                                    style="width: 100px;height:100px">
+                            </div>
+                            <figcaption class="card-body text-center">
+                                <h6 class="card-title m-0">Cardinal</h6>
+                                <p class="card-text">Get upto {{discountPercentage}}% off your entire purchase!</p>
+                                <p style="">Minimum purchase:{{minimumPurchaseAmount}}</p>
 
-                   {{#each myCoupons}}
-    <div class="col-xl-3 col-lg-4 col-md-5 col-7" style="margin-top: 2em;">
-        <figure class="card border-1">
-            <div class="card-header bg-white text-center">
-                <img height="50" src="{{image}}" class="img-fluid" alt="Logo"
-                    style="width: 100px;height:100px">
-            </div>
-            <figcaption class="card-body text-center">
-                <h6 class="card-title m-0">Cardinal</h6>
-                <p class="card-text">Get upto {{discountPercentage}}% off your entire purchase!</p>
-               <p style="" >Minimum purchase:{{minimumPurchaseAmount}}</p>
-
-                <div class="coupon-container">
-                    <div class="row ">
-                        <div class="col-md-7 d-flex align-items-center">
-                            <p style="margin-left: 4em;" class="coupon-code">{{couponCode}}</p>
-                        </div>
-                        <div class="col-md-5 d-flex align-items-center">
-                            <button class="text-center copy-btn ms-2" style="color: #ADB5BD;background-color:transparent;width: 28px;height: 30px;border: none;">
-                                <i class="fas fa-lg fa-copy"></i>
-                            </button>
+                                <div class="coupon-container">
+                                    <div class="row ">
+                                        <div class="col-md-7 d-flex align-items-center">
+                                            <p style="margin-left: 4em;" class="coupon-code">{{couponCode}}</p>
+                                        </div>
+                                        <div class="col-md-5 d-flex align-items-center">
+                                            <button class="text-center copy-btn ms-2"
+                                                style="color: #ADB5BD;background-color:transparent;width: 28px;height: 30px;border: none;">
+                                                <i class="fas fa-lg fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    {{/each}}
+                    {{else}}
+                    <div class="container" style="padding-bottom: 23em;">
+                        <div class="row">
+                            <h3 class="text-center "> No Coupons Available For You</h3>
+                            <p class="text-center mt-2">Please purchase something to get coupons..!</p>
                         </div>
                     </div>
-                </div>
-            </figcaption>
-        </figure>
-    </div>
-{{/each}}
-
-                    
+                    {{/if}}
                 </div> <!-- row.// -->
             </div> <!-- card-body end// -->
         </div> <!-- card end// -->
@@ -45,25 +52,25 @@
 
 <script>
 
-$(".copy-btn").on("click", function () {
-    // Find the coupon code element relative to the clicked button
-    var code = $(this).closest(".coupon-container").find(".coupon-code").text();
+    $(".copy-btn").on("click", function () {
+        // Find the coupon code element relative to the clicked button
+        var code = $(this).closest(".coupon-container").find(".coupon-code").text();
 
-    var dummy = document.createElement('input');
-    document.body.appendChild(dummy);
-    dummy.value = code;
-    dummy.select();
-    document.execCommand('copy');
-    document.body.removeChild(dummy);
+        var dummy = document.createElement('input');
+        document.body.appendChild(dummy);
+        dummy.value = code;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
 
-    // Show tooltip
-    $(this).tooltip({ title: "copied!", trigger: "manual" }).tooltip("show");
+        // Show tooltip
+        $(this).tooltip({ title: "copied!", trigger: "manual" }).tooltip("show");
 
-    // Hide tooltip after 1.5 seconds
-    setTimeout(function () {
-        $(".copy-btn").tooltip("hide");
-    }, 1500);
-});
+        // Hide tooltip after 1.5 seconds
+        setTimeout(function () {
+            $(".copy-btn").tooltip("hide");
+        }, 1500);
+    });
 
 
 </script>
