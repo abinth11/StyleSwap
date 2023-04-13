@@ -258,6 +258,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
+                        
                         {{#if cartItems}}
                         <table class="table shopping-summery text-center clean">
                             <thead>
@@ -290,13 +291,7 @@
                                     {{/if}}
                                     <td class="text-center" data-title="Stock">
                                         <div class="detail-qty border radius m-auto">
-                                            {{!-- <a class="qty-down"
-                                                onclick="changeQuantity('{{_id}}','{{product._id}}',1)"><i
-                                                    class="fi-rs-angle-small-down"></i></a>
-                                            <span>{{quantity}}</span>
-                                            <a class="qty-up"
-                                                onclick="changeQuantity('{{_id}}','{{product._id}}',-1)"><i
-                                                    class="fi-rs-angle-small-up"></i></a> --}}
+
 
                                             <button class="" style="border: none;background: none;"
                                                 onclick="changeQuantity('{{../cartId}}','{{product_id}}','{{../user._id}}',-1)"><i
@@ -867,11 +862,8 @@
     const changeCoupon = () => {
         var selectElement = document.getElementById('coupon-select');
         var inputElement = document.getElementById('coupon-input');
-        // Get the selected option's value and text
         var selectedValue = selectElement.value;
         var selectedText = selectElement.options[selectElement.selectedIndex].text;
-
-        // Update the input field with the selected option's value or text
         inputElement.value = selectedValue || selectedText;
 
     }

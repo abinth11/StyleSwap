@@ -62,10 +62,10 @@ router
 // Cart for user
 router.get(
   "/userCart",
-  sessionChecker.isUserOrGuestExist,
+  // sessionChecker.isUserOrGuestExist,
   cartControlers.userCartGet
 )
-
+  
 // add to the cart
 router.get("/add-to-cart", cartControlers.addToCartGet)
 

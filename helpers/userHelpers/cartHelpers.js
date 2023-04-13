@@ -71,7 +71,7 @@ export const cartHelpers = {
       const count = userCart?.products.length
       return count
     } catch (error) {
-      throw new Error("Failed to edit address.")
+      throw new Error("Failed to get the count.")
     }
   },
   changeCartQuantity: async ({ cartId, productId, count:countArg, quantity:quantityArg }) => {
@@ -131,6 +131,21 @@ export const cartHelpers = {
         .collection(collection.CART_COLLECTION)
         .updateOne(
           { _id: ObjectId(cartId) },
+          { $pull: { products: { item: ObjectId(productId) } } }
+        )
+      return { removed: true }
+    } catch (error) {
+      return { removed: false }
+    }
+  },
+  removeCartProductsGuest : async (guestId,info) => {
+    const {productId} = info
+    try {
+      await db
+        .get()
+        .collection(collection.GUEST_USERS)
+        .updateOne(
+          { guestId},
           { $pull: { products: { item: ObjectId(productId) } } }
         )
       return { removed: true }
@@ -400,6 +415,140 @@ export const cartHelpers = {
       return cart
     } catch (error) {
       throw new Error("Failed to get user cart.")
+    } 
+  },
+  changeCartQuantityForGuest:async(guestId,info) =>{
+    try {
+      console.log(guestId)
+      console.log(info)
+      let {productId,count,quantity} = info
+       count = parseInt(count)
+     quantity = parseInt(quantity)
+    if(isNaN(quantity))
+     throw new Error("Quantity must be a number")
+      // Get the product's current stock level
+      const product = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .findOne({ _id: ObjectId(productId) })
+      const currentStockLevel = product.product_quantity
+      if (count === -1 && quantity === 1) {
+        // Remove the product from the cart
+        await db
+          .get()
+          .collection(collection.GUEST_USERS)
+          .updateOne(
+            { guestId: guestId },
+            { $pull: { products: { item: ObjectId(productId) } } }
+          )
+        return { removed: true }
+      } else if (count > 0 && quantity >= currentStockLevel) {
+        // Set the product's status to "out of stock" and notify the user
+        await db
+          .get()
+          .collection(collection.PRODUCT_COLLECTION)
+          .updateOne(
+            { _id: ObjectId(productId) },
+            { $set: { status: "out of stock" } }
+          )
+        return {
+          status: false,
+          message: "The requested quantity is not available.",
+        }   
+      } else {
+        // If the requested quantity is less than or equal to the stock level, update the quantity in the user's cart
+        await db
+          .get()
+          .collection(collection.GUEST_USERS)
+          .findOneAndUpdate(
+            { guestId: guestId, "products.item": ObjectId(productId) },
+            { $inc: { "products.$.quantity": count } }
+          )
+        return { status: true }
+      }
+      
+
+    } catch (error) {
+      throw new Error("Failed to update quantity for guest")
     }
   },
+  findTotalAmountForGuest: async (guestId) => {
+    try {
+      const totalAmount = await db
+        .get()
+        .collection(collection.GUEST_USERS)
+        .aggregate([
+          {
+            $match: {
+              guestId,
+            },
+          },
+          {
+            $unwind: "$products",
+          },
+          {
+            $project: {
+              item: "$products.item",
+              quantity: "$products.quantity",
+            },
+          },
+          {
+            $lookup: {
+              from: collection.PRODUCT_COLLECTION,
+              localField: "item",
+              foreignField: "_id",
+              as: "product",
+            },
+          },
+          {
+            $project: {
+              item: 1,
+              quantity: 1,
+              product: { $arrayElemAt: ["$product", 0] },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              offerTotal: {
+                $sum: {
+                  $multiply: [
+                    "$quantity",
+                    {
+                      $cond: {
+                        if: { $gt: ["$product.offerPrice", 0] },
+                        then: "$product.offerPrice",
+                        else: "$product.product_price",
+                      },
+                    },
+                  ],
+                },
+              },
+              total: {
+                $sum: {
+                  $multiply: ["$quantity", "$product.product_price"],
+                },
+              },
+            },
+          },
+        ])
+        .toArray()
+      return totalAmount[0]
+    } catch (error) {
+      throw new Error("Failed to find total amount.")
+    }
+  },
+  getCartProductsCountGuest : async(guestId) =>{
+    try {
+      const guestCart = await db
+        .get()
+        .collection(collection.GUEST_USERS)
+        .findOne({ guestId })
+      const count = guestCart?.products.length
+      return count
+    } catch (error) {
+      throw new Error("Failed to edit address.")
+    }
+
+  }
 }

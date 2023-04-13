@@ -7,27 +7,26 @@ export const cartControlers = {
     try {
       const user = req.session.user?._id
       const guestUser = req.session.guestUser?.id
-      // console.log(user, guestUser)
       if (user) {
         const cartItems = await cartHelpers.getcartProducts(
           req.session.user._id
         )
         const coupons = await couponHelpers.getUserCoupons(user)
-        console.log(coupons)
         const saved = 0
         const cartId = cartItems?._id
         res.render("users/shop-cart", {
           cartItems,
           coupons, 
           user: req.session.user,
+          guestUser,
           cartId, 
           saved, 
-        }) 
+        })  
       } else if (guestUser) {
-        const cartItems = await guestHelper.getGuestUserCartProducts(
-          req.session.guestUser.id
-        )
+        const cartItems = await guestHelper.getGuestUserCartProducts(guestUser)
         res.render("users/shop-cart", { cartItems, guestUser })
+      }else {
+        res.render("users/shop-cart")
       }
     } catch (error) {
       res.render("users/shop-cart", {
@@ -38,15 +37,15 @@ export const cartControlers = {
   addToCartGet: async (req, res) => {
     try {
       const guestUser = {}
-      guestUser.id = uuidv4()
-      if (!req.session?.guestUser) {
+      if (!req.session?.guestUser) {  
+        guestUser.id = uuidv4()
         req.session.guestUser = guestUser
-      }
+      }      
       const {productId , from } = req.query
       const userId = req.session.user?._id
       const guestUserId = req.session?.guestUser?.id
       userId && (await cartHelpers.addToCart(productId, userId,from))
-      guestUserId &&
+      guestUserId && 
         (await guestHelper.createGuestUser(guestUserId, productId))
       res.json({ status: true,from })
     } catch (error) {
@@ -56,17 +55,31 @@ export const cartControlers = {
   changeCartProductQuantity: async (req, res) => {
     try {
       const { userId } = req.body
-      const response = await cartHelpers.changeCartQuantity(req.body)
-      response.total = await cartHelpers.findTotalAmout(userId)
-      res.json(response)
-    } catch (error) {
+      if(req.session.user){
+        const response = await cartHelpers.changeCartQuantity(req.body)
+        response.total = await cartHelpers.findTotalAmout(userId)
+        res.json(response)   
+      } else {
+        const guestUser = req.session.guestUser?.id
+        const response = await cartHelpers.changeCartQuantityForGuest(guestUser,req.body)
+        response.total = await cartHelpers.findTotalAmountForGuest(guestUser)
+        res.json(response)
+
+      }
+    } catch (error) {   
       res.status(500).json("Internal Server Error")
     }
   },
   removeProducts: async (req, res) => {
     try {
-      const response = await cartHelpers.removeCartProducts(req.body)
-      res.json(response)
+      if(req.session.user) {
+        const response = await cartHelpers.removeCartProducts(req.body)
+        res.json(response)
+      } else {
+        const guestUser = req.session.guestUser?.id
+        const response = await cartHelpers.removeCartProductsGuest(guestUser,req.body)
+        res.json(response)
+      }
     } catch (error) {
       res.status(500).json("Internal Server Error")
     }

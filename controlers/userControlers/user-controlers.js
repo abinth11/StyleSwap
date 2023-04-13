@@ -7,21 +7,23 @@ export const userControler = {
   userHome: async (req, res) => {
     try {
       let cartCount,cartItems,wishListItems,wishCount
-      // userHelpers.resetCouponCount()
-      if (req.session.user) {
+      const user = req.session?.user
+      if (user) {
         const userId = req.session.user._id
         cartCount = await cartHelpers.getCartProductsCount(
-          userId )
+          userId ) 
          cartItems = await cartHelpers.getcartProducts(
           userId )
           wishListItems = await wishListHelper.getAllItemsInWishlist(userId)
           wishListItems = JSON.stringify(wishListItems?.products)
           wishCount = await wishListHelper.getWishedCount(userId)
-      }  
-      console.log(wishCount)
+          req.session.guestUser = null
+      }else {
+        const {guestUser} = req.session
+        cartCount = await cartHelpers.getCartProductsCountGuest(guestUser?.id) 
+      }     
       const products = await userProductHelpers.viewProduct()
       res.render("index", { user: req.session.user, products, cartCount,cartItems,wishListItems,wishCount })
-      req.session.guestUser = null
     } catch (error) {
       res.render("index", {
         warningMessage: "Internal Server Error Please try again later...",
