@@ -55,7 +55,7 @@ export const walletHelpers = {
       if (balance && balance >= total) {
         const paymentStatusUpdated = await ordersCollection.updateOne(
           { _id: ObjectId(orderId) },
-          { $set: { paymentStatus: "done" } }
+          { $set: { paymentStatus: "done",status:"placed" } }
         )
         if (paymentStatusUpdated.modifiedCount === 1) {
           const updatedBalance = balance - total
