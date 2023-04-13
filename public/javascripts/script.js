@@ -162,7 +162,6 @@ const changeQuantity = (cartId, productId, userId, count) => {
       userId
     },
     success: (response) => {
-      console.log(response)
       if (response.removed) {
         // Show the "Product Removed" modal
         $('#productRemovedModal').modal('show')

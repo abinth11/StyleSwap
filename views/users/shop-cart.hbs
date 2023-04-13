@@ -281,9 +281,11 @@
                                         </p>
                                     </td>
                                     {{#if offerPrice}}
-                                    <td class="price" data-title="Price"><span id="price-{{product_id}}">{{formatCurrency offerPrice}}</span></td>
+                                    <td class="price" data-title="Price"><span
+                                            id="price-{{product_id}}">{{formatCurrency offerPrice}}</span></td>
                                     {{else}}
-                                    <td class="price" data-title="Price"><span id="price-{{product_id}}">{{formatCurrency product_price}}</span>
+                                    <td class="price" data-title="Price"><span
+                                            id="price-{{product_id}}">{{formatCurrency product_price}}</span>
                                     </td>
                                     {{/if}}
                                     <td class="text-center" data-title="Stock">
@@ -624,7 +626,7 @@
                                                 <div class="form-row row justify-content-center">
                                                     <div class="form-group col-lg-6">
                                                         <input class="font-medium" name="couponCode"
-                                                            placeholder="Enter Your Coupon">
+                                                            placeholder="Enter Your Coupon" id="coupon-input">
                                                     </div>
                                                     <div class="form-group col-lg-6">
                                                         <button class="btn  btn-sm" id="apply-btn"><i
@@ -632,22 +634,31 @@
                                                     </div>
                                                 </div>
                                             </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                <div class="form-row">
-                                    <div class="form-group col-lg-12">
-                                        <div class="custom_select">
-                                            <select class="form-control select-active">
-                                                <option value="" selected disabled>Choose a coupon...</option>
-                                               
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                </div>
 
+                                            <div class="form-group col-lg-6 mt-2">
+                                                <div class="custom_select">
+                                                    <h5 class="mb-2">Select Coupon</h5>
+                                                    <select class="form-control select-active "
+                                                        onchange="changeCoupon()" id="coupon-select">
+                                                        {{#if coupons }}
+                                                        <option value="" selected disabled>Choose a coupon...</option>
+                                                        {{#each coupons}}
+                                                        <option value="{{couponCode}}">
+                                                            Name:{{name}}<br>
+                                                            Code:{{couponCode}}<br><br>
+                                                            {{!-- Minimum Purchase:{{minimumPurchaseAmount}}<br> --}}
+                                                            {{!-- Percentage:{{discountPercentage}}<br> --}}
+                                                        </option>
+                                                        {{/each}}
+                                                        {{else}}
+                                                        <option value="" selected disabled>No coupons found...</option>
+                                                        {{/if}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-12">
@@ -660,29 +671,31 @@
                                         <tbody>
                                             <tr>
                                                 <td class="cart_total_label">Total Price</td>
-                                                <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand" id="total-initial">{{formatCurrency
+                                                <td class="cart_total_amount"><span class="font-lg fw-900 text-brand"
+                                                        id="total-initial">{{formatCurrency
                                                         cartItems.total}}</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Price after discount</td>
-                                                <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand" id="offer-total">{{formatCurrency
+                                                <td class="cart_total_amount"><span class="font-lg fw-900 text-brand"
+                                                        id="offer-total">{{formatCurrency
                                                         cartItems.offerTotal}}</span>
                                                 </td>
                                             </tr>
-                                             <tr>
+                                            <tr>
                                                 <td class="cart_total_label">Coupon code discount</td>
                                                 <td class="cart_total_amount">
-                                                    <span class="font-lg fw-900 text-brand" id="coupon-discounted-amout">₹0.00</span></td>
+                                                    <span class="font-lg fw-900 text-brand"
+                                                        id="coupon-discounted-amout">₹0.00</span>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Saved</td>
-                                                <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand" id="saved-amount" >{{formatCurrency saved
+                                                <td class="cart_total_amount"><span class="font-lg fw-900 text-brand"
+                                                        id="saved-amount">{{formatCurrency saved
                                                         }}</span></td>
-                                                        <input type="hidden" id="saved-amount-input" value="{{saved}}">
+                                                <input type="hidden" id="saved-amount-input" value="{{saved}}">
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Shipping</td>
@@ -737,59 +750,55 @@
         window.location.href = '/userSignup';
     });
 
-$("#coupon-form").submit((e) => {
-  e.preventDefault();
-  const applyButton = document.getElementById('apply-btn');
-  let amount = document.getElementById('totalPrice').value;
-  const saved = document.getElementById('saved-amount-input').value
-  const formData = $('#coupon-form').serializeArray();
-  formData.push({ name: "amount", value: amount });  // add the amount value to the serialized form data
-  formData.push({name:'saved', value:saved})
-  console.log(formData);
-  $.ajax({
-    type: "POST",
-    url: '/apply-coupon-code',
-    data: formData,
-    success: (response) => {
-      if (response.valid) {
-        const { discountAmount } = response;
-        amount = parseInt(amount);
-        console.log(response);
-        const couponDiscountSpan = document.getElementById('coupon-discounted-amout')
-        let savedAmountBeforeCoupon = document.getElementById('saved-amount-input').value
-        savedAmountBeforeCoupon = parseFloat(savedAmountBeforeCoupon)
-        console.log(savedAmountBeforeCoupon)
-        const savedAmount = document.getElementById('saved-amount')
-        savedAmount.textContent = savedAmountBeforeCoupon+discountAmount
-        discountAmount ?couponDiscountSpan.textContent = discountAmount :couponDiscountSpan.textContent = 0
-        const amountAfterDiscount = amount - discountAmount;
-        const discountedAmountSpan = document.getElementById("totalAmout");
-        discountedAmountSpan.textContent = amountAfterDiscount;
-        console.log(amountAfterDiscount);
-        // Display a success message using SweetAlert
-        Swal.fire({
-          imageUrl: "https://tenor.com/0DW3.gif",
-          title: "Coupon applied!",
-          text: `You have saved ₹${discountAmount} on your purchase. Your total amount is now ₹${amountAfterDiscount}.`,
-          buttons: false,
-          timer: 5000 // milliseconds
+    $("#coupon-form").submit((e) => {
+        e.preventDefault();
+        const applyButton = document.getElementById('apply-btn');
+        let amount = document.getElementById('totalPrice').value;
+        const saved = document.getElementById('saved-amount-input').value
+        const formData = $('#coupon-form').serializeArray();
+        formData.push({ name: "amount", value: amount });  // add the amount value to the serialized form data
+        formData.push({ name: 'saved', value: saved })
+        $.ajax({
+            type: "POST",
+            url: '/apply-coupon-code',
+            data: formData,
+            success: (response) => {
+                if (response.valid) {
+                    const { discountAmount } = response;
+                    amount = parseInt(amount);
+                    const couponDiscountSpan = document.getElementById('coupon-discounted-amout')
+                    let savedAmountBeforeCoupon = document.getElementById('saved-amount-input').value
+                    savedAmountBeforeCoupon = parseFloat(savedAmountBeforeCoupon)
+                    const savedAmount = document.getElementById('saved-amount')
+                    savedAmount.textContent = savedAmountBeforeCoupon + discountAmount
+                    discountAmount ? couponDiscountSpan.textContent = discountAmount : couponDiscountSpan.textContent = 0
+                    const amountAfterDiscount = amount - discountAmount;
+                    const discountedAmountSpan = document.getElementById("totalAmout");
+                    discountedAmountSpan.textContent = amountAfterDiscount;
+                    // Display a success message using SweetAlert
+                    Swal.fire({
+                        imageUrl: "https://tenor.com/0DW3.gif",
+                        title: "Coupon applied!",
+                        text: `You have saved ₹${discountAmount} on your purchase. Your total amount is now ₹${amountAfterDiscount}.`,
+                        buttons: false,
+                        timer: 5000 // milliseconds
+                    });
+                    // Update the button text and disable it
+                    applyButton.textContent = 'Applied';
+                    applyButton.disabled = true;
+                } else {
+                    // Display an error message using SweetAlert
+                    Swal.fire({
+                        icon: "error",
+                        title: "Invalid coupon code",
+                        text: `${response.message}`,
+                        buttons: false,
+                        timer: 3000 // milliseconds
+                    });
+                }
+            }
         });
-        // Update the button text and disable it
-        applyButton.textContent = 'Applied';
-        applyButton.disabled = true;
-      } else {
-        // Display an error message using SweetAlert
-        Swal.fire({
-          icon: "error",
-          title: "Invalid coupon code",
-          text: `${response.message}`,
-          buttons: false,
-          timer: 3000 // milliseconds
-        });
-      }
-    }
-  });
-});
+    });
 
 
 </script>
@@ -854,4 +863,18 @@ $("#coupon-form").submit((e) => {
             localStorage.removeItem('display_sweet_alert'); // Remove the flag so the alert doesn't appear again
         }
     }
+
+    const changeCoupon = () => {
+        var selectElement = document.getElementById('coupon-select');
+        var inputElement = document.getElementById('coupon-input');
+        // Get the selected option's value and text
+        var selectedValue = selectElement.value;
+        var selectedText = selectElement.options[selectElement.selectedIndex].text;
+
+        // Update the input field with the selected option's value or text
+        inputElement.value = selectedValue || selectedText;
+
+    }
+
+
 </script>

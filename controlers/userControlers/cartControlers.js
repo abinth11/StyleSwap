@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
 import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
 import { guestHelper } from "../../helpers/userHelpers/guestHelper.js"
+import { couponHelpers } from "../../helpers/userHelpers/couponHelperes.js"
 export const cartControlers = {
   userCartGet: async (req, res) => {
     try {
@@ -11,21 +12,17 @@ export const cartControlers = {
         const cartItems = await cartHelpers.getcartProducts(
           req.session.user._id
         )
-        const totalAmout = await cartHelpers.findTotalAmout(
-          req.session.user._id
-        )
-        let saved = 0
-        if (totalAmout) {
-          saved = totalAmout.total - totalAmout.offerTotal
-        }
+        const coupons = await couponHelpers.getUserCoupons(user)
+        console.log(coupons)
+        const saved = 0
         const cartId = cartItems?._id
         res.render("users/shop-cart", {
           cartItems,
+          coupons, 
           user: req.session.user,
-          totalAmout,
-          cartId,
-          saved,
-        })
+          cartId, 
+          saved, 
+        }) 
       } else if (guestUser) {
         const cartItems = await guestHelper.getGuestUserCartProducts(
           req.session.guestUser.id
