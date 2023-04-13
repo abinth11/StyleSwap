@@ -2,6 +2,7 @@ import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
 import { userProductHelpers } from "../../helpers/userHelpers/userProductHelpers.js"
 import { couponHelpers } from "../../helpers/userHelpers/couponHelperes.js"
 import { wishListHelper } from "../../helpers/userHelpers/wishListHelpers.js"
+import { walletHelpers } from "../../helpers/userHelpers/walletHelpers.js"
 export const userControler = {
   userHome: async (req, res) => {
     try {
@@ -40,11 +41,11 @@ export const userControler = {
     try {
       const coupons = await couponHelpers.getUserCoupons(req.session.user._id)
       const myCoupons = coupons.reverse()
-      res.render("users/view-coupons-user", { myCoupons })
+      res.render("users/view-coupons-user", { myCoupons, user:req.session.user})
     } catch (error) {
       res.render("users/view-coupons-user", {
         warningMessage: "Internal Server Error Please try again later...",
-      })
+      }) 
     }
   },
   applyCouponCode: async (req, res) => {
@@ -55,6 +56,20 @@ export const userControler = {
       res.json(response)
     } catch (error) {
       res.render("users/shop-cart", {
+        warningMessage: "Internal Server Error Please try again later...",
+      })
+    }
+  },
+  activateWallet: async(req,res) =>{
+    try {
+      const user = req.session.user
+      const response = await walletHelpers.activateWallet(user)
+      console.log(response)
+      response.acknowledged
+      ?res.status(200).json(response)
+      :res.status(403).json(response)
+    } catch (error) {
+      res.render("user/wallet", {
         warningMessage: "Internal Server Error Please try again later...",
       })
     }

@@ -4,11 +4,11 @@ export const orderControler = {
     try {
       let orderGroup = await orderHelpers.getOrderedGroup(req.session.user._id)
       orderGroup = orderGroup.reverse()
-      res.render("users/shop-orders", { orderGroup })
+      res.render("users/shop-orders", { orderGroup, user:req.session.user})
     } catch (error) {
       res.render("users/shop-orders", {
         warningMessage: "Internal Server Error Please try again later...",
-      })
+      }) 
     }
   },
   viewOrderBundle: async (req, res) => {

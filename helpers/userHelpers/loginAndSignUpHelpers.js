@@ -3,10 +3,17 @@ import collection from "../../config/collections.js"
 import bcrypt from "bcrypt"
 export const loginAndSignUpHelpers = {
   regisUserUser: async (userData) => {
-    const { password, email, mobile } = userData
-    userData.active = true
+    const { name,password, email,active, mobile } = userData
+    const user = {
+      name,
+      email,
+      mobile,
+      password,
+      active
+    }
+    user.active = true
     try {
-      userData.password = await bcrypt.hash(password, 10)
+      user.password = await bcrypt.hash(password, 10)
       const checkedEmail = await db
         .get()
         .collection(collection.USER_COLLECTION)
@@ -23,7 +30,7 @@ export const loginAndSignUpHelpers = {
         const result = await db
           .get()
           .collection(collection.USER_COLLECTION)
-          .insertOne(userData)
+          .insertOne(user)
         return { status: true, userData: result.insertedId }
       }
     } catch (error) {

@@ -100,6 +100,7 @@ router.get(
   sessionChecker.isUserExist,
   paymentControlers.getWallet
 )
+router.get('/open-wallet/activate-wallet',sessionChecker.isUserExist,userControler.activateWallet)
 router.post("/wallet-payment", paymentControlers.walletPayment)
 
 // for verifying the payment

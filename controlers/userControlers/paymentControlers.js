@@ -85,7 +85,7 @@ export const paymentControlers = {
   },
   orderPlacedLanding: (req, res) => {
     try {
-      res.render("users/order-placed-landing")
+      res.render("users/order-placed-landing",{user:req.session.user})
       req.session.couponAppliedDetails = null
     } catch (error) {
       res.render("users/order-placed-landing", {
@@ -119,14 +119,18 @@ export const paymentControlers = {
   getWallet: async (req, res) => {
     try {
       const walletData = await walletHelpers.getWalletData(
-        req.session.user._id
-      )
-      walletData.transactions = walletData.transactions.reverse()
-      res.render("users/wallet", { walletData })
-    } catch (error) {
-      res.render("users/wallet", {
-        warningMessage: "Internal Server Error Please try again later...",
-      })
+        req.session.user._id 
+      )  
+      if (walletData) { 
+        walletData.transactions = walletData.transactions ? walletData.transactions.reverse() : []
+      }
+      console.log(walletData)
+      res.render("users/wallet", { walletData,user:req.session.user })
+    } catch (error) { 
+      console.log(error)
+      // res.render("users/wallet", {
+      //   warningMessage: "Internal Server Error Please try again later...",
+      // })
     }
   },
   walletPayment: async (req, res) => {
