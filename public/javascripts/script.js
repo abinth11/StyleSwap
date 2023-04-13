@@ -135,11 +135,22 @@ const deleteFromWishlist = (productId) =>{
 }
 
 
-
+function convertRupeeToInt(amount) {
+  /**
+   * Converts a string containing Indian Rupee symbol and numerical value to an integer.
+   * @param {string} amount - String containing Indian Rupee symbol and numerical value.
+   * @returns {number} - Integer representation of the amount.
+   */
+  const rupeeSymbol = '₹' // Indian Rupee symbol
+  const numericString = amount.replace(rupeeSymbol, '').replace(',', '') // Remove Rupee symbol and commas
+  const numericValue = parseInt(numericString, 10) // Convert to integer
+  return numericValue
+}
 
 
 const changeQuantity = (cartId, productId, userId, count) => {
-  const quantity = parseInt(document.getElementById(productId).innerHTML)
+  let quantity =parseInt(document.getElementById(`quantity-${productId}`).innerHTML)
+  console.log(quantity)
   $.ajax({
     type: 'POST',
     url: '/change-quantity',
@@ -151,6 +162,7 @@ const changeQuantity = (cartId, productId, userId, count) => {
       userId
     },
     success: (response) => {
+      console.log(response)
       if (response.removed) {
         // Show the "Product Removed" modal
         $('#productRemovedModal').modal('show')
@@ -170,18 +182,18 @@ const changeQuantity = (cartId, productId, userId, count) => {
           timer: 3000
         })
       } else {
-        document.getElementById(productId).innerHTML = quantity + count
+        document.getElementById(`quantity-${productId}`).innerHTML = quantity + count
         let total = response.total.total
         total = formatMoney(total)
         document.getElementById('totalAmout').innerHTML = total
-        const subtotalArr = response.subtotal
-        for (let i = 0; i < subtotalArr.length; i++) {
-          let subtotal = subtotalArr[i].subtotal
-          subtotal = formatMoney(subtotal)
-          const productId = subtotalArr[i]._id.toString()
-
-          document.getElementById(`${productId}-subtotal`).innerHTML = subtotal
-        }
+        let price = document.getElementById(`price-${productId}`).innerText
+        price = convertRupeeToInt(price)
+        quantity = quantity+count
+        let subtotal = price* quantity
+        subtotal = formatMoney(subtotal)
+        document.getElementById(`${productId}-subtotal`).innerHTML = subtotal
+        document.getElementById('offer-total').innerHTML = formatMoney(response.total.offerTotal)
+        document.getElementById('total-initial').innerHTML = formatMoney(response.total.total)
       }
     },
     error: function (data) {

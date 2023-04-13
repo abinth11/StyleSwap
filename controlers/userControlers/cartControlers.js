@@ -61,8 +61,6 @@ export const cartControlers = {
       const { userId } = req.body
       const response = await cartHelpers.changeCartQuantity(req.body)
       response.total = await cartHelpers.findTotalAmout(userId)
-      const subtotal = await cartHelpers.findSubTotal(userId)
-      response.subtotal = subtotal
       res.json(response)
     } catch (error) {
       res.status(500).json("Internal Server Error")

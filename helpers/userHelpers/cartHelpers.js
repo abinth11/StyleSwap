@@ -3,7 +3,7 @@ import collection from "../../config/collections.js"
 import { ObjectId } from "mongodb"
 import { wishListHelper } from "./wishListHelpers.js"
 export const cartHelpers = {
-  addToCart: async (productId, userId,from) => {
+  addToCart: async (productId, userId, from) => {
     const product = {
       item: ObjectId(productId),
       quantity: 1,
@@ -30,7 +30,8 @@ export const cartHelpers = {
                 $inc: { "products.$.quantity": 1 },
               }
             )
-            from == 'wishlist' && await wishListHelper.removeProducts(productId,userId)
+          from == "wishlist" &&
+            (await wishListHelper.removeProducts(productId, userId))
         } else {
           const response = await db
             .get()
@@ -43,7 +44,8 @@ export const cartHelpers = {
                 },
               }
             )
-            from == 'wishlist' && await wishListHelper.removeProducts(productId,userId)
+          from == "wishlist" &&
+            (await wishListHelper.removeProducts(productId, userId))
           return response
         }
       } else {
@@ -52,7 +54,8 @@ export const cartHelpers = {
           products: [product],
         }
         await db.get().collection(collection.CART_COLLECTION).insertOne(cart)
-        from == 'wishlist' && await wishListHelper.removeProducts(productId,userId)
+        from == "wishlist" &&
+          (await wishListHelper.removeProducts(productId, userId))
       }
       return true
     } catch (error) {
@@ -71,49 +74,54 @@ export const cartHelpers = {
       throw new Error("Failed to edit address.")
     }
   },
-  changeCartQuantity: async ({ cartId, productId, countArg, quantityArg }) => {
+  changeCartQuantity: async ({ cartId, productId, count:countArg, quantity:quantityArg }) => {
     const count = parseInt(countArg)
     const quantity = parseInt(quantityArg)
-
-    // Get the product's current stock level
-    const product = await db
-      .get()
-      .collection(collection.PRODUCT_COLLECTION)
-      .findOne({ _id: ObjectId(productId) })
-    const currentStockLevel = product.product_quantity
-    if (count === -1 && quantity === 1) {
-      // Remove the product from the cart
-      await db
-        .get()
-        .collection(collection.CART_COLLECTION)
-        .updateOne(
-          { _id: ObjectId(cartId) },
-          { $pull: { products: { item: ObjectId(productId) } } }
-        )
-      return { removed: true }
-    } else if (count > 0 && quantity >= currentStockLevel) {
-      // Set the product's status to "out of stock" and notify the user
-      await db
+    if(isNaN(quantity))
+     throw new Error("Quantity must be a number")
+    try {
+      // Get the product's current stock level
+      const product = await db
         .get()
         .collection(collection.PRODUCT_COLLECTION)
-        .updateOne(
-          { _id: ObjectId(productId) },
-          { $set: { status: "out of stock" } }
-        )
-      return {
-        status: false,
-        message: "The requested quantity is not available.",
+        .findOne({ _id: ObjectId(productId) })
+      const currentStockLevel = product.product_quantity
+      if (count === -1 && quantity === 1) {
+        // Remove the product from the cart
+        await db
+          .get()
+          .collection(collection.CART_COLLECTION)
+          .updateOne(
+            { _id: ObjectId(cartId) },
+            { $pull: { products: { item: ObjectId(productId) } } }
+          )
+        return { removed: true }
+      } else if (count > 0 && quantity >= currentStockLevel) {
+        // Set the product's status to "out of stock" and notify the user
+        await db
+          .get()
+          .collection(collection.PRODUCT_COLLECTION)
+          .updateOne(
+            { _id: ObjectId(productId) },
+            { $set: { status: "out of stock" } }
+          )
+        return {
+          status: false,
+          message: "The requested quantity is not available.",
+        }
+      } else {
+        // If the requested quantity is less than or equal to the stock level, update the quantity in the user's cart
+        await db
+          .get()
+          .collection(collection.CART_COLLECTION)
+          .findOneAndUpdate(
+            { _id: ObjectId(cartId), "products.item": ObjectId(productId) },
+            { $inc: { "products.$.quantity": count } }
+          )
+        return { status: true }
       }
-    } else {
-      // If the requested quantity is less than or equal to the stock level, update the quantity in the user's cart
-      await db
-        .get()
-        .collection(collection.CART_COLLECTION)
-        .findOneAndUpdate(
-          { _id: ObjectId(cartId), "products.item": ObjectId(productId) },
-          { $inc: { "products.$.quantity": count } }
-        )
-      return { status: true }
+    } catch (err) {
+      throw new Error(err)
     }
   },
   removeCartProducts: async ({ cartId, productId }) => {

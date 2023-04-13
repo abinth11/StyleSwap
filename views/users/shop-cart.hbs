@@ -281,9 +281,9 @@
                                         </p>
                                     </td>
                                     {{#if offerPrice}}
-                                    <td class="price" data-title="Price"><span>{{formatCurrency offerPrice}}</span></td>
+                                    <td class="price" data-title="Price"><span id="price-{{product_id}}">{{formatCurrency offerPrice}}</span></td>
                                     {{else}}
-                                    <td class="price" data-title="Price"><span>{{formatCurrency product_price}}</span>
+                                    <td class="price" data-title="Price"><span id="price-{{product_id}}">{{formatCurrency product_price}}</span>
                                     </td>
                                     {{/if}}
                                     <td class="text-center" data-title="Stock">
@@ -299,7 +299,7 @@
                                             <button class="" style="border: none;background: none;"
                                                 onclick="changeQuantity('{{../cartId}}','{{product_id}}','{{../user._id}}',-1)"><i
                                                     class="fi-rs-angle-small-down"></i></button>
-                                            <p class="" id="{{product_id}}">{{quantity}}</p>
+                                            <p class="" id="quantity-{{product_id}}">{{quantity}}</p>
                                             <button class="" style="border: none;background: none;"
                                                 onclick="changeQuantity('{{../cartId}}','{{product_id}}','{{../user._id}}',1)"><i
                                                     class="fi-rs-angle-small-up"></i></button>
@@ -340,7 +340,7 @@
                     {{#if cartItems.products}}
                     <div class="row mb-50">
                         <div class="col-lg-6 col-md-12">
-                            <div class="heading_s1 mb-3">
+                            {{!-- <div class="heading_s1 mb-3">
                                 <h4>Calculate Shipping</h4>
                             </div>
                             <p class="mt-15 mb-30">Flat rate: <span class="font-xl text-brand fw-900">5%</span></p>
@@ -612,7 +612,7 @@
                                         <button class="btn  btn-sm"><i class="fi-rs-shuffle mr-10"></i>Update</button>
                                     </div>
                                 </div>
-                            </form>
+                            </form> --}}
                             <div class="mb-30 mt-50">
                                 <div class="heading_s1 mb-3">
                                     <h4>Apply Coupon</h4>
@@ -635,6 +635,19 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                <div class="form-row">
+                                    <div class="form-group col-lg-12">
+                                        <div class="custom_select">
+                                            <select class="form-control select-active">
+                                                <option value="" selected disabled>Choose a coupon...</option>
+                                               
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-12">
@@ -648,14 +661,14 @@
                                             <tr>
                                                 <td class="cart_total_label">Total Price</td>
                                                 <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand">{{formatCurrency
+                                                        class="font-lg fw-900 text-brand" id="total-initial">{{formatCurrency
                                                         cartItems.total}}</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Price after discount</td>
                                                 <td class="cart_total_amount"><span
-                                                        class="font-lg fw-900 text-brand">{{formatCurrency
+                                                        class="font-lg fw-900 text-brand" id="offer-total">{{formatCurrency
                                                         cartItems.offerTotal}}</span>
                                                 </td>
                                             </tr>
