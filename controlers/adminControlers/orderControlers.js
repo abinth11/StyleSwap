@@ -14,8 +14,7 @@ export const orderControlers = {
         })
       },
       orderReturn: async (req, res) => {
-        const odr = await orderHelpers.getReturnedOrders()
-        const returnOrders = orderHelpers.ISO_to_Normal_Date(odr)
+        const returnOrders = await orderHelpers.getReturnedOrders()
         res.render("admin/order-return", { returnOrders })
       },
       changeReturnStatus: (req, res) => {

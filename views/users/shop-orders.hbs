@@ -37,41 +37,39 @@
 
 
 {{!-- Modal for returning the product --}}
-	<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content bg-danger">
-				<div class="modal-header border-0">
-					<button type="button" class="btn-close text-white" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
-				<div class="modal-body text-center p-4">
-					<i class="fas fa-exclamation-circle fa-4x text-white mb-3"></i>
-					<h5 class="modal-title text-white mb-3" id="returnModalLabel">Return Order</h5>
-					<form id="returnForm">
-						<div class="mb-3">
-							<label for="reason" class="form-label text-white">Reason for return:</label>
-							<select class="form-select" id="reason" name="reason">
-								<option value="" selected disabled>Select a reason</option>
-								<option value="defective item">Defective item</option>
-								<option value="wrong item">Wrong item received</option>
-								<option value="damaged item">Item arrived damaged</option>
-								<option value="others">Other</option>
-							</select>
-						</div>
-						<div class="mb-3" id="otherReasonContainer" style="display:none;">
-							<label for="otherReason" class="form-label text-white">Other reason:</label>
-							<textarea class="form-control" id="otherReason" name="otherReason"></textarea>
-						</div>
-						<button type="button" class="btn btn-sm btn-link text-white"
-							data-bs-dismiss="modal">Close</button>
-						<button type="submit" class="btn btn-sm btn-light px-3 py-2 me-2"
-							onclick="returnOrderModal()">Submit</button>
-						<input type="hidden" id="orderId" value="">
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-danger">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fas fa-exclamation-circle fa-4x text-white mb-3"></i>
+                <h5 class="modal-title text-white mb-3" id="returnModalLabel">Return Order</h5>
+                <form id="returnForm">
+                    <div class="mb-3">
+                        <label for="reason" class="form-label text-white">Reason for return:</label>
+                        <select class="form-select" id="return-reason" name="reason">
+                            <option value="" selected disabled>Select a reason</option>
+                            <option value="defective item">Defective item</option>
+                            <option value="wrong item">Wrong item received</option>
+                            <option value="damaged item">Item arrived damaged</option>
+                            <option value="others">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="otherReasonContainer" style="display:none;">
+                        <label for="otherReason" class="form-label text-white">Other reason:</label>
+                        <textarea class="form-control" id="otherReason" name="otherReason"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-link text-white" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-sm btn-light px-3 py-2 me-2"
+                        onclick="returnOrder()">Submit</button>
+                    <input type="hidden" id="orderId" value="">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -270,24 +268,27 @@
 
 
 
-                        <table   id="userTable" class="table  shopping-summery text-center">
+                        <table id="userTable" class="table  shopping-summery text-center">
                             <thead>
                                 <tr class="main-heading">
                                     <th scope="col" class="col-3">OrderId</th>
                                     <th scope="col" class="col-2">
-                                         <div style="display: inline-flex; align-items: center;">
-                <div>Date</div>
-                <div class="ms-2 mb-2" style="display: flex; flex-direction: column;width: 2em;height: 2em;">
-                    <div style="height: 1em; cursor: pointer;" class="">
-                        <button style="border: none;background-color: transparent;" onclick="sortByDate('asc')"><i class="fas fa-chevron-up"
-                                style="display: inline-block;"></i></button>
-                    </div>
-                    <div style="height: 1em;cursor: pointer;">
-                        <button style="border: none;background-color: transparent;" onclick="sortByDate('desc')"><i class="fas fa-chevron-down"
-                                style="display: inline-block;"></i></button>
-                    </div>
-                </div>
-            </div>
+                                        <div style="display: inline-flex; align-items: center;">
+                                            <div>Date</div>
+                                            <div class="ms-2 mb-2"
+                                                style="display: flex; flex-direction: column;width: 2em;height: 2em;">
+                                                <div style="height: 1em; cursor: pointer;" class="">
+                                                    <button style="border: none;background-color: transparent;"
+                                                        onclick="sortByDate('asc')"><i class="fas fa-chevron-up"
+                                                            style="display: inline-block;"></i></button>
+                                                </div>
+                                                <div style="height: 1em;cursor: pointer;">
+                                                    <button style="border: none;background-color: transparent;"
+                                                        onclick="sortByDate('desc')"><i class="fas fa-chevron-down"
+                                                            style="display: inline-block;"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </th>
                                     <th scope="col" class="price col-2">Price</th>
                                     <th scope="col" class="price col-2">Status</th>
@@ -297,7 +298,8 @@
                             <tbody>
                                 {{#each orderGroup}}
                                 <tr>
-                                    <td class="col-3"><a href="/view-order-bundle/{{_id}}" style="" title="{{products.length}} products">{{_id}}</a></td>
+                                    <td class="col-3"><a href="/view-order-bundle/{{_id}}" style=""
+                                            title="{{products.length}} products">{{_id}}</a></td>
                                     <td class="col-2"> {{formatDate date}}</td>
                                     <td class="price col-2" data-title="Price"><span>{{ formatCurrency
                                             offerTotal}}</span></td>
@@ -326,39 +328,41 @@
                                     <td>
                                         <div class="action-icons">
                                             {{#or (eq status "cancelled") (eq status "pending")}}
-                                            <button  style="font-size: 24px;background-color: transparent;color: none;border: none;"
+                                            <button
+                                                style="font-size: 24px;background-color: transparent;color: none;border: none;"
                                                 class=" text-warning text-center" title="Help">
-                                          <i class="las la-info-circle"  style="font-size: 24px;"></i>
+                                                <i class="las la-info-circle" style="font-size: 24px;"></i>
                                             </button>
                                             {{else}}
                                             {{#if (eq status "completed")}}
-                                                         
+
                                             {{#if (not returnStatus)}}
-                                            <button id="returnBtn"
+                                            <button
                                                 style="font-size: 24px;background-color: transparent;color: none;border: none;"
-                                                onclick="setReturnData('{{_id}}')"
-                                                class="  text-danger  text-center" title="Return"
-                                                 data-bs-toggle="modal" data-bs-target="#returnModal">
+                                                onclick="showOrderReturnModal('{{_id}}',event)"
+                                                class="  text-danger  text-center" title="Return">
                                                 <i class="las la-truck-loading" style="font-size: 24px;"></i></button>
-                                                {{/if}}
+                                            {{/if}}
                                             {{else}}
                                             <button id="cancelBtn"
                                                 style="font-size: 24px;background-color: transparent;border: none;"
                                                 onclick="setOrderCancellData('{{_id}}')" class="  text-danger"
-                                                	data-bs-toggle="modal" data-bs-target="#cancelModal" title="Cancel">
+                                                data-bs-toggle="modal" data-bs-target="#cancelModal" title="Cancel">
                                                 <i class="las la-times-circle"></i>
                                             </button>
 
                                             {{/if}}
-                                            
+
                                             {{/or}}
                                             <a href="/track-order/{{_id}}" class=" text-success"
-                                                style="font-size: 24px;background-color: transparent;border: none;" title="Track">
+                                                style="font-size: 24px;background-color: transparent;border: none;"
+                                                title="Track">
                                                 <i class="las la-map-marker-alt" style="font-size: 24px;"></i>
                                             </a>
                                             <a class=" text-primary text-center"
-                                                style="font-size: 24px;background-color: transparent;border: none;" href="/view-order-bundle/{{_id}}"> <i
-                                                    class="las la-eye" style="font-size: 24px;" title="View more"></i></a>
+                                                style="font-size: 24px;background-color: transparent;border: none;"
+                                                href="/view-order-bundle/{{_id}}"> <i class="las la-eye"
+                                                    style="font-size: 24px;" title="View more"></i></a>
 
                                             <p><i class="3-dots fa fa-ellipsis-h"></i></p>
                                         </div>
@@ -382,10 +386,11 @@
 
 {{>foot-user}}
 <style>
-    tr{
+    tr {
         height: 60px;
 
     }
+
     .action-icons button {
         display: none;
     }
@@ -414,47 +419,76 @@
 
 <script>
 
-    function setReturnData(orderId) {
-		document.getElementById('orderId').value = orderId
-	}
-    const returnOrderModal = () => {
-		const orderId = document.getElementById('orderId').value
-		const reason = document.getElementById('reason').value
-		returnProducts(orderId, reason)
-	}
-    const returnProducts = (orderId, reason) => {
-		$.ajax({
-			url: '/return-products',
-			data: {
-				orderId,
-				reason
-			},
-			method: 'post',
-			success: () => {
-				location.href = '/return-prducts'
-			}
+    const showOrderReturnModal = (orderId, event) => {
+        event.preventDefault()
+        $('#orderId').val(orderId);
+        $('#returnModal').modal('show');
+    }
+    const returnOrder = () => {
+        const orderId = $('#orderId').val();
+        const reason = $('#return-reason').val()
+        $.ajax({
+            url: '/return-products',
+            type: 'POST',
+            data: {
+                orderId,
+                reason
+            },
+            success: (response) => {
+                $('#returnModal').modal('hide');
+                if (response.status) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Your return request has been successfully submitted.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    setTimeout(() => {
+                        location.reload()
+                    }, 2000)
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Failed to submit return request. Please try again later.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            },
+            error: (error) => {
+                $('#returnModal').modal('hide');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to submit return request. Please try again later.',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        })
+    }
 
-		})
-	}
 
     //Filter table by the date...
-      //sort by date
-        function sortByDate(order) {
-            var rows = $('#userTable tbody tr').get();
-            rows.sort(function (a, b) {
-                var A = $(a).children('td').eq(4).text().toUpperCase();
-                var B = $(b).children('td').eq(4).text().toUpperCase();
-                if (A < B) {
-                    return order === 'asc' ? -1 : 1;
-                }
-                if (A > B) {
-                    return order === 'asc' ? 1 : -1;
-                }
-                return 0;
-            });
-            $.each(rows, function (index, row) {
-                $('#userTable tbody').append(row);
-            });
-        }
+    //sort by date
+    function sortByDate(order) {
+        var rows = $('#userTable tbody tr').get();
+        rows.sort(function (a, b) {
+            var A = $(a).children('td').eq(4).text().toUpperCase();
+            var B = $(b).children('td').eq(4).text().toUpperCase();
+            if (A < B) {
+                return order === 'asc' ? -1 : 1;
+            }
+            if (A > B) {
+                return order === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+        $.each(rows, function (index, row) {
+            $('#userTable tbody').append(row);
+        });
+    }
 
 </script>

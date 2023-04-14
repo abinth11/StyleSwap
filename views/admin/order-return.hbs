@@ -63,7 +63,7 @@
                                 <td><b>{{name}}</b></td>
                                 <td>{{mobile}}</td>
                                 <td>${{totalPrice}}</td>
-                                <td>{{date}}</td>
+                                <td>{{ formatDateTwo date}}</td>
                                 {{#if (eq returnStatus "accepted")}}
                                 <td><span class="badge rounded-pill alert-success">Accepted</span></td>
                                 {{else if (eq returnStatus "pending")}}

@@ -103,53 +103,11 @@
         </tr>
         </thead>
         <tbody>
-            {{!-- {{#each orders}}
-            <tr>
-                <td>0901</td>
-                <td><b>{{name}}</b></td>
-                <td id="mobile">{{mobile}}</td>
-                <td>{{formatCurrency totalPrice}}</td>
-                <td id="order-date">{{formatDateTwo date}}</td>
-                {{#if (eq status "placed")}}
-                <td><span class="badge rounded-pill alert-success">Placed</span></td>
-                {{else if (eq status "pending")}}
-                <td><span class="badge rounded-pill alert-warning">Pending</span></td>
-                {{else if (eq status "cancelled")}}
-                <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
-                {{else if (eq status "confirmed")}}
-                <td><span class="badge rounded-pill alert-warning">Confirmed</span></td>
-                {{else if (eq status "shipped")}}
-                <td><span class="badge rounded-pill alert-primary">Shipped</span></td>
-                {{else if (eq status "delivery")}}
-                <td><span class="badge rounded-pill alert-info">Delivery</span></td>
-                {{else if (eq status "completed")}}
-                <td><span class="badge rounded-pill alert-secondary">Completed</span></td>
-                {{/if}}
-                <td class="">
-                    <div class="status-buttons">
-                        <select class="form-select form-select-sm"
-                            onchange="changeOrderStatus('{{_id}}','{{status}}', this.value)"
-                            style="font-size: 13px;width: 140px;">
-                            <option selected disabled>Change status</option>
-                            <option value="placed">Placed</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="delivery">Delivery</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
-                </td>
-                <td class="">
-                    <a href="/admin/dashboard/admin-view-orders/view-order-details/{{_id}}"
-                        class="btn btn-md rounded font-sm">Details</a>
-                </td>
-            </tr>
-            {{/each}} --}}
         </tbody>
         </table>
-        </div> <!-- table-responsive //end -->
-        </div> <!-- card-body end// -->
-        </div> <!-- card end// -->
+        </div> 
+        </div> 
+        </div> 
 
         <div class="pagination-area mt-15 mb-50">
             <nav aria-label="Page navigation example">

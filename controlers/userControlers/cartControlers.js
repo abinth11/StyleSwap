@@ -18,7 +18,6 @@ export const cartControlers = {
           cartItems,
           coupons, 
           user: req.session.user,
-          guestUser,
           cartId, 
           saved, 
         })  

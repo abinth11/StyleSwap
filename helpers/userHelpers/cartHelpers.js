@@ -151,7 +151,7 @@ export const cartHelpers = {
       return { removed: true }
     } catch (error) {
       return { removed: false }
-    }
+    } 
   },
   findTotalAmout: async (userId) => {
     try {

@@ -153,9 +153,12 @@ export const productControler = {
       res.status(500).json({ message: "Internal server error" })
     }
   },
-  returnProducts: (req, res) => {
+  returnProducts:async (req, res) => {
     try {
-      orderHelpers.returnProduct(req.body)
+      const response = await orderHelpers.returnProduct(req.body)
+      response.modifiedCount
+      ?res.status(200).json({status:true,Message:"Successfully requested for return"})
+      :res.status(403).json({status:false,Message:"Return request failed.."})
     } catch (error) {
       res.render("users/view-orders", {
         warningMessage: "Internal Server Error Please try again later...",
