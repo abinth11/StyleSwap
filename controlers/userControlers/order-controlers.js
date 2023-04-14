@@ -38,7 +38,7 @@ export const orderControler = {
     try {
       const order = await orderHelpers.getOrderStatus(req.params.id)
       const statusDates = await orderHelpers.getStatusDates(req.params.id)
-      res.render("users/track-order", { order, statusDates })
+      res.render("users/track-order", { order, statusDates,user:req.session.user })
     } catch (error) {
       res.render("users/track-order", {
         warningMessage: "Internal Server Error Please try again later...",
