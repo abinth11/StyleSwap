@@ -80,7 +80,7 @@ export const helpers = {
     return array.includes(value)
   },
   lowerCase: (str) => {
-    return str.toLowerCase()
+    return str?.toLowerCase()
   },
 
   // add more helper functions here...

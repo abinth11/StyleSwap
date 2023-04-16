@@ -18,8 +18,8 @@ export const productControler = {
         availabeSizes,
       })
     } catch (error) {
-      res
-        .statu(500)
+      res 
+        .status(500)
         .json({ Message: "Error while changing product color", error: true })
     }
   },
@@ -44,7 +44,7 @@ export const productControler = {
         availabeColors,
         availabeSizes,
         parentId,
-        userId,
+        userId, 
         parent
       })
     } catch (error) {
@@ -56,6 +56,7 @@ export const productControler = {
   mensCategory: async (req, res) => {
     try {
       const products = await userProductHelpers.getMensProducts()
+      console.log(products)
       const numberofProducts = products.length
       res.render("users/shop-men", { products, numberofProducts })
     } catch (error) {
@@ -155,16 +156,10 @@ export const productControler = {
   },
   returnProducts:async (req, res) => {
     try {
-      const {reason} = req.body
-      if(reason) {
         const response = await orderHelpers.returnProduct(req.body)
-        console.log(req.body)  
         response.modifiedCount
         ?res.status(200).json({status:true,Message:"Successfully requested for return"})
         :res.status(403).json({status:false,Message:"Return request failed.."})
-      } 
-      console.log('no reason')
-
     } catch (error) {
       res.render("users/view-orders", {
         warningMessage: "Internal Server Error Please try again later...",

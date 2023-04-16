@@ -47,7 +47,7 @@ export const cartControlers = {
       guestUserId && 
         (await guestHelper.createGuestUser(guestUserId, productId))
       res.json({ status: true,from })
-    } catch (error) {
+    } catch (error) { 
       res.status(500).json({ Message: "Internal server error" })
     }
   },

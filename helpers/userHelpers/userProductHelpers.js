@@ -228,10 +228,31 @@ export const userProductHelpers = {
   },
   getMensProducts: async () => {
     try {
+      const pipeline = [
+        {
+          $match: { category: 'Mens' } 
+        },
+        {
+          $lookup: { 
+            from: collection.PRODUCT_COLLECTION, 
+            localField: '_id', 
+            foreignField: 'parentId', 
+            as: 'products' 
+          }
+        },
+        {
+          $unwind: '$products' 
+        },
+        {
+          $replaceRoot: {
+            newRoot: '$products' 
+          }
+        }
+      ]
       const products = await db
-        .get()
-        .collection(collection.PRODUCT_COLLECTION)
-        .find({ product_category: "Mens" })
+        .get() 
+        .collection(collection.PRODUCT_TEMPLATE)
+        .aggregate(pipeline)
         .toArray()
       return products
     } catch (error) {
@@ -240,10 +261,31 @@ export const userProductHelpers = {
   },
   getWomensProducts: async () => {
     try {
+      const pipeline = [
+        {
+          $match: { category: 'Womens' } 
+        },
+        {
+          $lookup: { 
+            from: collection.PRODUCT_COLLECTION, 
+            localField: '_id', 
+            foreignField: 'parentId', 
+            as: 'products' 
+          }
+        },
+        {
+          $unwind: '$products' 
+        },
+        {
+          $replaceRoot: {
+            newRoot: '$products' 
+          }
+        }
+      ]
       const products = await db
-        .get()
-        .collection(collection.PRODUCT_COLLECTION)
-        .find({ product_category: "Womens" })
+        .get() 
+        .collection(collection.PRODUCT_TEMPLATE)
+        .aggregate(pipeline)
         .toArray()
       return products
     } catch (error) {
@@ -252,10 +294,31 @@ export const userProductHelpers = {
   },
   getKidsProducts: async () => {
     try {
+      const pipeline = [
+        {
+          $match: { category: 'Kids' } 
+        },
+        {
+          $lookup: { 
+            from: collection.PRODUCT_COLLECTION, 
+            localField: '_id', 
+            foreignField: 'parentId', 
+            as: 'products' 
+          }
+        },
+        {
+          $unwind: '$products' 
+        },
+        {
+          $replaceRoot: {
+            newRoot: '$products' 
+          }
+        }
+      ]
       const products = await db
-        .get()
-        .collection(collection.PRODUCT_COLLECTION)
-        .find({ product_category: "Kids" })
+        .get() 
+        .collection(collection.PRODUCT_TEMPLATE)
+        .aggregate(pipeline)
         .toArray()
       return products
     } catch (error) {
@@ -273,16 +336,16 @@ export const userProductHelpers = {
         .aggregate([
           {
             $match: {
-              userId: ObjectId(userId), 
-              status: "completed", 
+              userId: ObjectId(userId),
+              status: "completed",
             },
           },
           {
-            $unwind: "$products", 
+            $unwind: "$products",
           },
           {
             $match: {
-              "products.item": ObjectId(productId), 
+              "products.item": ObjectId(productId),
             },
           },
           {
