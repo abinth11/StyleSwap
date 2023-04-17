@@ -96,7 +96,6 @@ export const profileControlers = {
     try {
       const userId = req.session.user._id
       const userDetails = await profileHelpers.getLoginedUser(userId)
-      console.log(userDetails)
       res.render("users/user-profile/user-dashboard", {
         user: req.session.user,
         userDetails,  

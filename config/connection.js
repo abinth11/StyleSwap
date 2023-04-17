@@ -13,7 +13,6 @@ const state = {
       return state.db
     })
     .catch((err) => {
-      console.error('Failed to connect to MongoDB', err)
       throw err // rethrow the error to be caught by the caller
     })
 }

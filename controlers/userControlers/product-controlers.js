@@ -56,7 +56,6 @@ export const productControler = {
   mensCategory: async (req, res) => {
     try {
       const products = await userProductHelpers.getMensProducts()
-      console.log(products)
       const numberofProducts = products.length
       res.render("users/shop-men", { products, numberofProducts })
     } catch (error) {

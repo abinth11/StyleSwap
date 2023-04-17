@@ -26,9 +26,7 @@ const server = createServer(app)
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port, () => {
-  console.log(`listening on http://localhost:${port}`)
-})
+server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
 
@@ -68,11 +66,9 @@ function onError (error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges')
       process.exit(1)
       break
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use')
       process.exit(1)
       break
     default:

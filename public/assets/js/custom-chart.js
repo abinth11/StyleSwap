@@ -232,7 +232,6 @@ fetch("/admin/data-for-other-graphs-and-chart")
         })
       })
       .catch((error) => {
-        console.error("Error fetching data:", error)
       })
   }
   

@@ -64,7 +64,6 @@ export const categoryControler = {
         }
       },
       editSubCategory: () => {
-        // console.log(req.body)
       },
       deleteSubCategory: async (req, res) => {
         try {

@@ -31,7 +31,6 @@ export const wishListController = {
       const {productId } = req.params
       const userId = req.session.user._id
       const response = await wishListHelper.removeProducts(productId,userId)
-      console.log(response)
       res.json(response)
     } catch (error) {
       res.status(500).json("Internal Server Error")

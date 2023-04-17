@@ -108,7 +108,6 @@ const checkPrice = () => {
   let valid = false
   let price = priceEl.value.trim()
   price = parseInt(price)
-  console.log(price)
   if (!isRequired(price)) {
     showError(priceEl, 'price cannot be blank.')
   } else if (typeof price !== 'number' || isNaN(price)) {
@@ -306,7 +305,6 @@ const debounce = (fn, delay = 500) => {
 
 //   // submit to the server if the form is valid
 //   if (isFormValid) {
-//     console.log('form is valid')
 //     $.ajax({
 //       type: 'POST',
 //       url: '/admin/addProduct3',

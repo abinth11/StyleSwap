@@ -7,13 +7,9 @@ const otherHelpers = {
     try {
       const suggestionKey = 'suggest-key'
       const searchKey = searchTerm.toLowerCase()
-      // Get search suggestions from Redis
       const suggestionResult = await redisClient.ZRANGEBYSCORE(suggestionKey, 0, 5,'WITHSCORES')
-       console.log(suggestionResult)
-      // Check Redis cache for search results
       const redisResult = await redisClient.GET(searchKey)
       if (redisResult) {
-        console.log('Result from Redis cache')
         redisClient.ZINCRBY(suggestionKey, 1, searchKey)
         return { products: JSON.parse(redisResult), suggestions: suggestionResult }
       }
@@ -28,21 +24,16 @@ const otherHelpers = {
         )
         .sort({ score: { $meta: 'textScore' } })
         .toArray()
-  
-      console.log(result)
-  
+    
       // If result found in MongoDB, store it in Redis cache for future use
       if (result.length) {
-        console.log('Results found in MongoDB')
         redisClient.SETEX(searchKey, 3600, JSON.stringify(result))
         redisClient.ZINCRBY(suggestionKey, 1, searchKey)
       }
-  
-      console.log('Value successfully set in Redis.')
-  
+    
       return { products: result, suggestions: suggestionResult }
     } catch (error) {
-      console.error('Error setting value in Redis:', error)
+      throw new Error(error)
     }
   },
   currencyFormatter: (price) => {
@@ -61,7 +52,7 @@ const otherHelpers = {
         return false
       }
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
   },
   createIndexForProducts: () => {
@@ -84,12 +75,10 @@ const otherHelpers = {
           product_description: 1,
         },
       },
-      (err, result) => {
+      (err) => {
         if (err) {
-          console.log(err)
           throw new Error("Error creating index")
         }
-        console.log(result)
       }
     )
   },

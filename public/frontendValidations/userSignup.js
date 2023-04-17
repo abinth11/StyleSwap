@@ -146,7 +146,6 @@ form.addEventListener('submit', function (e) {
 
   // submit to the server if the form is valid
   if (isFormValid) {
-    console.log('form is valid')
     $.ajax({
       type: 'POST',
       url: '/userSignUp',

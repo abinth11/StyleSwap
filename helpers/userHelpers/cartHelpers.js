@@ -419,8 +419,6 @@ export const cartHelpers = {
   },
   changeCartQuantityForGuest:async(guestId,info) =>{
     try {
-      console.log(guestId)
-      console.log(info)
       let {productId,count,quantity} = info
        count = parseInt(count)
      quantity = parseInt(quantity)

@@ -150,7 +150,6 @@ function convertRupeeToInt(amount) {
 
 const changeQuantity = (cartId, productId, userId, count) => {
   let quantity =parseInt(document.getElementById(`quantity-${productId}`).innerHTML)
-  console.log(quantity)
   $.ajax({
     type: 'POST',
     url: '/change-quantity',

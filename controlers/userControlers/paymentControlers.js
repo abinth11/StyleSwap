@@ -124,13 +124,11 @@ export const paymentControlers = {
       if (walletData) { 
         walletData.transactions = walletData.transactions ? walletData.transactions.reverse() : []
       }
-      console.log(walletData)
       res.render("users/wallet", { walletData,user:req.session.user })
     } catch (error) { 
-      console.log(error)
-      // res.render("users/wallet", {
-      //   warningMessage: "Internal Server Error Please try again later...",
-      // })
+      res.render("users/wallet", {
+        warningMessage: "Internal Server Error Please try again later...",
+      })
     }
   },
   walletPayment: async (req, res) => {

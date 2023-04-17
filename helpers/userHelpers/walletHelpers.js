@@ -119,7 +119,6 @@ export const walletHelpers = {
         updatedAt: currentDateTime,
       }
       const response = await db.get().collection(collection.WALLET).insertOne(wallet)
-      console.log(response)
       return response
     } catch (error) {
       throw new Error("Error while activating wallet")
