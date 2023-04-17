@@ -1,8 +1,6 @@
 import { validationResult } from "express-validator"
 import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
-import { orderHelpers } from "../../helpers/adminHelpers/orderHelpers.js"
 import { uploadStream } from "../../config/cloudinary.js"
-import { Readable } from 'stream'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
@@ -10,6 +8,7 @@ export const profileControlers = {
   editUserProfile: async (req, res) => {
     try {
       const id = req.session?.user._id
+      console.log(req.session)
       const userDetails = await profileHelpers.getLoginedUser(id)
       const address = await profileHelpers.getUserAddress(id)
       res.render("users/edit-profile", {
@@ -98,7 +97,6 @@ export const profileControlers = {
     try {
       const userId = req.session.user._id
       const userDetails = await profileHelpers.getLoginedUser(userId)
-      console.log(userDetails)
       res.render("users/user-profile/user-dashboard", {
         user: req.session.user,
         userDetails,
@@ -111,13 +109,13 @@ export const profileControlers = {
   },
   userProfileOrders: async (req, res) => {
     try {
-      const odr = await orderHelpers.getOrdersProfile(req.session.user._id)
-      const orders = orderHelpers.ISO_to_Normal_Date(odr)
+      const orders = await profileHelpers.getOrdersProfile(req.session.user._id)
       res.render("users/user-profile/user-orders", { orders })
     } catch (error) {
-      res.render("users/user-profile/user-orders", {
-        warningMessage: "Internal Server Error Please try again later...",
-      })
+      console.log(error)
+      // res.render("users/user-profile/user-orders", {
+      //   warningMessage: "Internal Server Error Please try again later...",
+      // })
     }
   },
   userProfileTrackOrders: (req, res) => {
@@ -185,7 +183,7 @@ export const profileControlers = {
         warningMessage: "Internal Server Error Please try again later...",
       })
     }
-  },
+  }, 
   changePasswordPost: async (req, res) => {
     try {
       const errors = validationResult(req)

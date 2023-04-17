@@ -42,11 +42,6 @@
                     aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="track-orders-tab" href="/profile-track-orders" role="tab"
-                    aria-controls="track-orders" aria-selected="false"><i
-                        class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" id="address-tab" href="/profile-address" role="tab" aria-controls="address"
                     aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
             </li>
@@ -55,12 +50,14 @@
                     aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Account
                     details</a>
             </li>
-
-            <li class="nav-item">
+            {{#if userDetails.registeredWithGoogle}}
+             {{else}}
+             <li class="nav-item">
                 <a class="nav-link" id="account-detail-tab" href="/profile-change-password" role="tab"
                     aria-controls="account-detail" aria-selected="true"><i class="fa-solid fa-lock mr-10"></i>Change
                     password</a>
             </li>
+            {{/if}}
             <li class="nav-item">
                 <a class="nav-link" href="/logoutUser"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
             </li>

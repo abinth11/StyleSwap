@@ -171,18 +171,6 @@ export const orderHelpers = {
       throw new Error(error)
     }
   },
-  getOrdersProfile: async (orderId) => {
-    try {
-      const orders = await db
-        .get()
-        .collection(collection.ORDER_COLLECTION)
-        .find({ userId: ObjectId(orderId) })
-        .toArray()
-      return orders
-    } catch (error) {
-      throw new Error(error)
-    }
-  },
   getProductsWithSameId: async (orderId) => {
     try {
       const products = await db

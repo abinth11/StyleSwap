@@ -194,7 +194,7 @@ export const profileHelpers = {
         .toArray()
       return addresses
     } catch (error) {
-      throw new Error("Failed to fetch all orders of the user")
+      throw new Error("Failed to fetch all address of the user")
     }
   },
   uploadProfilePhoto:async(photo,userId)=>{
@@ -212,5 +212,17 @@ export const profileHelpers = {
     } catch (error){
       throw new Error("Failed to upload profile phot")
     }
-  }
+  },
+  getOrdersProfile: async (orderId) => {
+    try {
+      const orders = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .find({ userId: ObjectId(orderId) })
+        .toArray()
+      return orders
+    } catch (error) {
+      throw new Error(error)
+    }
+  },
 }
