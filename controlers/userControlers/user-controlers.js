@@ -3,16 +3,18 @@ import { userProductHelpers } from "../../helpers/userHelpers/userProductHelpers
 import { couponHelpers } from "../../helpers/userHelpers/couponHelperes.js"
 import { wishListHelper } from "../../helpers/userHelpers/wishListHelpers.js"
 import { walletHelpers } from "../../helpers/userHelpers/walletHelpers.js"
+import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
 export const userControler = {
   userHome: async (req, res) => {
     try {
-      let cartCount,cartItems,wishListItems,wishCount
+      let cartCount,cartItems,wishListItems,wishCount,userDetails
       const user = req.session?.user
       if (user) {
         const userId = req.session.user._id
         cartCount = await cartHelpers.getCartProductsCount(
           userId ) 
-         cartItems = await cartHelpers.getcartProducts(
+          userDetails = await profileHelpers.getLoginedUser(userId)
+          cartItems = await cartHelpers.getcartProducts(
           userId )
           wishListItems = await wishListHelper.getAllItemsInWishlist(userId)
           wishListItems = JSON.stringify(wishListItems?.products)
@@ -23,7 +25,7 @@ export const userControler = {
         cartCount = await cartHelpers.getCartProductsCountGuest(guestUser?.id) 
       }     
       const products = await userProductHelpers.viewProduct()
-      res.render("index", { user: req.session.user, products, cartCount,cartItems,wishListItems,wishCount })
+      res.render("index", { user: req.session.user, products, cartCount,cartItems,wishListItems,wishCount,userDetails })
     } catch (error) {
       res.render("index", {
         warningMessage: "Internal Server Error Please try again later...",
