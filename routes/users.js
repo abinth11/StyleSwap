@@ -161,11 +161,6 @@ router.get(
   productControler.viewMoreProducts
 )
 router.get(
-  "/profile-track-orders",
-  sessionChecker.isUserExist,
-  profileControlers.userProfileTrackOrders
-)
-router.get(
   "/profile-account-detail",
   sessionChecker.isUserExist,
   profileControlers.userAccountDetails

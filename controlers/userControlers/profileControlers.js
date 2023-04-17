@@ -8,7 +8,6 @@ export const profileControlers = {
   editUserProfile: async (req, res) => {
     try {
       const id = req.session?.user._id
-      console.log(req.session)
       const userDetails = await profileHelpers.getLoginedUser(id)
       const address = await profileHelpers.getUserAddress(id)
       res.render("users/edit-profile", {
@@ -112,17 +111,7 @@ export const profileControlers = {
       const orders = await profileHelpers.getOrdersProfile(req.session.user._id)
       res.render("users/user-profile/user-orders", { orders })
     } catch (error) {
-      console.log(error)
-      // res.render("users/user-profile/user-orders", {
-      //   warningMessage: "Internal Server Error Please try again later...",
-      // })
-    }
-  },
-  userProfileTrackOrders: (req, res) => {
-    try {
-      res.render("users/user-profile/user-track-orders")
-    } catch (error) {
-      res.render("users/user-profile/user-track-orders", {
+      res.render("users/user-profile/user-orders", {
         warningMessage: "Internal Server Error Please try again later...",
       })
     }
