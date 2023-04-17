@@ -1,23 +1,29 @@
-
-
-<div class="col-md-12" >
+<div class="col-md-12">
     <div class="col-lg-12 ">
         <div class="card">
             <div class="card-body row">
                 <div class="col-lg-3">
-                    <img src="https://mdbcdn.b-cdn.net/img/new/avatars/1.webp" class="rounded-circle shadow-4"
-                        style="width: 50px;" alt="Avatar" />
+                    {{#if userDetails.image}}
+                    <img src="{{userDetails.image}}" class="rounded-circle shadow-4" style="width: 50px;"
+                        alt="Avatar" />
+                    {{else}}
+                    <img src="/imgs/avatar/profile.png" class="rounded-circle shadow-4" style="width: 50px;"
+                        alt="Avatar" />
+                    {{/if}}
+
                 </div>
                 <div class="col-lg-3">
                     <ul>
-                        <li>Hello,</li>
                         <li>{{userDetails.name}}</li>
                     </ul>
                 </div>
-                <div class="col-lg-6">
-                    <div class="row">
-                        <button class="btn btn-xs btn-primary" type="button">
-                            <span style="font-size: 10px;">Change <i class="fa fa-fw fa-camera"></i></span>
+                <div class="col-lg-6  pt-3">
+                    <div class="row ">
+                        <!-- File input element with a hidden style -->
+                        <input class="file-input" type="file" id="fileInput">
+                        <!-- Button to trigger the file input click event -->
+                        <button class="file-button btn btn-xl" onclick="document.getElementById('fileInput').click()">
+                            Change <i class="fa fa-fw fa-camera"></i>
                         </button>
 
                     </div>
@@ -28,22 +34,21 @@
     <div class="dashboard-menu mt-4">
         <ul class="nav flex-column" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="dashboard-tab"  href="/profile-dashboard" role="tab"
-                    aria-controls="dashboard" aria-selected="false"><i
-                        class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                <a class="nav-link " id="dashboard-tab" href="/profile-dashboard" role="tab" aria-controls="dashboard"
+                    aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="orders-tab"  href="/profile-orders" role="tab"
-                    aria-controls="orders" aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                <a class="nav-link" id="orders-tab" href="/profile-orders" role="tab" aria-controls="orders"
+                    aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="track-orders-tab"  href="/profile-track-orders" role="tab"
+                <a class="nav-link" id="track-orders-tab" href="/profile-track-orders" role="tab"
                     aria-controls="track-orders" aria-selected="false"><i
                         class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="address-tab" href="/profile-address" role="tab"
-                    aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
+                <a class="nav-link" id="address-tab" href="/profile-address" role="tab" aria-controls="address"
+                    aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="account-detail-tab" href="/profile-account-detail" role="tab"
@@ -52,7 +57,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" id="account-detail-tab"  href="/profile-change-password" role="tab"
+                <a class="nav-link" id="account-detail-tab" href="/profile-change-password" role="tab"
                     aria-controls="account-detail" aria-selected="true"><i class="fa-solid fa-lock mr-10"></i>Change
                     password</a>
             </li>
@@ -62,3 +67,137 @@
         </ul>
     </div>
 </div>
+<style>
+    /* Style for the file input element */
+    .file-input {
+        display: none;
+    }
+
+    /* Style for the button */
+    .file-button {
+        /* Add your desired button styles here */
+        /* For example: */
+        padding: 5px 10px;
+        color: #fff;
+        cursor: pointer;
+        border: none;
+        font-size: 10px;
+    }
+
+    /* Define the keyframe animation for the moving bar */
+    @keyframes moveBar {
+        0% {
+            left: -100%;
+            /* Start from left side of the container */
+        }
+
+        100% {
+            left: 100%;
+            /* Move to right side of the container */
+        }
+    }
+
+
+
+    /* Define the styles for the custom loading bar */
+    .custom-loading-bar {
+        overflow: hidden;
+        /* Hide overflow to prevent scrollbar */
+
+        width: 100%;
+        /* Set the width of the container */
+        height: 2px;
+        /* Set the height of the loading bar */
+        background-color: #007bff;
+        /* Set the background color of the loading bar */
+        position: relative;
+        /* Set the position to relative for absolute positioning of the bar */
+    }
+
+    /* Define the styles for the moving bar animation */
+    .custom-loading-bar::after {
+        content: "";
+        /* Add an empty content for the bar */
+        display: block;
+        /* Set the display to block for absolute positioning */
+        width: 100%;
+        /* Set the width of the bar to 100% of the container */
+        height: 100%;
+        /* Set the height of the bar to 100% of the container */
+        background-color: #ffffff;
+        /* Set the background color of the bar */
+        position: absolute;
+        /* Set the position to absolute for positioning relative to the container */
+        animation: moveBar 2s infinite linear;
+        /* Apply the keyframe animation to the bar */
+    }
+</style>
+
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', function () {
+        var file = this.files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+            // Convert the file to a base64-encoded string
+            var base64String = reader.result.split(',')[1];
+
+            var loadingSwal = Swal.fire({
+                title: "Uploading",
+                html: '<div class="custom-loading-bar"></div>', // Replace with your custom HTML for the moving bar animation
+                showCancelButton: false,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass: {
+                    container: 'loading-swalert-container', // Add a custom class to the container
+                },
+                onBeforeOpen: () => {
+                    // Add the `animate__animated` class to the alert element for animation effect
+                    Swal.getPopup().classList.add("animate__animated");
+                },
+            });
+
+
+            // Make the AJAX call
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload-profile-photo'); // Replace with your endpoint URL
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.onload = function () {
+                // Hide the loading spinner
+                loadingSwal.close();
+
+                if (xhr.status === 200) {
+                    // Handle success response
+                    Swal.fire({
+                        title: "Success",
+                        text: "Image uploaded successfully",
+                        icon: "success",
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        text: "Failed to upload image",
+                        icon: "error",
+                    });
+                }
+            };
+            xhr.onerror = function () {
+                // Hide the loading spinner
+                loadingSwal.close();
+
+                Swal.fire({
+                    title: "Error",
+                    text: "Failed to upload image",
+                    icon: "error",
+                });
+            };
+            xhr.send(JSON.stringify({ image: base64String }));
+        };
+
+        // Read the file as a data URL
+        reader.readAsDataURL(file);
+    });
+</script>

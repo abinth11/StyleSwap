@@ -197,4 +197,20 @@ export const profileHelpers = {
       throw new Error("Failed to fetch all orders of the user")
     }
   },
+  uploadProfilePhoto:async(photo,userId)=>{
+    try {
+  const result = await db.get().collection(collection.USER_COLLECTION).updateOne(
+    {_id:ObjectId(userId)},
+    {
+      $set :{
+        image:photo
+      }
+    },
+    {upsert:true}
+  )
+  return result
+    } catch (error){
+      throw new Error("Failed to upload profile phot")
+    }
+  }
 }

@@ -29,3 +29,17 @@ export async function uploadSingle(image) {
   const result = await cloudinary.uploader.upload(image.path)
   return result.secure_url
 }
+
+
+export async function uploadStream(image) {
+  cloudinary.config({
+    // eslint-disable-next-line no-undef
+    cloud_name: process.env.CLOUD_NAME,
+    // eslint-disable-next-line no-undef
+    api_key: process.env.API_KEY,
+    // eslint-disable-next-line no-undef
+    api_secret: process.env.API_SECRET,
+  })
+  const result = await cloudinary.uploader.upload(image)
+  return result.secure_url
+}

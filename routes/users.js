@@ -149,6 +149,7 @@ router.get(
   sessionChecker.isUserExist,
   profileControlers.userProfileDash
 )
+router.post('/upload-profile-photo',sessionChecker.isUserExist,profileControlers.uploadProfilePhoto)
 router.get(
   "/profile-orders",
   sessionChecker.isUserExist,
@@ -224,7 +225,7 @@ router.post(
   "/apply-coupon-code",
   sessionChecker.isUserExist,
   userControler.applyCouponCode
-)
+) 
 
 //? ROUTES FOR CATEGORY WISE FILTERING
 //purchase based on category

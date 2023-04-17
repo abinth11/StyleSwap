@@ -1,6 +1,11 @@
 import { validationResult } from "express-validator"
 import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
 import { orderHelpers } from "../../helpers/adminHelpers/orderHelpers.js"
+import { uploadStream } from "../../config/cloudinary.js"
+import { Readable } from 'stream'
+import fs from 'fs'
+import os from 'os'
+import path from 'path'
 export const profileControlers = {
   editUserProfile: async (req, res) => {
     try {
@@ -34,17 +39,16 @@ export const profileControlers = {
     try {
       const userId = req.session.user?._id
       const { addressFromCheckOut } = req.body
-      req.body.userId = userId 
+      req.body.userId = userId
       profileHelpers.addNewAddress(req.body).then(() => {
         const jsonResponse = addressFromCheckOut
-          ? { addressFromCheckOut: true }  
-          : { addressFromProfile: true } 
-        res.json(jsonResponse) 
-
-      })            
+          ? { addressFromCheckOut: true }
+          : { addressFromProfile: true }
+        res.json(jsonResponse)
+      })
     } catch (error) {
       res
-        .status(500) 
+        .status(500)
         .json({ error: true, message: "Error occurred while adding address" })
     }
   },
@@ -90,10 +94,14 @@ export const profileControlers = {
       })
     }
   },
-  userProfileDash: (req, res) => {
+  userProfileDash: async (req, res) => {
     try {
+      const userId = req.session.user._id
+      const userDetails = await profileHelpers.getLoginedUser(userId)
+      console.log(userDetails)
       res.render("users/user-profile/user-dashboard", {
         user: req.session.user,
+        userDetails,
       })
     } catch (error) {
       res.render("users/user-profile/user-dashboard", {
@@ -196,6 +204,29 @@ export const profileControlers = {
       res.render("users/user-profile/user-change-password", {
         warningMessage: "Internal Server Error Please try again later...",
       })
+    } 
+  }, 
+  uploadProfilePhoto: async (req, res) => {
+    try {
+      const imageBase64 = req.body.image
+      const buffer = Buffer.from(imageBase64, "base64")
+      const tempFilePath = path.join(os.tmpdir(), "temp_image.jpg")
+      fs.writeFileSync(tempFilePath, buffer)
+      const url = await uploadStream(tempFilePath)
+      const userId = req.session.user._id
+       if(url){
+        profileHelpers.uploadProfilePhoto(url,userId).then((response)=>{
+          response.acknowledged
+          ?res.status(200).json({Message:"Successfully uploaded profile photo"})
+          :res.status(403).json({Message:"Error while uploading profile photo"})
+        })
+       }else {
+        res.status(402).json({"Message":"Something went wrong while uploading profile photo"})
+       }  
+      fs.unlinkSync(tempFilePath)
+    } catch (err) {
+      res.status(500).json({"Message":"Something went wrong while uploading profile photo"})
     }
-  },
+  }
+   
 }
