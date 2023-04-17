@@ -149,7 +149,6 @@ export const productControler = {
     try {
       const orderedProductsWithSameId =
         await orderHelpers.getProductsWithSameId(req.params.id)
-        console.log(orderedProductsWithSameId)
       res.render("users/view-more-orders", { orderedProductsWithSameId })
     } catch (error) {
       res.status(500).json({ message: "Internal server error" })

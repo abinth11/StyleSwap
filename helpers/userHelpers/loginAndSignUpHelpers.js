@@ -95,6 +95,7 @@ export const loginAndSignUpHelpers = {
           email: userInfo.emails[0].value,
           registeredWithGoogle: true,
           active: true,
+          image:userInfo.photos[0].value
         }
         const userExist = await db
           .get()
