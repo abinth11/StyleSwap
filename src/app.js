@@ -20,6 +20,7 @@ import {redisConnect} from "../config/redisCache.js"
 import otherHelpers from "../helpers/otherHelpers.js"
 import passport from "passport"
 import { offerHelpers } from "../helpers/adminHelpers/offerHelpers.js"
+import cors from 'cors'
 const { json, urlencoded } = pkg
 const serveStatic = express.static
 const app = express()
@@ -48,6 +49,7 @@ app.use(json())
 app.use(urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(serveStatic(join(__dirname, "../public/")))
+app.use(cors())
 const oneDay = 1000 * 60 * 60 * 24
 app.use(
   session({
@@ -62,6 +64,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use("/", usersRouter)
 app.use("/admin", adminRouter)
+
 connect()
   .then(() => {
     console.log("Successfully connected to the database")
@@ -70,6 +73,7 @@ connect()
   .catch((err) => {
     console.log("Connection failed", err)
   })
+  
 redisConnect()
    .then(()=> {
     console.log("Successfull connected to redis")

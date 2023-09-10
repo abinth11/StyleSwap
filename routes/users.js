@@ -239,9 +239,12 @@ router.post("/shop-product-right/edit-review", productControler.editRating)
 
 router.get(
   "/get-available-size-and-color/:productId",
-  productControler.getSizeAndColor
-)
-// User logout
+  productControler.getSizeAndColor 
+) 
+router.get('/test-api',(req,res)=>{
+  res.status(200).json({Message:"Hello request is success"})
+})
+// User logout 
 router.get("/logoutUser", userControler.userLogout)
 
 export default router
