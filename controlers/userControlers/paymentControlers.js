@@ -3,6 +3,7 @@ import { paymentHelpers } from "../../helpers/userHelpers/paymentHelpers.js"
 import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
 import { walletHelpers } from "../../helpers/userHelpers/walletHelpers.js"
 import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
+import HttpStatusCodes from "../../contants/httpStatusCodes.js"
 export const paymentControlers = {
   proceedToCheckOutGet: async (req, res) => {
     try {
@@ -80,7 +81,7 @@ export const paymentControlers = {
         res.json({ status: false })
       }
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" })
     }
   },
   orderPlacedLanding: (req, res) => {
@@ -113,7 +114,7 @@ export const paymentControlers = {
           res.json({ status: false, errorMsg: err })
         })
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" })
     }
   },
   getWallet: async (req, res) => {
@@ -145,7 +146,7 @@ export const paymentControlers = {
       response.coupon = coupon
       res.json(response)
     } catch (error) {
-      res.status(500).json({ status: false, errorMsg: "Something went wrong" })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ status: false, errorMsg: "Something went wrong" })
     }
   },
   buyNow: async (req, res) => {
@@ -155,16 +156,16 @@ export const paymentControlers = {
       if (req.session?.user?._id) {
         const response = cartHelpers.addToCart(productId, userId)
         response
-          ? res.status(200).json({ status: true, Message: "Success" })
+          ? res.status(HttpStatusCodes.OK).json({ status: true, Message: "Success" })
           : res
-              .status(500)
+              .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
               .json({ status: true, Message: "Something went wrong" })
       } else {
-        res.status(200).json({ status: false, Message: "User is not logined" })
+        res.status(HttpStatusCodes.OK).json({ status: false, Message: "User is not logined" })
       }
     } catch (error) {
       res
-        .status(500)
+        .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
         .json({
           error: true,
           errorMsg: "Something went wrong please try again later",

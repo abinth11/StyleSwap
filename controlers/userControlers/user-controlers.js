@@ -4,6 +4,7 @@ import { couponHelpers } from "../../helpers/userHelpers/couponHelperes.js"
 import { wishListHelper } from "../../helpers/userHelpers/wishListHelpers.js"
 import { walletHelpers } from "../../helpers/userHelpers/walletHelpers.js"
 import { profileHelpers } from "../../helpers/userHelpers/profileHelpers.js"
+import HttpStatusCodes from "../../contants/httpStatusCodes.js"
 export const userControler = {
   userHome: async (req, res) => {
     try {
@@ -69,8 +70,8 @@ export const userControler = {
       const user = req.session.user
       const response = await walletHelpers.activateWallet(user)
       response.acknowledged
-      ?res.status(200).json(response)
-      :res.status(403).json(response)
+      ?res.status(HttpStatusCodes.OK).json(response)
+      :res.status(HttpStatusCodes.BAD_REQUEST).json(response)
     } catch (error) {
       res.render("user/wallet", {
         warningMessage: "Internal Server Error Please try again later...",

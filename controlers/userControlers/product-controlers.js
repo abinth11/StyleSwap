@@ -2,6 +2,7 @@ import fetchcallHelpers from "../../helpers/fetch-apis.js"
 import { userProductHelpers } from "../../helpers/userHelpers/userProductHelpers.js"
 import { orderHelpers } from "../../helpers/userHelpers/orderHelpers.js"
 import otherHelpers from "../../helpers/otherHelpers.js"
+import HttpStatusCodes from "../../contants/httpStatusCodes.js"
 export const productControler = {
   changeProduct: async (req, res) => {
     try {
@@ -11,7 +12,7 @@ export const productControler = {
       const allowedColors = ["red", "green", "blue", "yellow", "black","maroon"]
       const availabeColors = parent.availabeColors
       const availabeSizes = parent.availabeSizes
-      res.status(200).json({
+      res.status(HttpStatusCodes.OK).json({
         product,
         allowedColors,
         availabeColors,
@@ -19,7 +20,7 @@ export const productControler = {
       })
     } catch (error) {
       res 
-        .status(500)
+        .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
         .json({ Message: "Error while changing product color", error: true })
     }
   },
@@ -94,10 +95,10 @@ export const productControler = {
         response.products = response.products.slice(0,7)
       }
       response?.products  
-      ?res.status(200).json(response)
-      :res.status(400).json({"Message":"Result not found"})
+      ?res.status(HttpStatusCodes.OK).json(response)
+      :res.status(HttpStatusCodes.BAD_REQUEST).json({"Message":"Result not found"})
     } catch (err) {
-      res.status(500).json({Message:"failed to search the product"})
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({Message:"failed to search the product"})
     }
   },
   addRatingForProducts: async (req, res) => {
@@ -113,7 +114,7 @@ export const productControler = {
         res.json({ Message: "Please login to add a review ", status: false })
       }
     } catch (error) {
-      res.status(500).json({ message: "Error while adding rating" })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Error while adding rating" })
     }
   },
   editRating: async (req,res) => {
@@ -121,10 +122,10 @@ export const productControler = {
       const userId = req.session.user._id
       const response = await userProductHelpers.editReviews(req.body,userId)
       response.acknowledged
-      ?res.status(200).json({status:true,"Message":"Updated comment"})
-      :res.status(403).json({status:false,"Message":"Error while updating comment"})
+      ?res.status(HttpStatusCodes.OK).json({status:true,"Message":"Updated comment"})
+      :res.status(HttpStatusCodes.BAD_REQUEST).json({status:false,"Message":"Error while updating comment"})
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" })
     }
 
   },
@@ -136,12 +137,12 @@ export const productControler = {
         const sizeAndColor = await fetchcallHelpers.getSizeAndColor(productId)
         const colors = sizeAndColor.availabeColors
         const sizes = sizeAndColor.availabeSizes
-        res.status(200).json({ colors, sizes, stock: true })
+        res.status(HttpStatusCodes.OK).json({ colors, sizes, stock: true })
       } else {
-        res.status(200).json(response)
+        res.status(HttpStatusCodes.OK).json(response)
       }
     } catch (error) {
-      res.status(500).json({ Message: "Internal server error", status: error })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ Message: "Internal server error", status: error })
     }
   },
   viewMoreProducts: async (req, res) => {
@@ -150,15 +151,15 @@ export const productControler = {
         await orderHelpers.getProductsWithSameId(req.params.id)
       res.render("users/view-more-orders", { orderedProductsWithSameId })
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" })
     }
   },
   returnProducts:async (req, res) => {
     try {
         const response = await orderHelpers.returnProduct(req.body)
         response.modifiedCount
-        ?res.status(200).json({status:true,Message:"Successfully requested for return"})
-        :res.status(403).json({status:false,Message:"Return request failed.."})
+        ?res.status(HttpStatusCodes.OK).json({status:true,Message:"Successfully requested for return"})
+        :res.status(HttpStatusCodes.BAD_REQUEST).json({status:false,Message:"Return request failed.."})
     } catch (error) {
       res.render("users/view-orders", {
         warningMessage: "Internal Server Error Please try again later...",
