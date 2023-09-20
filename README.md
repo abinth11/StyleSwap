@@ -1,6 +1,6 @@
-`E-commerce App`
+`StyleSwap`
 
-This is an e-commerce app built with Node.js, Express,Redis and MongoDB. It allows users to browse and purchase products online.
+StyleSwap is a e-commerce app built with Node.js, Express,Redis and MongoDB. It allows users to browse and purchase products online.
 
 # Frameworks and libraries used
 
