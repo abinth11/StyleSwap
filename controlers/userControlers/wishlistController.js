@@ -1,3 +1,4 @@
+import HttpStatusCodes from "../../contants/httpStatusCodes.js"
 import { wishListHelper } from "../../helpers/userHelpers/wishListHelpers.js"
 export const wishListController = {
     addToWishList:async (req,res) =>{
@@ -12,7 +13,7 @@ export const wishListController = {
             res.json({status:false})
           }   
           } catch (error) {
-            res.status(500).json({ Message: "Internal server error" })
+            res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ Message: "Internal server error" })
           }
     },
       userWishlistGet: async (req, res) => {
@@ -33,7 +34,7 @@ export const wishListController = {
       const response = await wishListHelper.removeProducts(productId,userId)
       res.json(response)
     } catch (error) {
-      res.status(500).json("Internal Server Error")
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json("Internal Server Error")
     }
   },
 

@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid"
 import { cartHelpers } from "../../helpers/userHelpers/cartHelpers.js"
 import { guestHelper } from "../../helpers/userHelpers/guestHelper.js"
 import { couponHelpers } from "../../helpers/userHelpers/couponHelperes.js"
+import HttpStatusCodes from "../../contants/httpStatusCodes.js"
 export const cartControlers = {
   userCartGet: async (req, res) => {
     try {
@@ -48,7 +49,7 @@ export const cartControlers = {
         (await guestHelper.createGuestUser(guestUserId, productId))
       res.json({ status: true,from })
     } catch (error) { 
-      res.status(500).json({ Message: "Internal server error" })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ Message: "Internal server error" })
     }
   },
   changeCartProductQuantity: async (req, res) => {
@@ -66,7 +67,7 @@ export const cartControlers = {
 
       }
     } catch (error) {   
-      res.status(500).json("Internal Server Error")
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json("Internal Server Error")
     }
   },
   removeProducts: async (req, res) => {
@@ -80,7 +81,7 @@ export const cartControlers = {
         res.json(response)
       }
     } catch (error) {
-      res.status(500).json("Internal Server Error")
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json("Internal Server Error")
     }
   },
 }

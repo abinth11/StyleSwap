@@ -4,6 +4,7 @@ import { uploadStream } from "../../config/cloudinary.js"
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
+import HttpStatusCodes from "../../contants/httpStatusCodes.js"
 export const profileControlers = {
   editUserProfile: async (req, res) => {
     try {
@@ -46,7 +47,7 @@ export const profileControlers = {
       })
     } catch (error) {
       res
-        .status(500)
+        .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: true, message: "Error occurred while adding address" })
     }
   },
@@ -196,6 +197,7 @@ export const profileControlers = {
   uploadProfilePhoto: async (req, res) => {
     try {
       const imageBase64 = req.body.image
+      // eslint-disable-next-line no-undef
       const buffer = Buffer.from(imageBase64, "base64")
       const tempFilePath = path.join(os.tmpdir(), "temp_image.jpg")
       fs.writeFileSync(tempFilePath, buffer)

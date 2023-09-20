@@ -4,6 +4,7 @@ import { generateOpt, verifyOtp } from "../../middlewares/twilio.js"
 import { guestHelper } from "../../helpers/userHelpers/guestHelper.js"
 import {cartHelpers} from '../../helpers/userHelpers/cartHelpers.js'
 import {walletHelpers} from '../../helpers/userHelpers/walletHelpers.js'
+import HttpStatusCodes from "../../contants/httpStatusCodes.js"
 export const userLoginAndSignupControler = {
   userSignUpGet: (req, res) => {
     try {
@@ -47,7 +48,7 @@ export const userLoginAndSignupControler = {
         res.json({ status: false })
       }
     } catch (error) {
-      res.status(500).json("Internal Server Error")
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json("Internal Server Error")
     }
   },
   userLoginGet: (req, res) => {
@@ -161,18 +162,18 @@ export const userLoginAndSignupControler = {
           }else if (from === 'buyNow') {
             const response = await cartHelpers.addToCart(productId,userId)
             response
-            ?res.status(200).json(successResponse)
-            :res.status(200).json({status:false,"Message":"Internal serser error"})
+            ?res.status(HttpStatusCodes.OK).json(successResponse)
+            :res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({status:false,"Message":"Internal serser error"})
            }else {
             res.json(successResponse)
           }
         } else {
           req.session.loginError = "Invalid phone number or password"
-          res.status(200).json({ status: false })
+          res.status(HttpStatusCodes.BAD_REQUEST).json({ status: false })
         }
       }
     } catch (error) {
-      res.status(500).json("Internal Server Error", { status: false })
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json("Internal Server Error", { status: false })
     }
   },
   loginWithGoogleRedirect:async (req,res) =>{
