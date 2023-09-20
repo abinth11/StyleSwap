@@ -1,5 +1,5 @@
-import db from "../../config/connection.js"
-import collection from "../../config/collections.js"
+import db from "../../config/database.js"
+import collection from "../../contants/collections.js"
 import { ObjectId as objectId } from "mongodb"
 export const stockHelper = {
     getAllProductsAndOutofStock:async () => {

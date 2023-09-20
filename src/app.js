@@ -4,7 +4,7 @@ import pkg from "body-parser"
 import { join, dirname } from "path"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
-import { connect } from "../config/connection.js"
+import { connect } from "../config/database.js"
 import { engine } from "express-handlebars"
 import { helpers } from "../middlewares/handlebarHelpers.js"
 import session from "express-session"
@@ -21,6 +21,7 @@ import otherHelpers from "../helpers/otherHelpers.js"
 import passport from "passport"
 import { offerHelpers } from "../helpers/adminHelpers/offerHelpers.js"
 import cors from 'cors'
+import routes from "../routes/index.js"
 const { json, urlencoded } = pkg
 const serveStatic = express.static
 const app = express()
@@ -62,8 +63,8 @@ app.use(
 app.use(nocache())
 app.use(passport.initialize())
 app.use(passport.session())
-app.use("/", usersRouter)
-app.use("/admin", adminRouter)
+
+routes(app)
 
 connect()
   .then(() => {

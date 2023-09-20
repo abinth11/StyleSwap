@@ -1,6 +1,6 @@
 import redisClient from "../config/redisCache.js"
-import collection from "../config/collections.js"
-import db from "../config/connection.js"
+import collection from "../contants/collections.js"
+import db from "../config/database.js"
 import { couponHelpers } from "./userHelpers/couponHelperes.js"
 const otherHelpers = {
   getProductsWithRedis: async (searchTerm) => {
