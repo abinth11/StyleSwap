@@ -1,5 +1,6 @@
 import passport from "passport"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
+import ENV_VARS from "../src/env-vars"
 passport.serializeUser((user,done)=>{
 done(null,user)
 })
@@ -8,9 +9,9 @@ passport.deserializeUser((user,done)=>{
        
 })
 passport.use(new GoogleStrategy({
-    clientID: "775881117552-sadk4h5jbejfrrc8bj51j0ctvpe8psom.apps.googleusercontent.com",
-    clientSecret: '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',
-    callbackURL: "https://styleswap.online/userLogin/login-with-google/callback",
+    clientID:ENV_VARS.GOOGLE_CLIENT_ID,
+    clientSecret: ENV_VARS.GOOGLE_CLIENT_SECRET,
+    callbackURL: ENV_VARS.GOOGLE_CALLBACK_URL,
     passReqToCallback: true, 
   }, (request, accessToken, refreshToken, profile, done) => {
     return done(null,profile)

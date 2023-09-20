@@ -1,12 +1,13 @@
 import { MongoClient } from 'mongodb'
+import ENV_VARS from '../src/env-vars'
 
 const state = {
   db: null
 }
 
  export const connect = async () => {
-  const url = process.env.DB_URL ?? 'mongodb+srv://abinth250:nYLxpl4cJ8e4iIs6@cluster0.ml4r8cb.mongodb.net/test'
-  const dbName = 'StyleSwap'
+  const url = ENV_VARS.DB_URL
+  const dbName = ENV_VARS.DB_NAME
   return MongoClient.connect(url)
     .then((client) => {
       state.db = client.db(dbName)
