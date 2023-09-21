@@ -209,11 +209,9 @@
                         // Add the new row to the table
                         $('#userTable tbody').append(newRow);
                     });
-                    console.log(response)
 
                 },
                 error: (error) => {
-                    console.log(error)
                 }
             })
         }
@@ -256,7 +254,6 @@
         var pageIdx=1
         $(document).ready(function () {
             const totalPages = Math.ceil($('#total-pages').val() / 7)
-            console.log(totalPages)
             var $pagination = $('#pagination');
             $pagination.empty();
 
@@ -284,21 +281,17 @@
                     activePage = $(this).parent().data('page');
                     if(activePage == 1) counter = 0
                     else counter = activePage*7
-                    console.log(activePage)
                     limitAndSkipDocuments(activePage);
                     $pagination.find('.active').removeClass('active');
                     $(this).parent().addClass('active');
                 });
 
                 $pagination.on('click', '#previousPage', function () {
-                    console.log(activePage+"beforeprev")
                     if(activePage == 2) counter = 0
                     else counter = (activePage -1) *7
-                    console.log(counter+"prev")
                     if (activePage > 1) {
                         activePage--;
                         limitAndSkipDocuments(activePage);
-                        console.log(activePage)
 
                         $pagination.find('.active').removeClass('active');
                         $pagination.find('li[data-page="' + activePage + '"]').addClass('active');
@@ -310,7 +303,6 @@
                     if (activePage < totalPages) {
                         activePage++;
                         limitAndSkipDocuments(activePage);
-                        console.log(activePage)
 
                         $pagination.find('.active').removeClass('active');
                         $pagination.find('li[data-page="' + activePage + '"]').addClass('active');
@@ -374,7 +366,6 @@
     <script>
         const changeOrderStatus = (orderId, newStatus) => {
             const currStatus = $('#statusSpan_' + orderId).text()
-            console.log(orderId, currStatus, newStatus)
 
             $.ajax({
                 url: "/admin/change-product-status",
@@ -385,11 +376,8 @@
                 },
                 method: 'post',
                 success: (res) => {
-                    console.log(getStatusClass(currStatus))
-                    console.log(getStatusClass(newStatus))
                     const statusSpan = $('#statusSpan_' + orderId);
                     statusSpan.removeClass()
-                    console.log(statusSpan)
 
                     statusSpan.addClass(getStatusClass(newStatus)).text(newStatus);
 
@@ -403,7 +391,6 @@
 
 
         const viewMoreOrders = (orderId) => {
-            console.log(orderId);
             $.ajax({
                 url: "/admin/view-order-details",
                 data: {

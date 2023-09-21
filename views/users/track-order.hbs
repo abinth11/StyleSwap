@@ -153,7 +153,6 @@
     const returnOrder = () => {
         const orderId = $('#orderId').val();
         const reason = $('#return-reason-track').val()
-		console.log(reason)
         $.ajax({
             url: '/return-products',
             type: 'POST',
@@ -164,7 +163,6 @@
             success: (response) => {
                 $('#returnModal').modal('hide');
                 if (response.status) {
-					console.log(response)
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',

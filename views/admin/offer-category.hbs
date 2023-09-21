@@ -148,7 +148,6 @@
                 url: '/admin/dashboard/add-offers-by-category',
                 data: $('#add-offer').serialize(),
                 success: function (response) {
-                    console.log(response);
                     if (response.length) {
                         const categoryNameInput = document.getElementById('category-name-exists');
                         const categoryPriceInput = document.getElementById('exist-price')
@@ -168,14 +167,12 @@
         });
         const ReplaceOffer = () => {
             const data = $('#add-offer').serialize()
-            console.log(data)
             $.ajax({
                 type: 'POST',
                 url: '/admin/replace-offer',
                 data: $('#add-offer').serialize(),
                 success:(response)=>{
                     if(response){
-                        console.log(response)
                     }
                 }
 

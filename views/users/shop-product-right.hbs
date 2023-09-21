@@ -1130,7 +1130,6 @@
             url: "/shop-product-right/add-rating-for-products",
             data: $('#add-rating').serialize() + "&rating=" + stars + "&productId=" + productId + "&comment=" + myTextareaValue,
             success: (response) => {
-                console.log(response);
                 if (response.status) {
                     const ratingValue = $('input[name="rating"]:checked').val();
                     const productId = document.getElementById('product_id').value;
@@ -1150,7 +1149,6 @@
                         confirmButtonColor: '#3085d6',
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            console.log('User clicked OK');
                         }
                     });
                 } else if (response.notPurchased) {
@@ -1358,13 +1356,11 @@
     }
 
     const buyNow = (productId) => {
-        console.log(productId)
         $.ajax({
             url:"/shop-product-right/buyNow",
             type:"POST",
             data:{productId},
             success:(response)=>{
-                console.log(response)
                 if(response.status){
                     location.href= '/proceed-to-checkout'
 
@@ -1373,7 +1369,6 @@
                 }
             },
             error:(err)=>{
-                console.log(err)
 
             }
         })

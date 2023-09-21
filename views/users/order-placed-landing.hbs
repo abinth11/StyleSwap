@@ -232,11 +232,9 @@
 
   try {
     const couponDetails = JSON.parse(decodeURIComponent(couponDetailsParam))
-    console.log(couponDetails)
 
     if (couponDetails) {
       $('#coupon-div').show()
-      console.log('coupon here')
       const {
         couponCode,
         brand,
@@ -253,7 +251,6 @@
       $('#percentage').text(discountPercentage)
       $('#logo').attr('src', image);
     } else {
-      console.log('no coupon')
       $('#coupon-div').hide()
     }
   } catch (error) {

@@ -971,7 +971,6 @@
             url: "/shop-product-right/add-rating-for-products",
             data: $('#add-rating').serialize() + "&rating=" + stars + "&productId=" + productId + "&comment=" + myTextareaValue,
             success: (response) => {
-                console.log(response);
                 if (response.status) {
                     const ratingValue = $('input[name="rating"]:checked').val();
                     const productId = document.getElementById('product_id').value;
@@ -991,7 +990,7 @@
                         confirmButtonColor: '#3085d6',
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            console.log('User clicked OK');
+                            
                         }
                     });
                 } else if (response.notPurchased) {
@@ -1068,7 +1067,6 @@
 
 
 
-    {{!-- // Define a function to retrieve and update the product details
 function updateProductDetails() {
   // Check if product details are stored in localStorage
   const storedProductDetails = localStorage.getItem('productDetails');
@@ -1077,37 +1075,30 @@ function updateProductDetails() {
     // Parse the JSON data
     const productDetails = JSON.parse(storedProductDetails);
 
-    // Update the product details on the page
     const productImage = document.querySelector('#image-one');
     const hoverImage = document.querySelector('#image-hover')
     productImage.src = productDetails.product.images.image1;
     hoverImage.src = productDetails.product.images.image1;
 
-    // Update any other elements that depend on the product details
   }
 }
 
 
-// Call the function when the page finishes loading
 window.onload = function() {
   updateProductDetails();
 };
 
 
    const changeProduct = (productId, parentId) => {
-    // Make the AJAX request to get the updated product details
     $.ajax({
         url: 'shop-product-right',
         type: "POST",
         data: { productId, parentId },
         success: (response) => {
-            // Update the DOM elements with the new product data
             const productImage = document.querySelector('#image-one');
             const hoverImage = document.querySelector('#image-hover');
             productImage.src = response.product.images.image1;
             hoverImage.src = response.product.images.image2;
-            console.log(response.product.images.image2)
-            // Store the updated product details in localStorage
             localStorage.setItem('productDetails', JSON.stringify(response));
         }
     });

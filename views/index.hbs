@@ -1977,8 +1977,6 @@
             url: `/get-available-size-and-color/${productId}`,
             type: 'GET',
             success: (response) => {
-                console.log(response)
-                console.log(response.stock)
                 if (!response.stock) {
                     Swal.fire({
                         icon: 'warning',
@@ -2005,7 +2003,6 @@
                     $("#productPrice").text(`${productPrice}`)
                     // Populate available sizes in the size select
                     response.sizes.forEach((size) => {
-                        console.log(size, currSize)
                         if (size === currSize) {
                             $("#sizeSelect").append(`<option value="${size}" selected>${size}</option>`);
                         } else {
@@ -2023,10 +2020,7 @@
                     });
                     // Populate available colors in the color filter
                     response.colors.forEach((color) => {
-                        console.log(color)
                         const clr = color.color.toLowerCase()
-                        console.log(clr)
-                        console.log(color.color === currentColor)
                         if (color.color === currentColor) {
                             $("#color-filter").append(`<li><a class="active" data-color="${clr}"><span class="product-color-${clr}"></span></a></li>`);
                         } else {

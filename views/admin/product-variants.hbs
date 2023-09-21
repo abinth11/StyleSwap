@@ -187,7 +187,6 @@
             const colorInput = document.querySelector('#color_name');
             const colorValue = colorInput.value;
             const colorCode = document.querySelector('#color_code').value
-            console.log(colorValue)
             e.preventDefault()
             $.ajax({
                 type: 'POST',
@@ -207,7 +206,7 @@
                     })
                 },
                 error: (err) => {
-                    console.log(err)
+
                 }
             })
         })
@@ -234,7 +233,6 @@
                     })
                 },
                 err: (err) => {
-                    console.log(err)
                 }
             })
         })

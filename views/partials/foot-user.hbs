@@ -121,7 +121,6 @@
                     if (response.products.length > 0) {
                         // Generate HTML for search suggestions
                         const suggestionList = response.products.map(item => {
-                            console.log(item.parentId)
                             return `
               <li>
                 <a href ="/shop-product-right?productId=${item._id}&parentId=${item.parentId}">
