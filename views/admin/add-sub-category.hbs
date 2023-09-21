@@ -131,11 +131,10 @@
                 url: `/admin/dashboard/add-product-category/delete-sub-category/${categoryId}`,
                 method:'get',
                 success:(response) =>{
-                    console.log(response)
                     reload()   
                 },
                 error:()=>{
-                    console.log(error)
+
                 }
             })
         }
@@ -149,12 +148,11 @@
                 data: $('#add-sub-category').serialize(),
                 method: 'POST',
                 success: (response) => {
-                    console.log(response)
                     var myModal = new bootstrap.Modal(document.getElementById('my-modal'));
                     myModal.show();
                 },
                 error: (error) => {
-                    console.log(error);
+                    
                 }
             });
         });

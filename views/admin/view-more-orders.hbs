@@ -293,7 +293,6 @@
         }
 
         const refundAmount = (orderId, userId, amount) => {
-            console.log(orderId, userId, amount)
             $.ajax({
                 url: '/admin/refund-amount',
                 data: {
@@ -303,7 +302,6 @@
                 },
                 method: 'post',
                 success: (response) => {
-                    console.log(response)
                     if (response.status) {
                         Swal.fire({
                             imageUrl: 'https://media.giphy.com/media/2u11zpzwyMTy8/giphy.gif',
@@ -328,7 +326,7 @@
                     }
                 },
                 error: (err) => {
-                    console.log(err)
+                    
                 }
             })
         }

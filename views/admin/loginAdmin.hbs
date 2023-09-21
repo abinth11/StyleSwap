@@ -162,13 +162,10 @@
 
             // submit to the server if the form is valid
             if (isFormValid) {
-                console.log('form is valid')
-                $.ajax({
                     type: 'POST',
                     url: '/admin/',
                     data: $('#signIn').serialize(),
                     success: (response) => {
-                        console.log(response)
                         if (response.status) {
                             location.href = '/admin/dashboard'
                         } else {

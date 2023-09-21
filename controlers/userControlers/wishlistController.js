@@ -37,6 +37,4 @@ export const wishListController = {
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json("Internal Server Error")
     }
   },
-
-
 }

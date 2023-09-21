@@ -113,7 +113,6 @@
     {{>admin-footer}}
     <script>
         const changeOrderStatus = (orderId, currStatus, newStatus) => {
-            console.log(orderId, currStatus, newStatus)
             $.ajax({
                 url: "/admin/change-product-status",
                 data: {
@@ -142,7 +141,6 @@
             })
         }
         const viewMoreOrders = (orderId) => {
-            console.log(orderId);
             $.ajax({
                 url: "/admin/view-order-details",
                 data: {

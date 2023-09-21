@@ -144,8 +144,6 @@
                 // Add an onchange event listener to the input field
                 inputField.addEventListener('change', () => {
                     const quantity = parseInt(inputField.value);
-                    console.log(quantity)
-                    console.log(isNaN(quantity))
                     if (quantity < 0 || isNaN(quantity)) {
                         Swal.fire({
                             icon: 'warning',
@@ -176,7 +174,7 @@
 
                 },
                 error: (error) => {
-                    console.log(error)
+                    
                 }
             })
         }

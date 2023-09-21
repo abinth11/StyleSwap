@@ -351,8 +351,6 @@
                 data: $('#filter-report').serialize(),
                 type: 'POST',
                 success: (response) => {
-                    console.log(response)
-                    console.log(response.mostSold)
                     const totalRevenueTd = document.getElementById('total-revenue')
                     const averageOrderValueTd = document.getElementById('avereage-order-value')
                     const monthlyEarningsTd = document.getElementById('monthly-earnings')
@@ -442,7 +440,6 @@
             const numberOfProducts = document.getElementById('number-of-products').textContent.trim()
             const from = document.getElementById('from').value
             const to = document.getElementById('to').value
-            console.log(from, to)
             $.ajax({
                 url: '/admin/dashboard/create-report',
                 data: {
@@ -516,7 +513,7 @@
                         console.error('Unsupported file type:', contentType)
                     }
                 }, error: function (xhr, status, error) {
-                    console.log('Error generating report:', error)
+
                 }
             })
         }

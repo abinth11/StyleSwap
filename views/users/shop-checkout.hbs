@@ -606,7 +606,6 @@
                         couponResponsePareser(response)
                         $('#successModal').modal('show')
                     } else if (response.id) {
-                        console.log(response)
                         getRazorpay(response);
                     } else if (response.paypal) {
                         location.href = response.reUrl
@@ -639,7 +638,6 @@
                                     url: "/wallet-payment",
                                     data: { confirmed: true, total },
                                     success: function (response) {
-                                        console.log(response)
                                         // Handle payment success
                                         if (response.paid) {
                                             const amountPaid = currencyFormatter.format(response.amountPaid);
@@ -744,7 +742,6 @@
             },
             success: (response) => {
                 if (response.status) {
-                    console.log(response)
                     $('#successModal').modal('show')
                     couponResponsePareser(response)
 

@@ -179,7 +179,6 @@
         processData: false,
         success: (response) => {
           // Hide loading effect
-          console.log(response)
           loading.close();
 
           if (response.status) {
@@ -215,7 +214,6 @@
           }
         },
         error: (error) => {
-            console.log(error)
           // Hide loading effect
           loading.close();
 
