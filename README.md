@@ -35,7 +35,7 @@ Create a .env file in the root directory and set the following environment varia
 MONGODB_URI - the URI for your MongoDB database
 SECRET_KEY - a secret key for encrypting session data
 Start the server: npm start
-
+<!--
 `Usage`
 
 To use this app, follow these steps:
