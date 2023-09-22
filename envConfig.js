@@ -1,3 +1,5 @@
+import dotenv from 'dotenv'
+dotenv.config()
 const ENV_VARS = {
   // eslint-disable-next-line no-undef
   TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,

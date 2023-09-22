@@ -1,5 +1,5 @@
-import userRouter from "./users"
-import adminRouter from "./admin"
+import userRouter from "./users.js"
+import adminRouter from "./admin.js"
 
 const routes = (app) => {
 

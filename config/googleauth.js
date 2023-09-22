@@ -1,6 +1,6 @@
 import passport from "passport"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
-import ENV_VARS from "../src/env-vars"
+import ENV_VARS from "../envConfig.js"
 passport.serializeUser((user,done)=>{
 done(null,user)
 })
