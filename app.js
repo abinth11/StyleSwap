@@ -1,10 +1,10 @@
 import express from "express"
+import http from 'http'
 import EventEmitter from "events"
 import pkg from "body-parser"
 import { join, dirname } from "path"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
-import { connect } from "./config/db/mongodb.js"
 import mongodb from "./config/db/mongodb.js"
 import { engine } from "express-handlebars"
 import { helpers } from "./middlewares/handlebarHelpers.js"
@@ -21,9 +21,11 @@ import passport from "passport"
 import { offerHelpers } from "./helpers/adminHelpers/offerHelpers.js"
 import cors from 'cors'
 import routes from "./routes/index.js"
+import serverConfig from "./config/server.js"
 const { json, urlencoded } = pkg
 const serveStatic = express.static
 const app = express()
+const server = http.createServer(app)
 
 dotenv.config()
 EventEmitter.defaultMaxListeners = 20
@@ -130,9 +132,9 @@ app.use(function (err, req, res, next) {
   })
 })
 
-app.listen(3000,()=>{
+serverConfig(server).startServer()
+// app.listen(3000,()=>{
 
-  console.log('app is listening on port 3000')
+//   console.log('app is listening on port 3000')
 
-})
-// export default app
+// })

@@ -1,6 +1,8 @@
 import dotenv from 'dotenv'
 dotenv.config()
 const ENV_VARS = {
+  PORT: process.env.PORT,
+  NODE_ENV: process.env.NODE_ENV,
   // eslint-disable-next-line no-undef
   TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
  // eslint-disable-next-line no-undef
