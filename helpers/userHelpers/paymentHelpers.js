@@ -1,5 +1,5 @@
 let sotoredAmount
-import db from "../../config/database.js"
+import db from "../../config/db/mongodb.js"
 import collection from "../../contants/collections.js"
 import { ObjectId } from "mongodb"
 import Razorpay from "razorpay"

@@ -1,4 +1,4 @@
-import db from "../../config/database.js"
+import db from "../../config/db/mongodb.js"
 import collection from "../../contants/collections.js"
 export const graphHelpers = {
     calculateMonthlySalesForGraph: async () => {
