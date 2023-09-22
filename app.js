@@ -4,19 +4,18 @@ import pkg from "body-parser"
 import { join, dirname } from "path"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
-import { connect } from "./config/database.js"
+import { connect } from "./config/db/mongodb.js"
+import mongodb from "./config/db/mongodb.js"
 import { engine } from "express-handlebars"
 import { helpers } from "./middlewares/handlebarHelpers.js"
 import session from "express-session"
 import nocache from "nocache"
 import dotenv from "dotenv"
-import usersRouter from "./routes/users.js"
-import adminRouter from "./routes/admin.js"
 import { MulterError } from "multer"
 import CustomError from "./middlewares/errorHandler.js"
 import { schedule } from "node-cron"
 import { fileURLToPath } from "url"
-import {redisConnect} from "./config/redisCache.js"
+import redis from "./config/db/redis.js"
 import otherHelpers from "./helpers/otherHelpers.js"
 import passport from "passport"
 import { offerHelpers } from "./helpers/adminHelpers/offerHelpers.js"
@@ -66,7 +65,7 @@ app.use(passport.session())
 
 routes(app)
 
-connect()
+mongodb.connect()
   .then(() => {
     console.log("Successfully connected to the database")
     // otherHelpers.createIndexForProducts()
@@ -75,7 +74,7 @@ connect()
     console.log("Connection failed", err)
   })
   
-redisConnect()
+redis.connect()
    .then(()=> {
     console.log("Successfull connected to redis")
    })

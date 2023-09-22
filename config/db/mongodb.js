@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb'
-import ENV_VARS from '../envConfig.js'
+import ENV_VARS from '../../envConfig.js'
 
 const state = {
   db: null

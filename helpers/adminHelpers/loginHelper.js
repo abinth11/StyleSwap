@@ -1,5 +1,5 @@
 import collection from "../../contants/collections.js"
-import db from "../../config/database.js"
+import db from "../../config/db/mongodb.js"
 
 export const loginHelpers = {
     adminLogin: async (adminInfo) => {
