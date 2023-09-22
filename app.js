@@ -4,24 +4,24 @@ import pkg from "body-parser"
 import { join, dirname } from "path"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
-import { connect } from "../config/database.js"
+import { connect } from "./config/database.js"
 import { engine } from "express-handlebars"
-import { helpers } from "../middlewares/handlebarHelpers.js"
+import { helpers } from "./middlewares/handlebarHelpers.js"
 import session from "express-session"
 import nocache from "nocache"
 import dotenv from "dotenv"
-import usersRouter from "../routes/users.js"
-import adminRouter from "../routes/admin.js"
+import usersRouter from "./routes/users.js"
+import adminRouter from "./routes/admin.js"
 import { MulterError } from "multer"
-import CustomError from "../middlewares/errorHandler.js"
+import CustomError from "./middlewares/errorHandler.js"
 import { schedule } from "node-cron"
 import { fileURLToPath } from "url"
-import {redisConnect} from "../config/redisCache.js"
-import otherHelpers from "../helpers/otherHelpers.js"
+import {redisConnect} from "./config/redisCache.js"
+import otherHelpers from "./helpers/otherHelpers.js"
 import passport from "passport"
-import { offerHelpers } from "../helpers/adminHelpers/offerHelpers.js"
+import { offerHelpers } from "./helpers/adminHelpers/offerHelpers.js"
 import cors from 'cors'
-import routes from "../routes/index.js"
+import routes from "./routes/index.js"
 const { json, urlencoded } = pkg
 const serveStatic = express.static
 const app = express()
@@ -32,7 +32,7 @@ EventEmitter.defaultMaxListeners = 20
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 // view engine setup
-app.set("views", join(__dirname, "../views"))
+app.set("views", join(__dirname, "./views"))
 app.set("view engine", "hbs")
 app.engine(
   "hbs",
@@ -40,8 +40,8 @@ app.engine(
     extname: "hbs",
     helpers: helpers,
     defaultLayout: "layout",
-    layoutsDir: join(__dirname, "../views/", "layout"),
-    partialsDir: join(__dirname, "../views/", "partials"),
+    layoutsDir: join(__dirname, "./views/", "layout"),
+    partialsDir: join(__dirname, "./views/", "partials"),
   })
 )
 
@@ -49,7 +49,7 @@ app.use(logger("dev"))
 app.use(json())
 app.use(urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(serveStatic(join(__dirname, "../public/")))
+app.use(serveStatic(join(__dirname, "./public/")))
 app.use(cors())
 const oneDay = 1000 * 60 * 60 * 24
 app.use(
@@ -131,4 +131,9 @@ app.use(function (err, req, res, next) {
   })
 })
 
-export default app
+app.listen(3000,()=>{
+
+  console.log('app is listening on port 3000')
+
+})
+// export default app
