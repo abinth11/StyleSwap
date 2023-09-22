@@ -64,7 +64,7 @@ To use the API, send requests to the appropriate endpoint with the required data
 # USER
 
 
-`Database schema`
+<!--`Database schema`
 
 This app uses MongoDB to store data. The database schema is as follows(this is a sample schema, this app is built with mongoclient & contails 18 collections)
 ```mongodb sample schema
@@ -110,6 +110,7 @@ quantity: { type: Number, required: true },
 total: { type: Number, required: true },
 date: { type: Date, required: true, default: Date.now },
 };
+-->
 ```
 `Contributing`
 
