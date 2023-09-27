@@ -55,7 +55,7 @@ const expressConfig = (app) => {
     })
   )
 
-  app.use(helmet())
+  // app.use(helmet())
   app.use(mongoSanitize())
   app.use(limiter)
 }
