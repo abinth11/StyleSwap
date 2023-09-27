@@ -169,7 +169,7 @@ export const userLoginAndSignupControler = {
           }
         } else {
           req.session.loginError = "Invalid phone number or password"
-          res.status(HttpStatusCodes.BAD_REQUEST).json({ status: false })
+          res.json({ status: false })
         }
       }
     } catch (error) {

@@ -55,14 +55,7 @@ const expressConfig = (app) => {
     })
   )
 
-  app.use(
-    helmet.contentSecurityPolicy({
-      directives: {
-        imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
-        frameSrc: ["'self'", "https:"],
-      },
-    })
-  )
+  app.use(helmet())
   app.use(mongoSanitize())
   app.use(limiter)
 }
